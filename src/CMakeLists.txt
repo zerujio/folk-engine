@@ -1,0 +1,6 @@
+add_library(folk_engine folk_engine.cpp)
+target_compile_features(folk_engine PUBLIC cxx_std_17)
+target_include_directories(folk_engine PUBLIC ${FOLK_INCLUDE_DIR})
+target_include_directories(folk_engine PRIVATE ${EXTERN_INCLUDE_DIRS})
+target_link_libraries(folk_engine ${FOLK_LIBS})
+set_property(TARGET folk_engine PROPERTY FOLDER lib)

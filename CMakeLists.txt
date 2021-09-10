@@ -4,15 +4,17 @@ project(FolkEngine VERSION 0.1.0
 
 find_package(OpenGL REQUIRED)
 
-set(EXTERN_INCLUDE_DIRS "extern/glad/include"
-                        "extern/glfw/include")
+set(EXTERN_INCLUDE_DIRS "glad/include" "glfw/include")
+list(TRANSFORM EXTERN_INCLUDE_DIRS PREPEND "${CMAKE_CURRENT_SOURCE_DIR}/extern/")
 
-add_library(FolkEngine FolkEngine.cpp)
-target_include_directories(FolkEngine PUBLIC include/folk-engine)
-target_compile_features(FolkEngine PUBLIC cxx_std_11)
+set(FOLK_INCLUDE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/include/folk-engine")
+set(FOLK_LIBS glfw glad ${OPENGL_LIBRARIES})
 
-add_executable(hello_opengl examples/hello_opengl.cpp)
-target_include_directories(hello_opengl PUBLIC ${EXTERN_INCLUDE_DIRS})
-target_link_libraries(hello_opengl glfw glad ${OPENGL_LIBRARIES})
+# configure engine library
+add_subdirectory(src)
 
+# external dependencies
 add_subdirectory(extern)
+
+# examples
+add_subdirectory(examples)
