@@ -1,0 +1,1 @@
+set(LIB_FILES "thread_safe.cpp" PARENT_SCOPE)

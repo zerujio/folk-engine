@@ -1,7 +1,5 @@
+#include "folk/folk.hpp"
 
-int main() {
-
-
-    
-    return 0;
+void folk::sceneInit(folk::Scene &scene) {
+    return;
 }
