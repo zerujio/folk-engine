@@ -1,5 +1,5 @@
-#ifndef FOLK_ENGINE__ENGINE_HPP
-#define FOLK_ENGINE__ENGINE_HPP
+#ifndef FOLK_ENGINE__ENGINE_SINGLETON_HPP
+#define FOLK_ENGINE__ENGINE_SINGLETON_HPP
 
 #include <array>
 #include <ostream>
@@ -9,6 +9,7 @@
 #include "../render/module.hpp"
 #include "../audio/module.hpp"
 #include "../simulation/module.hpp"
+#include "../window/module.hpp"
 #include "engine_module.hpp"
 #include "main.hpp"
 
@@ -23,6 +24,9 @@ public:
     // The engine functor is what main() calls to run the engine itself
     friend class EngineFunctor;
 
+    // signal the engine to exit
+    void exit() noexcept;
+
 private:
     Scene scene {};
     int started_modules {0};
@@ -30,7 +34,8 @@ private:
 
     /* Module initialization list. Modules are started up in this order, and
     shut down in reverse. */
-    const std::array<EngineModule*, 3> mod_init_list {
+    const std::array<EngineModule*, 4> mod_init_list {
+        &WindowModule::instance,
         &SimulationModule::instance,
         &AudioModule::instance, 
         &RenderModule::instance
@@ -60,4 +65,4 @@ private:
 
 } // namespace folk
 
-#endif//FOLK_ENGINE__ENGINE_HPP
+#endif//FOLK_ENGINE__ENGINE_SINGLETON_HPP

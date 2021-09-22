@@ -7,18 +7,14 @@
 // include
 #include "folk/folk.hpp"
 #include "folk/engine/error.hpp"
-#include "engine.hpp"
+#include "engine_singleton.hpp"
 #include "main.hpp"
 
-using callbackType = void (*)();
-static callbackType exitCallback;
-
 void signalHandler(int sig) {
-    exitCallback();
+    folk::ENGINE.exit();
 }
 
-void setSignalHandler(callbackType f) {
-    exitCallback = f;
+void setSignalHandler() {
     struct sigaction new_action, old_action;
     new_action.sa_handler = signalHandler;
     sigemptyset(&new_action.sa_mask);
@@ -32,6 +28,6 @@ void setSignalHandler(callbackType f) {
 }
 
 int main() {
-    setSignalHandler(folk::ENGINE_MAIN.exit);
+    setSignalHandler();
     return folk::ENGINE_MAIN(std::cout, std::cerr);
 }
