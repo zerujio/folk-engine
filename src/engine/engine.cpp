@@ -1,75 +1,117 @@
-#include <list>
-#include <string>
+#include <chrono>
+#include <thread>
 
 #include "engine.hpp"
+#include "folk/folk.hpp"
 
 namespace folk {
 
-void EngineSingleton::startUp() 
+// EngineSingleton
+
+EngineSingleton::Status EngineSingleton::loop() noexcept
 {
+    try {
+        while (not exit_flag) {
+            std::this_thread::sleep_for(std::chrono::milliseconds(10));
+        }
+    } catch (...) {
+        return ERROR;
+    }
+    return OK;
+}
+
+EngineSingleton::Status EngineSingleton::startUp(std::ostream& std_out, 
+        std::ostream& err_out) noexcept
+{
+    std_out << "Starting up...\n";
+
     while (started_modules < mod_init_list.size()) {
-        mod_init_list[started_modules]->startUp();
+        auto& mod = *mod_init_list[started_modules];
+
+        std_out << "> " << mod.name() << " : ";
+
+        try {
+            mod.startUp();
+        } catch (std::exception &e) {
+            std_out << "ERROR\n";
+            err_out << mod.name() << ": start up error: " << e.what() << "\n";
+            return ERROR;
+        } catch (...) {
+            std_out << "ERROR\n";
+            return ERROR;
+        }
+
+        std_out << "OK\n";
+
         ++started_modules;
     }
+
+    return OK;
 }
 
-void EngineSingleton::shutDown()
+EngineSingleton::Status EngineSingleton::shutDown(std::ostream& std_out, 
+        std::ostream& err_out) noexcept
 {
-    EngineErrorList errors;
+    std_out << "Shutting down...\n";
 
     while (started_modules > 0) {
+        auto& mod = *mod_init_list[--started_modules];
+
+        std_out << "> " << mod.name() << " : "; 
+
         try {
-            mod_init_list[--started_modules]->shutDown();
-        } catch (EngineRuntimeError &e) {
-            errors.push_back(e);
+            mod.shutDown();
+        } catch (std::exception &e) {
+            std_out << "ERROR\n";
+            err_out << mod.name() << ": shut down error: " << e.what() << "\n";
+            return ERROR;
+        } catch (...) {
+            std_out << "ERROR\n";
+            return ERROR;
         }
+
+        std_out << "OK\n";
     }
 
-    if (!errors.empty())
-        throw errors;
+    return OK;
 }
 
-void EngineSingleton::setScene(Scene* scn) {
-    scene_ptr = scn;
-}
 
-EngineSingleton::Status EngineSingleton::Manager::startUp(std::ostream& out) {
+// Engine Functor
+int EngineFunctor::operator() (std::ostream& std_out, std::ostream& err_out) 
+{
+    // module startup
+    if (ENGINE.startUp(std_out, err_out) != Status::OK) {
+        ENGINE.shutDown(std_out, err_out);
+        return 1;
+    }
+
+    // scene initialization
+    bool init_ok = true;
     try {
-        ENGINE.startUp();
+        sceneInit(ENGINE.scene);
+    } catch (std::exception &e) {
+        err_out << "Exception caught during scene initialization: " 
+            << e.what() << "\n";
+        init_ok = false;
+    } catch (...) {
+        err_out << "Unknown exception caught during scene initialization!\n";
+        init_ok = false;
     }
 
-    catch (EngineRuntimeError &e) {
-        out << "Startup error: " << e.what() << "\n";
-        shutDown(out);
-        return FAILURE;
+    if (not init_ok) {
+        std_out << "Scene initialization failed.\n";
+        ENGINE.shutDown(std_out, err_out);
+        return 1;
     }
 
-    return SUCCESS;
-}
+    // loop
+    auto loop_status = ENGINE.loop();
 
-EngineSingleton::Status EngineSingleton::Manager::shutDown(std::ostream& out) {
-    try {
-        ENGINE.shutDown();   
-    }
+    // shutdown
+    auto shut_down_status = ENGINE.shutDown(std_out, err_out);
 
-    catch (EngineErrorList &elist) {
-        out << "During shutdown the following errors ocurred:\n";
-        for (auto& err : elist) {
-            out << err.what() << "\n";
-        }
-        return FAILURE;
-    }
-
-    return SUCCESS;
-}
-
-EngineSingleton::Status EngineSingleton::Manager::setScene(Scene* scn) {
-    try {
-        ENGINE.setScene(scn);
-    } catch(...) {
-        return FAILURE;
-    }
-    return SUCCESS;
+    return loop_status == Status::OK && shut_down_status == Status::OK ? 0 : 1;
 }
 
 } // namespace folk

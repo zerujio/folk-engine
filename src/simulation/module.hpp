@@ -3,13 +3,11 @@
 
 #include "../engine/engine_module.hpp"
 
-#include <iostream>
-
 namespace folk {
 
 FOLK_ENGINE_MODULE_SINGLETON(SimulationModule) {
-    void onStartUp() {std::cout << "Simulation module up!\n";}
-    void onShutDown() {std::cout << "Simulation module down!\n";}
+    void onStartUp() {}
+    void onShutDown() {}
     FOLK_ENGINE_MODULE_NAME_FUNCTION("Simulation")
 };
 

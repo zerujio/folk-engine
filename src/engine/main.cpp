@@ -10,13 +10,15 @@
 #include "engine.hpp"
 #include "main.hpp"
 
-static bool should_close = false;
+using callbackType = void (*)();
+static callbackType exitCallback;
 
 void signalHandler(int sig) {
-    should_close = true;
+    exitCallback();
 }
 
-void setSignalHandler() {
+void setSignalHandler(callbackType f) {
+    exitCallback = f;
     struct sigaction new_action, old_action;
     new_action.sa_handler = signalHandler;
     sigemptyset(&new_action.sa_mask);
@@ -30,40 +32,6 @@ void setSignalHandler() {
 }
 
 int main() {
-    setSignalHandler();
-
-    using Status = folk::EngineSingleton::Status;
-
-    folk::Scene scene;
-    folk::ENGINE.manager.setScene(&scene);
-
-    // start engine modules
-    if (folk::ENGINE.manager.startUp(std::cerr) != Status::SUCCESS)
-        return -1;
-
-    // initialize scene
-    try {
-        folk::sceneInit(scene);
-
-    } catch (std::exception &e) {
-        std::cerr << "Error during scene initialization: " << e.what() << "\n";
-        folk::ENGINE.manager.shutDown(std::cerr);
-        return -1;
-    
-    } catch (...) {
-        std::cerr << "Unexpected exception during scene initialization!\n";
-        folk::ENGINE.manager.shutDown(std::cerr);
-        return -1;
-    }
-
-    // loop
-    while(not should_close) {
-        std::this_thread::sleep_for(std::chrono::milliseconds(100));
-    }
-
-    // shutdown
-    if (folk::ENGINE.manager.shutDown(std::cerr) != Status::SUCCESS)
-        return -1;
-
-    return 0;
+    setSignalHandler(folk::ENGINE_MAIN.exit);
+    return folk::ENGINE_MAIN(std::cout, std::cerr);
 }
