@@ -1,5 +1,5 @@
-#ifndef FOLK_ENGINE__ENGINE_HPP
-#define FOLK_ENGINE__ENGINE_HPP
+#ifndef FOLK__ENGINE_HPP
+#define FOLK__ENGINE_HPP
 
 #include <string>
 
@@ -11,4 +11,4 @@ void setWindowTitle(const char*);
 
 } // namespace folk::engine
 
-#endif//FOLK_ENGINE__ENGINE_HPP
+#endif//FOLK__ENGINE_HPP

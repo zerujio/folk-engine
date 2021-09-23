@@ -2,7 +2,7 @@
 #define FOLK_ENGINE__ENGINE_MODULE_HPP
 
 #include <string>
-#include "folk/engine/error.hpp"
+#include "folk/error.hpp"
 
 namespace folk
 {

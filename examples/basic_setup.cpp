@@ -1,5 +1,5 @@
 #include "folk/folk.hpp"
-#include "folk/engine/engine.hpp"
+#include "folk/engine.hpp"
 
 void folk::engineInit() {
     folk::engine::setWindowTitle("Hello world!");

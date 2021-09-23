@@ -4,7 +4,7 @@
 #include <array>
 #include <ostream>
 
-#include "folk/scene/scene.hpp"
+#include "folk/scene.hpp"
 #include "../utils/singleton.hpp"
 #include "../render/module.hpp"
 #include "../audio/module.hpp"
