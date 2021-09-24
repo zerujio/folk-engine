@@ -35,18 +35,47 @@ EngineSingleton::EngineSingleton()
     }
 }
 
-EngineSingleton::~EngineSingleton() {}
+EngineSingleton::~EngineSingleton()
+{
+    exception_queue.stopProcessing();
+}
 
 void EngineSingleton::exit() noexcept
 {
     exit_flag = true;
 }
 
-void EngineSingleton::mainLoop() noexcept
+void EngineSingleton::transportException(std::exception_ptr p) noexcept
 {
-    // wait until exit call
-    while (not exit_flag) {
-        std::this_thread::sleep_for(std::chrono::milliseconds(10));
+    exception_queue.enqueue(p);
+}
+
+void EngineSingleton::mainLoop()
+{
+    std::vector<UpdateListener*> to_update {&window, &render};
+    while (!exit_flag) {
+        for (UpdateListener* p : to_update)
+            try {
+                p->update(0.16);
+            } catch (...) {
+                transportException(std::current_exception());
+            }
+    }
+}
+
+void EngineSingleton::handleException(std::exception_ptr ptr) noexcept
+{
+    try {
+        if (ptr)
+            std::rethrow_exception(ptr);
+    } catch (CriticalEngineError &e) {
+        errout << "Critical error: " << e.what() << "\n";
+        exit();
+    } catch (std::exception &e) {
+        errout << "Error: " << e.what() << "\n";
+    } catch (...) {
+        errout << "Critical error: caught unexpected exception!\n";
+        exit();
     }
 }
 

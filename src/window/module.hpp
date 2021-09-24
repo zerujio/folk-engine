@@ -4,10 +4,11 @@
 #include <string>
 #include <GLFW/glfw3.h>
 #include "../utils/singleton.hpp"
+#include "../utils/update_listener.hpp"
 
 namespace folk {
 
-FOLK_SINGLETON_CLASS_FINAL(WindowModule) {
+FOLK_SINGLETON_CLASS_FINAL(WindowModule), public UpdateListener {
 public:
     struct WindowDimentions {
         GLuint width; 
@@ -35,6 +36,8 @@ private:
 
     WindowModule();
     ~WindowModule();
+
+    void update(double) override;
 };
 
 #define WINDOW WindowModule::instance()

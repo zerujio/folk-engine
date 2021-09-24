@@ -4,6 +4,8 @@
 #include <array>
 #include <ostream>
 #include <iostream>
+#include <exception>
+#include <thread>
 
 #include "folk/scene.hpp"
 #include "../utils/singleton.hpp"
@@ -11,6 +13,8 @@
 #include "../audio/module.hpp"
 #include "../simulation/module.hpp"
 #include "../window/module.hpp"
+#include "../utils/processing_queue.hpp"
+#include "../utils/coroutine.hpp"
 #include "main.hpp"
 
 namespace folk
@@ -29,16 +33,29 @@ public:
     // signal the engine to exit
     void exit() noexcept;
 
+    /* Transport an exception across threads, from the calling thread to the
+    handler thread. The exception is thrown again in said thread and then 
+    handled.*/
+    void transportException(std::exception_ptr) noexcept;
+
+    std::ostream& out {std::cout};
+    std::ostream& errout {std::cerr}; 
+
 private:
     EngineSingleton();
     ~EngineSingleton();
 
-    std::ostream& out {std::cout};
-    std::ostream& errout {std::cerr}; 
-    Scene scene {};
-    bool exit_flag {false};
+    void mainLoop();
+    void handleException(std::exception_ptr) noexcept;
 
-    void mainLoop() noexcept;
+    bool exit_flag {false};
+    Scene scene {};
+    ProcessingQueue<std::exception_ptr> exception_queue;
+    Coroutine exception_handler {
+        &ProcessingQueue<std::exception_ptr>::processLoop,
+        &exception_queue,
+        [this](std::exception_ptr p){ handleException(p); }
+    };
 
     friend int ::main();
 };

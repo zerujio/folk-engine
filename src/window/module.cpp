@@ -4,10 +4,8 @@
 
 namespace folk {
 
-static void closeWindowCallback(GLFWwindow *w)
-{
-    ENGINE.exit();
-}
+static void closeWindowCallback(GLFWwindow*);
+static void keyCallback(GLFWwindow*, int, int, int, int);
 
 WindowModule::WindowModule() 
 {
@@ -30,10 +28,9 @@ WindowModule::WindowModule()
         glfwTerminate();
         throw EngineRuntimeError("GLFW: window creation failed.");
     }
-    
-    glfwMakeContextCurrent(window);
 
     glfwSetWindowCloseCallback(window, closeWindowCallback);
+    glfwSetKeyCallback(window, keyCallback);
 }
 
 WindowModule::~WindowModule() 
@@ -55,6 +52,34 @@ GLFWwindow* WindowModule::getWindowPtr()
 WindowModule::WindowDimentions const& WindowModule::getWindowSize() 
 {
     return window_size;
+}
+
+void WindowModule::update(double delta) {
+    glfwPollEvents();
+}
+
+static void closeWindowCallback(GLFWwindow *w)
+{
+    ENGINE.exit();
+}
+
+static void keyCallback(GLFWwindow* window, int key, int scancode, int action, int mode)
+{
+    if (action == GLFW_PRESS)
+    {
+        try {
+            switch (key) {
+                case GLFW_KEY_ESCAPE:
+                    throw CriticalEngineError("dummy critical error");
+                    break;
+                case GLFW_KEY_SPACE:
+                    throw EngineRuntimeError("dummy engine runtime error");
+                    break;
+            }
+        } catch (...) {
+            ENGINE.transportException(std::current_exception());
+        }
+    }
 }
 
 } // namespace folk

@@ -6,34 +6,18 @@
 #include <condition_variable>
 #include <GLFW/glfw3.h>
 #include "../utils/singleton.hpp"
+#include "../utils/update_listener.hpp"
 
 namespace folk {
 
-FOLK_SINGLETON_CLASS_FINAL(RenderModule) {
+FOLK_SINGLETON_CLASS_FINAL(RenderModule), public UpdateListener {
 private:
     friend class EngineSingleton;
     friend class RenderThread;
 
-    class RenderThread {
-    public:
-        RenderThread();
-        ~RenderThread();
+    RenderModule();
 
-    private:
-        enum Status {STARTED, STOPPED, ERROR} status {STOPPED};
-        std::thread thread;
-        std::mutex mutex;
-        std::condition_variable condition;
-        bool stop_flag {false};
-
-        void main();
-        bool configureContext();
-        void renderLoop();
-        bool checkStopFlag();
-    } render_thread;
-
-    RenderModule() {}
-    ~RenderModule() {}
+    void update(double) override;
 };
 
 } // namespace folk

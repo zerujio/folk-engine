@@ -4,60 +4,12 @@
 
 namespace folk {
 
-// RenderModule::RenderThread
-RenderModule::RenderThread::RenderThread()
-{   
-    {
-        std::unique_lock m(mutex);
-        
-        thread = std::thread(&RenderThread::main, this);
-
-        while (status != STOPPED)
-            condition.wait(m);
-    }
-
-    if (status == ERROR) {
-        thread.join();
-        throw EngineRuntimeError("OpenGL context initialization failed");
-    }
-}
-
-RenderModule::RenderThread::~RenderThread()
-{
-    {
-        std::lock_guard m(mutex);
-        stop_flag = true;
-    }
-
-    thread.join();
-}
-
-void RenderModule::RenderThread::main()
-{
-    bool success = configureContext();
-
-    {
-        std::lock_guard lk(mutex);
-
-        if (success) {
-            status = STARTED;
-        } else {
-            status = ERROR;
-        }
-    }
-
-    condition.notify_all();
-
-    if (success)
-        renderLoop();
-}
-
-bool RenderModule::RenderThread::configureContext()
+RenderModule::RenderModule() 
 {
     glfwMakeContextCurrent(WINDOW.getWindowPtr());
 
     if (!gladLoadGLLoader((GLADloadproc) glfwGetProcAddress))
-        return false;
+        throw CriticalEngineError("OpenGL context initialization error: gladLoadGLLoader returned an error");
 
     {
         auto& wsize = WINDOW.getWindowSize();
@@ -65,25 +17,12 @@ bool RenderModule::RenderThread::configureContext()
     }
 
     glClearColor(0.5f, 0.5f, 0.5f, 1.0f);
-    
-    return true;
 }
 
-void RenderModule::RenderThread::renderLoop()
+void RenderModule::update(double delta)
 {
-    while(!checkStopFlag()) {
-        //GLFW
-        glfwPollEvents();
-        //OpenGL
-        glClear(GL_COLOR_BUFFER_BIT);
-        glfwSwapBuffers(WINDOW.getWindowPtr());
-    }
-}
-
-bool RenderModule::RenderThread::checkStopFlag()
-{
-    std::lock_guard lk(mutex);
-    return stop_flag;
+    glClear(GL_COLOR_BUFFER_BIT);
+    glfwSwapBuffers(WINDOW.getWindowPtr());
 }
 
 } // namespace folk
