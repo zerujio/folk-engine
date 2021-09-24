@@ -12,9 +12,9 @@ struct EngineRuntimeError : public std::runtime_error {
 };
 
 // Critical error. Throwing exceptions of this type will cause the engine to shut down.
-class CriticalEngineError : std::exception
+class CriticalEngineError : std::runtime_error
 {
-    using exception::exception;
+    using runtime_error::runtime_error;
 };
 
 } // namespace folk

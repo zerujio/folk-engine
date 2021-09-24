@@ -29,5 +29,13 @@ void setSignalHandler() {
 
 int main() {
     setSignalHandler();
-    return folk::ENGINE_MAIN(std::cout, std::cerr);
+
+    try {
+        folk::EngineSingleton engine {};
+        engine.mainLoop();
+    } catch (std::exception &e) {
+        std::cerr << e.what() << "\n";
+    }
+
+    return 0;
 }

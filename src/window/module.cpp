@@ -1,6 +1,6 @@
 #include "folk/error.hpp"
-#include "../engine/engine_singleton.hpp"
 #include "module.hpp"
+#include "../engine/engine_singleton.hpp"
 
 namespace folk {
 
@@ -9,7 +9,7 @@ static void closeWindowCallback(GLFWwindow *w)
     ENGINE.exit();
 }
 
-void WindowModule::onStartUp() 
+WindowModule::WindowModule() 
 {
     if (!glfwInit())
         throw EngineRuntimeError("GLFW initialization failed.");
@@ -36,7 +36,7 @@ void WindowModule::onStartUp()
     glfwSetWindowCloseCallback(window, closeWindowCallback);
 }
 
-void WindowModule::onShutDown() 
+WindowModule::~WindowModule() 
 {
     glfwTerminate();
 }
@@ -44,9 +44,7 @@ void WindowModule::onShutDown()
 void WindowModule::setWindowTitle(const char* title)
 {
     window_title = title;
-
-    if (isRunning())
-        glfwSetWindowTitle(window, window_title.c_str());
+    glfwSetWindowTitle(window, window_title.c_str());
 }
 
 GLFWwindow* WindowModule::getWindowPtr() 

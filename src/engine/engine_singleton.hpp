@@ -3,6 +3,7 @@
 
 #include <array>
 #include <ostream>
+#include <iostream>
 
 #include "folk/scene.hpp"
 #include "../utils/singleton.hpp"
@@ -10,7 +11,6 @@
 #include "../audio/module.hpp"
 #include "../simulation/module.hpp"
 #include "../window/module.hpp"
-#include "engine_module.hpp"
 #include "main.hpp"
 
 namespace folk
@@ -18,50 +18,32 @@ namespace folk
 
 // Singleton class to access aplication level functions and variables.
 FOLK_SINGLETON_CLASS_FINAL(EngineSingleton) {
-public:
-    enum Status {OK, ERROR};
 
-    // The engine functor is what main() calls to run the engine itself
-    friend class EngineFunctor;
+public:
+    // Engine modules
+    WindowModule window {};
+    RenderModule render {};
+    AudioModule audio {};
+    SimulationModule simulation {};
 
     // signal the engine to exit
     void exit() noexcept;
 
 private:
+    EngineSingleton();
+    ~EngineSingleton();
+
+    std::ostream& out {std::cout};
+    std::ostream& errout {std::cerr}; 
     Scene scene {};
-    int started_modules {0};
     bool exit_flag {false};
 
-    /* Module initialization list. Modules are started up in this order, and
-    shut down in reverse. */
-    const std::array<EngineModule*, 4> mod_init_list {
-        &WindowModule::instance,
-        &SimulationModule::instance,
-        &AudioModule::instance, 
-        &RenderModule::instance
-    };
+    void mainLoop() noexcept;
 
-    // start up all engine modules
-    Status startUp(std::ostream&, std::ostream&) noexcept;
-
-    // shut down all engine modules
-    Status shutDown(std::ostream&, std::ostream&) noexcept;
-
-    Status loop() noexcept;
-};
-
-#define ENGINE EngineSingleton::instance
-
-FOLK_SINGLETON_CLASS_FINAL(EngineFunctor) {
-    using Status = EngineSingleton::Status;
-private:
-    int operator()(std::ostream&, std::ostream&);
-    static void exit() {ENGINE.exit_flag = true;}
-    
     friend int ::main();
 };
 
-#define ENGINE_MAIN EngineFunctor::instance
+#define ENGINE EngineSingleton::instance()
 
 } // namespace folk
 

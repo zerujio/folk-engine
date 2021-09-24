@@ -5,20 +5,20 @@
 #include <mutex>
 #include <condition_variable>
 #include <GLFW/glfw3.h>
-#include "../engine/engine_module.hpp"
+#include "../utils/singleton.hpp"
 
 namespace folk {
 
-FOLK_ENGINE_MODULE_SINGLETON(RenderModule) {
-public:
-    FOLK_ENGINE_MODULE_NAME_FUNCTION("Render")
-
+FOLK_SINGLETON_CLASS_FINAL(RenderModule) {
 private:
+    friend class EngineSingleton;
     friend class RenderThread;
+
     class RenderThread {
     public:
-        void start();
-        void stop();
+        RenderThread();
+        ~RenderThread();
+
     private:
         enum Status {STARTED, STOPPED, ERROR} status {STOPPED};
         std::thread thread;
@@ -30,15 +30,12 @@ private:
         bool configureContext();
         void renderLoop();
         bool checkStopFlag();
-        static void staticMain();
     } render_thread;
 
-    void onStartUp();
-    void onShutDown();
+    RenderModule() {}
+    ~RenderModule() {}
 };
 
 } // namespace folk
-
-#define RENDER RenderModule::instance
 
 #endif//FOLK_RENDER__MODULE_HPP

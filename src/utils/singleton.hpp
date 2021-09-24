@@ -1,20 +1,38 @@
 #ifndef FOLK_UTILS__SINGLETON_HPP
 #define FOLK_UTILS__SINGLETON_HPP
 
+#include "folk/error.hpp"
+
 namespace folk {
 
 template<typename T>
 class Singleton {
 public:
-    static T instance;
+    static T& instance() {return *((T*)instance_ptr);}
+
 protected:
-    Singleton() = default;
+    Singleton() {
+        if (instance_ptr)
+            throw CriticalEngineError("attempted to instantiate a singleton class twice");
+
+        instance_ptr = this;
+    }
+
     Singleton(Singleton const&) = delete;
     Singleton& operator=(Singleton const&) = delete;
+
+    ~Singleton() noexcept {
+        instance_ptr = nullptr;
+    }
+
+    operator T*() {return *this;}
+
+private:
+    static Singleton<T> *instance_ptr;
 };
 
 template<typename T>
-T Singleton<T>::instance {};
+Singleton<T>* Singleton<T>::instance_ptr {nullptr};
 
 } // namespace folk
 

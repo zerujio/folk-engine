@@ -11,7 +11,7 @@ void exit()
 
 void setWindowTitle(const char* text) 
 {
-    WindowModule::instance.setWindowTitle(text);
+    ENGINE.window.setWindowTitle(text);
 }
 
 } // namespace folk::engine

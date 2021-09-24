@@ -4,29 +4,13 @@
 
 namespace folk {
 
-// RenderModule
-
-void RenderModule::onStartUp() {
-    render_thread.start();
-}
-
-void RenderModule::onShutDown() {
-    render_thread.stop();
-}
-
-// RenderThread
-
-void RenderModule::RenderThread::staticMain()
-{
-    RENDER.render_thread.main();
-}
-
-void RenderModule::RenderThread::start()
+// RenderModule::RenderThread
+RenderModule::RenderThread::RenderThread()
 {   
     {
         std::unique_lock m(mutex);
         
-        thread = std::thread(staticMain);
+        thread = std::thread(&RenderThread::main, this);
 
         while (status != STOPPED)
             condition.wait(m);
@@ -38,7 +22,7 @@ void RenderModule::RenderThread::start()
     }
 }
 
-void RenderModule::RenderThread::stop()
+RenderModule::RenderThread::~RenderThread()
 {
     {
         std::lock_guard m(mutex);

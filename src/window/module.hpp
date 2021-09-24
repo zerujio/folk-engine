@@ -3,17 +3,15 @@
 
 #include <string>
 #include <GLFW/glfw3.h>
-#include "../engine/engine_module.hpp"
+#include "../utils/singleton.hpp"
 
 namespace folk {
 
-FOLK_ENGINE_MODULE_SINGLETON(WindowModule) {
+FOLK_SINGLETON_CLASS_FINAL(WindowModule) {
 public:
-    FOLK_ENGINE_MODULE_NAME_FUNCTION("Window")
-
     struct WindowDimentions {
-        GLuint width = 800; 
-        GLuint height = 600;
+        GLuint width; 
+        GLuint height;
     };
 
     // Set width and height of application window
@@ -29,16 +27,18 @@ public:
     GLFWwindow* getWindowPtr();
 
 private:
+    friend class EngineSingleton;
+
     GLFWwindow* window = nullptr;
-    WindowDimentions window_size;
+    WindowDimentions window_size {800, 600};
     std::string window_title {"Unnamed Folk Engine Application"};
 
-    void onStartUp();
-    void onShutDown();
+    WindowModule();
+    ~WindowModule();
 };
 
-} // namespace folk
+#define WINDOW WindowModule::instance()
 
-#define WINDOW WindowModule::instance
+} // namespace folk
 
 #endif//FOLK_WINDOW__MODULE_HPP
