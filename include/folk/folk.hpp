@@ -6,15 +6,23 @@
 namespace folk
 {
 
-/* Called before engine module initialization. Allows global engine settings to
-be configured before the first scene is loaded. */
+/// Se invoca luego de que todos los módulos del motor han sido inicializados.
+/** 
+ * Permite configurar opciones globales del motor antes de que se inicialize la 
+ * primera escena.
+ * 
+ * @see sceneInit()
+ */
 void engineInit();
 
-/* This function is called with an empty scene as argument. This is the scene
-the engine is currently playing.
-
-All engine modules have been initialized at this point. */
-void sceneInit(Scene&);
+/// Se invoca luego de que se ha instanciado una escena vacía.
+/**
+ * En esta función se deben añadir elementos a la escena.
+ * 
+ * @param scene escena vacía
+ * @see engineInit()
+ */
+void sceneInit(Scene& scene);
 
 }//namespace folk
 

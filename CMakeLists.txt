@@ -4,6 +4,8 @@ project(FolkEngine VERSION 0.1.0
 
 find_package(OpenGL REQUIRED)
 
+find_package(Doxygen)
+
 set(EXTERN_INCLUDE_DIRS "glad/include" "glfw/include")
 list(TRANSFORM EXTERN_INCLUDE_DIRS PREPEND "${CMAKE_CURRENT_SOURCE_DIR}/extern/")
 
@@ -18,3 +20,8 @@ add_subdirectory(extern)
 
 # examples
 add_subdirectory(examples)
+
+# documentation
+if(DOXYGEN_FOUND)
+    doxygen_add_docs(folk_docs include src)
+endif()

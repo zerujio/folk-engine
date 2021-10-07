@@ -1,0 +1,29 @@
+Estilo de documentación:
+
+/// descripción breve
+DECLARACIÓN
+
+/**
+ * descripción extensa
+ */
+DEFINICIÓN
+
+
+Ejemplo:
+
+[sum.hpp]
+/// Suma dos números enteros.
+int sum(int x, int y);
+
+[sum.cpp]
+/**
+ * Descripción extensa.
+ * 
+ * @param x sumando izquierdo
+ * @param y sumando derecho
+ * @return x + y
+ * @see substract()
+ */
+int sum (int x, int y) {
+    return x + y;
+}
