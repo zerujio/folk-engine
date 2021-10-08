@@ -3,23 +3,24 @@
 
 #include "folk/scene.hpp"
 
+/// folk engine namespace
 namespace folk
 {
 
-/// Se invoca luego de que todos los módulos del motor han sido inicializados.
+/// Called after engine initialization, but before scene initialization.
 /** 
- * Permite configurar opciones globales del motor antes de que se inicialize la 
- * primera escena.
+ * Use this callback to set global engine settings before a scene is 
+ * instantiated.
  * 
  * @see sceneInit()
  */
 void engineInit();
 
-/// Se invoca luego de que se ha instanciado una escena vacía.
+/// Called after engine initialization and scene instantiation.
 /**
- * En esta función se deben añadir elementos a la escena.
+ * Use this function to add elements to the scene.
  * 
- * @param scene escena vacía
+ * @param scene an empty [Scene](@ref Scene).
  * @see engineInit()
  */
 void sceneInit(Scene& scene);
