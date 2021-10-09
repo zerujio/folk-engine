@@ -15,30 +15,43 @@
 #include "../window/module.hpp"
 #include "../utils/processing_queue.hpp"
 #include "../utils/coroutine.hpp"
+#include "../utils/delta_clock.hpp"
 #include "main.hpp"
 
 namespace folk
 {
 
-// Singleton class to access aplication level functions and variables.
+/// Singleton class to access aplication level functions and variables.
 FOLK_SINGLETON_CLASS_FINAL(EngineSingleton) {
 
 public:
     // Engine modules
+
+    /// Window module
     WindowModule window {};
+
+    /// Render module
     RenderModule render {};
+
+    /// Audio module
     AudioModule audio {};
+
+    /// simulation module
     SimulationModule simulation {};
 
-    // signal the engine to exit
+    /// Signal the engine to exit.
     void exit() noexcept;
 
-    /* Transport an exception across threads, from the calling thread to the
+    /// Handle an exception in another thread.
+    /** Transport an exception across threads, from the calling thread to the
     handler thread. The exception is thrown again in said thread and then 
     handled.*/
     void transportException(std::exception_ptr) noexcept;
 
+    /// output stream
     std::ostream& out {std::cout};
+
+    /// error outpout stream
     std::ostream& errout {std::cerr}; 
 
 private:
@@ -56,6 +69,7 @@ private:
         &exception_queue,
         [this](std::exception_ptr p){ handleException(p); }
     };
+    DeltaClock frame_clock {};
 
     friend int ::main();
 };

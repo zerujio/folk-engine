@@ -54,7 +54,7 @@ WindowModule::WindowDimentions const& WindowModule::getWindowSize()
     return window_size;
 }
 
-void WindowModule::update(double delta) {
+void WindowModule::update(Delta delta) {
     glfwPollEvents();
 }
 

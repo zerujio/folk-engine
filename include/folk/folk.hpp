@@ -7,11 +7,8 @@
 namespace folk
 {
 
-/// Called after engine initialization, but before scene initialization.
+/// Called before engine initialization, allows configuration of certain settings.
 /** 
- * Use this callback to set global engine settings before a scene is 
- * instantiated.
- * 
  * @see sceneInit()
  */
 void engineInit();

@@ -5,8 +5,10 @@
 
 namespace folk::engine {
 
-// Signal the engine to exit (close the application).
+/// Signal the engine to exit (close the application).
 void exit();
+
+/// Set the title of the game window.
 void setWindowTitle(const char*);
 
 } // namespace folk::engine

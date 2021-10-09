@@ -1,0 +1,1 @@
+set(LIB_FILES "node.cpp" "scene.cpp" PARENT_SCOPE)

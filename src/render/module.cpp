@@ -19,7 +19,7 @@ RenderModule::RenderModule()
     glClearColor(0.5f, 0.5f, 0.5f, 1.0f);
 }
 
-void RenderModule::update(double delta)
+void RenderModule::update(Delta delta)
 {
     glClear(GL_COLOR_BUFFER_BIT);
     glfwSwapBuffers(WINDOW.getWindowPtr());

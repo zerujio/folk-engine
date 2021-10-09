@@ -17,7 +17,7 @@ private:
 
     RenderModule();
 
-    void update(double) override;
+    void update(Delta) override;
 };
 
 } // namespace folk

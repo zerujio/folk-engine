@@ -8,6 +8,9 @@ namespace folk {
 /// Utility class for mesuring frame times (deltaT)
 class DeltaClock {
 public:
+    using clock = std::chrono::steady_clock;
+    using nanoseconds = std::chrono::nanoseconds;
+
     /// Default constructor.
     /** 
      * Time for the first frame begins immediately upon construction. maxDelta 
@@ -28,15 +31,15 @@ public:
      * @param <T> std::chrono::duration instance representing the time unit
      * @return unclamped time delta for last frame.
      */
-    template<typename T = std::chrono::milliseconds>
+    template<typename T = nanoseconds>
     inline T rawDelta();
 
-    /// time delta for last frame, clamped to the range [0, max_delta].
+    /// time delta for last frame, clamped to the range [0, maxDelta].
     /**
      * @param <T> std::chrono::duration instance representing the time unit
      * @return clamped time delta for last frame.
      */
-    template<typename T = std::chrono::milliseconds>
+    template<typename T = nanoseconds>
     inline T delta();
 
     /// Mark the end of current frame and the start of a new one.
@@ -58,16 +61,13 @@ public:
     /**
      * @param <T> an std::chrono::duration type
      */
-    template <typename T>
+    template <typename T = nanoseconds>
     inline T maxDelta();
 
 private:
-    using clock = std::chrono::steady_clock;
-    using duration  = std::chrono::nanoseconds;
-
-    duration _last_delta {1};
-    duration _clamped_last_delta {1};
-    duration _max_delta {std::chrono::milliseconds(500)};
+    nanoseconds _last_delta {1};
+    nanoseconds _clamped_last_delta {1};
+    nanoseconds _max_delta {std::chrono::milliseconds(500)};
     clock::time_point _initial_time {clock::now()};
 };
 
@@ -86,6 +86,6 @@ T DeltaClock::maxDelta() {
     return std::chrono::duration_cast<T>(_max_delta);
 }
 
-}// namespace folk
+}//namespace folk
 
 #endif//FOLK_UTILS__DELTA_TIMER_HPP

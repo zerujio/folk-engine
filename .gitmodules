@@ -1,3 +1,6 @@
 [submodule "extern/glfw"]
 	path = extern/glfw
 	url = git@github.com:glfw/glfw.git
+[submodule "extern/entt"]
+	path = extern/entt
+	url = git@github.com:skypjack/entt.git

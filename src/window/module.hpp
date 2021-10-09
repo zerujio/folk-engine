@@ -37,7 +37,7 @@ private:
     WindowModule();
     ~WindowModule();
 
-    void update(double) override;
+    void update(Delta) override;
 };
 
 #define WINDOW WindowModule::instance()

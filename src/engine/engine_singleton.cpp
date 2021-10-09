@@ -17,6 +17,7 @@ EngineSingleton::EngineSingleton()
         std::string msg ("engineInit exception: ");
         msg += e.what();
         throw CriticalEngineError(msg);
+    
     } catch (...) {
         throw CriticalEngineError("Unexpected exception during engine initialization");
     }
@@ -52,14 +53,22 @@ void EngineSingleton::transportException(std::exception_ptr p) noexcept
 
 void EngineSingleton::mainLoop()
 {
+    using Delta = UpdateListener::Delta;
+
     std::vector<UpdateListener*> to_update {&window, &render};
+
     while (!exit_flag) {
-        for (UpdateListener* p : to_update)
+        frame_clock.click();
+
+        out << Delta(frame_clock.delta()).count() << "\n";
+
+        for (UpdateListener* p : to_update) {
             try {
-                p->update(0.16);
+                p->update(frame_clock.delta());
             } catch (...) {
                 transportException(std::current_exception());
             }
+        }
     }
 }
 
