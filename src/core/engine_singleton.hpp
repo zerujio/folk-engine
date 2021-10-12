@@ -7,12 +7,17 @@
 #include <exception>
 #include <thread>
 
-#include "folk/scene.hpp"
-#include "../utils/singleton.hpp"
+#include "folk/scene/scene.hpp"
+
+// modules
 #include "../render/module.hpp"
 #include "../audio/module.hpp"
 #include "../simulation/module.hpp"
 #include "../window/module.hpp"
+#include "../scene/module.hpp"
+#include "../exception/module.hpp"
+
+#include "../utils/singleton.hpp"
 #include "../utils/processing_queue.hpp"
 #include "../utils/coroutine.hpp"
 #include "../utils/delta_clock.hpp"
@@ -27,6 +32,8 @@ FOLK_SINGLETON_CLASS_FINAL(EngineSingleton) {
 public:
     // Engine modules
 
+    ExceptionModule exception {};
+
     /// Window module
     WindowModule window {};
 
@@ -39,6 +46,9 @@ public:
     /// simulation module
     SimulationModule simulation {};
 
+    /// Scene module
+    SceneModule scene {};
+
     /// Signal the engine to exit.
     void exit() noexcept;
 
@@ -46,7 +56,7 @@ public:
     /** Transport an exception across threads, from the calling thread to the
     handler thread. The exception is thrown again in said thread and then 
     handled.*/
-    void transportException(std::exception_ptr) noexcept;
+    //void transportException(std::exception_ptr) noexcept;
 
     /// output stream
     std::ostream& out {std::cout};
@@ -59,16 +69,18 @@ private:
     ~EngineSingleton();
 
     void mainLoop();
-    void handleException(std::exception_ptr) noexcept;
+    // void handleException(std::exception_ptr) noexcept;
 
     bool exit_flag {false};
-    Scene scene {};
-    ProcessingQueue<std::exception_ptr> exception_queue;
-    Coroutine exception_handler {
-        &ProcessingQueue<std::exception_ptr>::processLoop,
-        &exception_queue,
-        [this](std::exception_ptr p){ handleException(p); }
-    };
+    
+    // ProcessingQueue<std::exception_ptr> exception_queue;
+    
+    // Coroutine exception_handler {
+    //     &ProcessingQueue<std::exception_ptr>::processLoop,
+    //     &exception_queue,
+    //     [this](std::exception_ptr p){ handleException(p); }
+    // };
+
     DeltaClock frame_clock {};
 
     friend int ::main();

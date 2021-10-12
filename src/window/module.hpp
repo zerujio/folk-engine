@@ -1,10 +1,13 @@
 #ifndef FOLK_WINDOW__MODULE_HPP
 #define FOLK_WINDOW__MODULE_HPP
 
-#include <string>
-#include <GLFW/glfw3.h>
 #include "../utils/singleton.hpp"
 #include "../utils/update_listener.hpp"
+
+#include "glad/glad.h"
+#include "GLFW/glfw3.h"
+
+#include <string>
 
 namespace folk {
 

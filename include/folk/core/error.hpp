@@ -1,5 +1,5 @@
-#ifndef FOLK__ERROR_HPP
-#define FOLK__ERROR_HPP
+#ifndef FOLK_CORE__ERROR_HPP
+#define FOLK_CORE__ERROR_HPP
 
 #include <stdexcept>
 
@@ -19,4 +19,4 @@ class CriticalEngineError : public std::runtime_error
 
 } // namespace folk
 
-#endif//FOLK_ENGINE__ERROR_HPP
+#endif//FOLK_CORE__ERROR_HPP

@@ -1,5 +1,5 @@
-#ifndef FOLK__ENGINE_HPP
-#define FOLK__ENGINE_HPP
+#ifndef FOLK_ENGINE__ENGINE_HPP
+#define FOLK_ENGINE__ENGINE_HPP
 
 #include <string>
 

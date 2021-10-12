@@ -1,7 +1,8 @@
 #ifndef FOLK_HPP
 #define FOLK_HPP
 
-#include "folk/scene.hpp"
+#include "folk/scene/scene.hpp"
+#include "folk/core/engine.hpp"
 
 /// folk engine namespace
 namespace folk

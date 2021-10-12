@@ -24,7 +24,7 @@ EngineSingleton::EngineSingleton()
 
     // initialize scene
     try {
-        sceneInit(scene);
+        sceneInit(scene.scene);
 
     } catch (std::exception &e) {
         std::string msg ("sceneInit exception: ");
@@ -38,7 +38,7 @@ EngineSingleton::EngineSingleton()
 
 EngineSingleton::~EngineSingleton()
 {
-    exception_queue.stopProcessing();
+    //exception_queue.stopProcessing();
 }
 
 void EngineSingleton::exit() noexcept
@@ -46,32 +46,34 @@ void EngineSingleton::exit() noexcept
     exit_flag = true;
 }
 
+/* 
 void EngineSingleton::transportException(std::exception_ptr p) noexcept
 {
     exception_queue.enqueue(p);
-}
+} 
+*/
 
 void EngineSingleton::mainLoop()
 {
     using Delta = UpdateListener::Delta;
 
-    std::vector<UpdateListener*> to_update {&window, &render};
+    std::vector<UpdateListener*> to_update {&window, &scene, &render};
 
     while (!exit_flag) {
         frame_clock.click();
-
-        out << Delta(frame_clock.delta()).count() << "\n";
 
         for (UpdateListener* p : to_update) {
             try {
                 p->update(frame_clock.delta());
             } catch (...) {
-                transportException(std::current_exception());
+                exception.handle();
+                // transportException(std::current_exception());
             }
         }
     }
 }
 
+/* 
 void EngineSingleton::handleException(std::exception_ptr ptr) noexcept
 {
     try {
@@ -87,5 +89,5 @@ void EngineSingleton::handleException(std::exception_ptr ptr) noexcept
         exit();
     }
 }
-
+ */
 } // namespace folk

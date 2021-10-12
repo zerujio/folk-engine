@@ -1,5 +1,5 @@
-#include "folk/node.hpp"
-#include "folk/error.hpp"
+#include "folk/scene/node.hpp"
+#include "folk/core/error.hpp"
 
 namespace folk {
 
@@ -39,7 +39,7 @@ void Node::addChild(Node& node)
     node.changeParent(this);
 }
 
-Node* Node::createChild() {return createChild("Node");}
+Node* Node::createChild() {return createChild("New Child Node");}
 
 Node* Node::createChild(const char* name) 
 {

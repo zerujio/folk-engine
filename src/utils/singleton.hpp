@@ -1,7 +1,7 @@
 #ifndef FOLK_UTILS__SINGLETON_HPP
 #define FOLK_UTILS__SINGLETON_HPP
 
-#include "folk/error.hpp"
+#include "folk/core/error.hpp"
 
 namespace folk {
 
@@ -10,7 +10,6 @@ class Singleton {
 public:
     static T& instance() {return *((T*)instance_ptr);}
 
-protected:
     Singleton() {
         if (instance_ptr)
             throw CriticalEngineError("attempted to instantiate a singleton class twice");
