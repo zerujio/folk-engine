@@ -9,17 +9,20 @@
 
 namespace folk {
 
-/* Concurrent FIFO queue for consumer-producer style processing. */
+/// Concurrent FIFO queue for consumer-producer style processing.
+/**
+ * @param T type of the object to be processed
+*/
 template<typename T>
 class ProcessingQueue {
 
 public:
     ~ProcessingQueue();
 
-    /* Wake all processing threads and cause them to return. */
+    /** Wake all processing threads and cause them to return. */
     void stopProcessing();
 
-    /* Begin processing elements in queue in a loop. If the queue is empty, 
+    /** Begin processing elements in queue in a loop. If the queue is empty, 
     execution of calling thread will be suspended until a new element is 
     inserted. Processing will continue until a call to stopProcessing is made, 
     or the ProcessingQueue is destroyed.
@@ -31,10 +34,10 @@ public:
     in course. */
     void processLoop(std::function<void(T)>);
 
-    /* Push a new element to the back of the queue. */
+    /** Push a new element to the back of the queue. */
     void enqueue(T);
 
-    /* Construct in place a new element at the back of the queue. */
+    /** Construct in place a new element at the back of the queue. */
     template<typename... Args>
     decltype(auto) emplace(Args&&... args);
 

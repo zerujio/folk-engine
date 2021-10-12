@@ -2,15 +2,18 @@
 #define FOLK_EXCEPTION__MODULE_HPP
 
 #include "../utils/singleton.hpp"
+#include "../utils/processing_queue.hpp"
 
+#include <exception>
 #include <thread>
-#include <mutex>
 
 namespace folk {
 
 FOLK_SINGLETON_CLASS_FINAL(ExceptionModule) {
 
 public:
+    ExceptionModule();
+    ~ExceptionModule();
     
     /// Handle the current exception.
     /**
@@ -19,6 +22,13 @@ public:
     */
     void handle();
 
+private:
+    using QueueT = ProcessingQueue<std::exception_ptr>;
+
+    QueueT queue {};
+    std::thread handler_thread {&ExceptionModule::handlerRoutine, this};
+
+    void handlerRoutine();
 };
 
 } // namespace folk

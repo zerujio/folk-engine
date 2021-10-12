@@ -6,22 +6,37 @@
 
 namespace folk {
 
+ExceptionModule::ExceptionModule() {}
+
+ExceptionModule::~ExceptionModule() {
+    handler_thread.join();
+}
+
 void ExceptionModule::handle()
 {
-    try {
-        std::rethrow_exception(std::current_exception());
-    
-    } catch (CriticalEngineError &e) {
-        ENGINE.out << "CriticalEngineError: " << e.what() << "\n";
-        ENGINE.exit();
+    queue.enqueue(std::current_exception());
+}
 
-    } catch (std::exception &e) {
-        ENGINE.out << e.what();
-    
-    } catch (...) {
-        ENGINE.out << "Caught unexpected exception!\n";
-        ENGINE.exit();
-    }
+void ExceptionModule::handlerRoutine() 
+{
+    queue.processLoop(
+        [] (std::exception_ptr ptr) {
+            try {
+                std::rethrow_exception(ptr);
+        
+            } catch (CriticalEngineError &e) {
+                ENGINE.out << "CriticalEngineError: " << e.what() << "\n";
+                ENGINE.exit();
+
+            } catch (std::exception &e) {
+                ENGINE.out << "RuntimeException: " << e.what() << "\n";
+        
+            } catch (...) {
+                ENGINE.out << "Caught unexpected exception!\n";
+                ENGINE.exit();
+            }
+        }
+    );
 }
 
 } // namespace folk

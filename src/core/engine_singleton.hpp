@@ -32,6 +32,7 @@ FOLK_SINGLETON_CLASS_FINAL(EngineSingleton) {
 public:
     // Engine modules
 
+    /// Exception handling module
     ExceptionModule exception {};
 
     /// Window module
