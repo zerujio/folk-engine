@@ -3,9 +3,9 @@
 
 #include "../utils/singleton.hpp"
 #include "../utils/processing_queue.hpp"
+#include "../utils/coroutine.hpp"
 
 #include <exception>
-#include <thread>
 
 namespace folk {
 
@@ -26,7 +26,7 @@ private:
     using QueueT = ProcessingQueue<std::exception_ptr>;
 
     QueueT queue {};
-    std::thread handler_thread {&ExceptionModule::handlerRoutine, this};
+    Coroutine handler_thread {&ExceptionModule::handlerRoutine, this};
 
     void handlerRoutine();
 };

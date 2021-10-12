@@ -9,7 +9,7 @@ namespace folk {
 ExceptionModule::ExceptionModule() {}
 
 ExceptionModule::~ExceptionModule() {
-    handler_thread.join();
+    queue.stopProcessing();
 }
 
 void ExceptionModule::handle()
