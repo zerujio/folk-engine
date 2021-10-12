@@ -11,10 +11,11 @@ static void copyBuffer(GLuint from, GLuint to) {
     GLint size;
     glGetBufferParameteriv(GL_COPY_READ_BUFFER, GL_BUFFER_SIZE, &size);
     glCopyBufferSubData(GL_COPY_READ_BUFFER, GL_COPY_WRITE_BUFFER, 0, 0, size);
-
+    /* 
     ENGINE.out 
         << "copied " << size << "bytes from buffer" << from 
-        << "to buffer " << to << "\n";
+        << "to buffer " << to << "\n"; 
+    */
 }
 
 template <class T>
@@ -25,11 +26,12 @@ static void writeBuffer(GLenum target, GLuint buffer, GLenum draw_mode,
 
     glBindBuffer(target, buffer);
     glBufferData(target, size, data.data(), draw_mode);
-
+    /* 
     ENGINE.out << "Wrote " << size << " bytes to buffer " << buffer << ": {";
     for (auto x : data)
         ENGINE.out << x << " ";
     ENGINE.out << "}\n";
+    */
 }
 
 Mesh::Ref Mesh::createEmpty() {
@@ -46,7 +48,7 @@ Mesh::Mesh(VertexArray const& vertices, IndexArray const& indices,
 {
     // create vbo, ebo
     glGenBuffers(2, buffers);
-    ENGINE.out << "Created two buffers {vbo=" << vbo << ", ebo=" << ebo << "}\n";
+    // ENGINE.out << "Created two buffers {vbo=" << vbo << ", ebo=" << ebo << "}\n";
     
     writeBuffer(GL_ARRAY_BUFFER, vbo, GL_STATIC_DRAW, vertices);
     writeBuffer(GL_ARRAY_BUFFER, ebo, GL_STATIC_DRAW, indices);
@@ -55,7 +57,7 @@ Mesh::Mesh(VertexArray const& vertices, IndexArray const& indices,
 Mesh::~Mesh()
 {
     glDeleteBuffers(2, buffers);
-    ENGINE.out << "Deleted buffers: " << vbo << ", " << ebo << "\n";
+    // ENGINE.out << "Deleted buffers: " << vbo << ", " << ebo << "\n";
 }
 
 Mesh::Mesh(Mesh const& other) 

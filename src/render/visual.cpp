@@ -13,7 +13,7 @@ Visual::Visual(MeshRef mesh_, MaterialRef material_)
 {
     // this is single threaded!
     glGenVertexArrays(1, &vao);
-    ENGINE.out << "Created VAO: " << vao << "\n";
+    // ENGINE.out << "Created VAO: " << vao << "\n";
 
     bindBuffers();
     enableVertexAttributes();
@@ -24,7 +24,7 @@ Visual::Visual(Visual const& other) : Visual(other.mesh, other.material) {}
 Visual::~Visual()
 {
     glDeleteVertexArrays(1, &vao);
-    ENGINE.out << "Deleted VAO:" << vao << "\n";
+    // ENGINE.out << "Deleted VAO:" << vao << "\n";
 }
 
 Visual& Visual::operator=(Visual const& other) {
@@ -60,14 +60,16 @@ void Visual::bindBuffers() {
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mesh->ebo);
     glBindVertexArray(0);
 
-    ENGINE.out << "Bound VBO=" << mesh->vbo 
+    /* 
+        ENGINE.out << "Bound VBO=" << mesh->vbo 
             << " and EBO=" << mesh->ebo
             << " to VAO=" << vao << "\n";
+     */
 }
 
 void Visual::enableVertexAttributes() {
     glBindVertexArray(vao);
-    ENGINE.out << "Enabled attribute locations ";
+    // ENGINE.out << "Enabled attribute locations ";
     for (auto& a : material->vertex_attributes) {
         glVertexAttribPointer(
             a.location,
@@ -78,9 +80,9 @@ void Visual::enableVertexAttributes() {
             (void*) a.offset
         );
         glEnableVertexAttribArray(a.location);
-        ENGINE.out << a.location << ", ";
+        // ENGINE.out << a.location << ", ";
     }
-    ENGINE.out << " in VAO=" << vao << "\n";
+    // ENGINE.out << " in VAO=" << vao << "\n";
     glBindVertexArray(0);
 }
 

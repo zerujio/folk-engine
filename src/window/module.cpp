@@ -187,12 +187,20 @@ void GLAPIENTRY messageCallback(GLenum source, GLenum type, GLuint id,
         break;
     }
 
-    ENGINE.errout 
-        << "*** GL DEBUG MESSAGE ***\n"
-        << "source:     " << source_str << "\n"
-        << "type:       " << type_str << "\n"
-        << "severity:   " << severity_str << "\n"
-        << message << "\n\n";
+    std::string msg = 
+        std::string("*** GL DEBUG MESSAGE ***\n")
+        + "source:     " + source_str + "\n"
+        + "type:       " + type_str + "\n"
+        + "severity:   " + severity_str + "\n"
+        + message + "\n\n";
+
+    try {
+        throw EngineRuntimeError(msg);
+    }
+    catch(...)
+    {
+        ENGINE.exception.handle();
+    }
 }
 
 } // namespace folk

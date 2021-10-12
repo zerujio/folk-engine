@@ -24,12 +24,13 @@ static void glDump() {
     glGetIntegerv(GL_ARRAY_BUFFER_BINDING, &vbo);
     glGetIntegerv(GL_ELEMENT_ARRAY_BUFFER_BINDING, &ebo);
     glGetIntegerv(GL_CURRENT_PROGRAM, &program);
-
+    /* 
     ENGINE.out << "*** OPENGL STATE DUMP ***\n"
         << "VAO=" << vao << "\n"
         << "VBO=" << vbo << "\n"
         << "EBO=" << ebo << "\n"
         << "Program=" << program << "\n";
+     */
 }
 
 void RenderModule::update(Delta delta)

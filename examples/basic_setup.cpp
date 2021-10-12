@@ -4,9 +4,12 @@
 
 #include <iostream>
 
-static void update(folk::Scene&, double);
-
 static folk::InputAction action {};
+
+static void update(folk::Scene& scn, double delta) {
+    if (action.state())
+        std::cout << delta << "\n";
+}
 
 void folk::engineInit() {
     folk::engine::setWindowTitle("Hello world!");
@@ -26,9 +29,4 @@ void folk::sceneInit(folk::Scene &scene) {
 
     action.keys.emplace(folk::key_right_alt);
     action.keys.emplace(folk::key_left_alt);
-}
-
-void update(folk::Scene& scn, double delta) {
-    if (action.state())
-        std::cout << delta << "\n";
 }

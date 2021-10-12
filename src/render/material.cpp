@@ -80,7 +80,7 @@ Material::Material(const char* vert_src, const char* frag_src,
                                     frag_src);
 
     program = glCreateProgram();
-    ENGINE.out << "Created program: " << program;
+    // ENGINE.out << "Created program: " << program;
 
     glAttachShader(program, vertex_shader);
     glAttachShader(program, fragment_shader);
