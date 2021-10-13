@@ -11,7 +11,7 @@ Node& Scene::addNode(const char* name)
 
 Node& Scene::addNode()
 {
-    addNode("New Node");
+    return addNode("New Node");
 }
 
 Scene::NodeList const& Scene::nodes()
