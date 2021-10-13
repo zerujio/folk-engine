@@ -1,5 +1,8 @@
 #include "folk/core/error.hpp"
+
 #include "module.hpp"
+
+#include "../core/common.hpp"
 #include "../core/engine_singleton.hpp"
 
 namespace folk {
@@ -15,8 +18,8 @@ WindowModule::WindowModule()
     if (!glfwInit())
         throw EngineRuntimeError("GLFW initialization failed.");
 
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 6);
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, gl_version.major);
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, gl_version.minor);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
     glfwWindowHint(GLFW_RESIZABLE, GL_FALSE);
 
