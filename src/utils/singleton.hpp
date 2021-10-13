@@ -3,7 +3,7 @@
 
 #include "folk/core/error.hpp"
 
-namespace folk {
+namespace Folk {
 
 template<typename T>
 class Singleton {

@@ -7,7 +7,7 @@
 
 #include <exception>
 
-namespace folk {
+namespace Folk {
 
 FOLK_SINGLETON_CLASS_FINAL(ExceptionModule) {
 

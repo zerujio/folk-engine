@@ -1,6 +1,6 @@
 #include "folk/scene/scene.hpp"
 
-namespace folk {
+namespace Folk {
 
 Node& Scene::addNode(const char* name)
 {

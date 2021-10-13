@@ -5,7 +5,7 @@
 #include "folk/render/material.hpp"
 #include "folk/render/mesh.hpp"
 
-namespace folk
+namespace Folk
 {
 
 /// A resource that pairs a Mesh and a Material.

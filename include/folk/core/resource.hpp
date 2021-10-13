@@ -6,7 +6,7 @@
 
 #include <mutex>
 
-namespace folk {
+namespace Folk {
 
 /// Base clase for resources like meshes, textures, and shaders.
 /**

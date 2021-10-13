@@ -5,7 +5,7 @@
 #include "folk/core/engine.hpp"
 
 /// folk engine namespace
-namespace folk
+namespace Folk
 {
 
 /// Called before engine initialization, allows configuration of certain settings.

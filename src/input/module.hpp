@@ -3,7 +3,7 @@
 
 #include "../utils/singleton.hpp"
 
-namespace folk
+namespace Folk
 {
     
 FOLK_SINGLETON_CLASS_FINAL(InputModule) {

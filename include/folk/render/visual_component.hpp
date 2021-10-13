@@ -4,7 +4,7 @@
 #include "folk/render/common.hpp"
 #include "folk/render/visual.hpp"
 
-namespace folk {
+namespace Folk {
 
 /// Allows an object to be drawn.
 /**

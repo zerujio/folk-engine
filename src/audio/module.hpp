@@ -5,7 +5,7 @@
 
 #include <iostream> 
 
-namespace folk {
+namespace Folk {
 
 FOLK_SINGLETON_CLASS_FINAL(AudioModule) {
     friend class EngineSingleton;

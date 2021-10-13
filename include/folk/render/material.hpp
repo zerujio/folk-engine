@@ -8,7 +8,7 @@
 
 #include <vector>
 
-namespace folk
+namespace Folk
 {
 
 /// Determines the way a Mesh is rendered.

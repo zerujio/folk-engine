@@ -6,7 +6,7 @@
 #include "folk/render/immediate_geometry.hpp"
 #include "folk/render/common.hpp"
 
-namespace folk
+namespace Folk
 {
 
 class Mesh : public Resource {

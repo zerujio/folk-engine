@@ -3,7 +3,7 @@
 
 #include <set>
 
-namespace folk
+namespace Folk
 {
 
 enum Key {

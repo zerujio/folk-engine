@@ -11,7 +11,7 @@
 #include "main.hpp"
 
 void signalHandler(int sig) {
-    folk::ENGINE.exit();
+    Folk::ENGINE.exit();
 }
 
 void setSignalHandler() {
@@ -31,7 +31,7 @@ int main() {
     setSignalHandler();
 
     try {
-        folk::EngineSingleton engine {};
+        Folk::EngineSingleton engine {};
         engine.mainLoop();
     } catch (std::exception &e) {
         std::cerr << e.what() << "\n";

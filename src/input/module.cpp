@@ -7,7 +7,7 @@
 #include "glad/glad.h"
 #include "GLFW/glfw3.h"
 
-namespace folk
+namespace Folk
 {
 
 KeyState getKey(Key key) {

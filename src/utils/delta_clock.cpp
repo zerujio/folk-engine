@@ -1,7 +1,7 @@
 #include "delta_clock.hpp"
 #include "folk/core/error.hpp"
 
-namespace folk {
+namespace Folk {
 
 DeltaClock::DeltaClock(std::chrono::nanoseconds max_delta) 
     : _max_delta(max_delta) {}

@@ -3,7 +3,7 @@
 
 #include <stdexcept>
 
-namespace folk
+namespace Folk
 {
 
 // Standard engine error

@@ -3,7 +3,7 @@
 
 #include<mutex>
 
-namespace folk {
+namespace Folk {
 
 template<typename T> class Reference;
 template<typename T> class ReferenceCountedObject;

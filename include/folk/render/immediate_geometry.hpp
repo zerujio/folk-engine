@@ -3,7 +3,7 @@
 
 #include "folk/render/common.hpp"
 
-namespace folk
+namespace Folk
 {
 
 struct ImmediateGeometry

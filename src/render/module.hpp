@@ -4,7 +4,7 @@
 #include "../utils/singleton.hpp"
 #include "../utils/update_listener.hpp"
 
-namespace folk {
+namespace Folk {
 
 FOLK_SINGLETON_CLASS_FINAL(RenderModule), public UpdateListener {
 private:

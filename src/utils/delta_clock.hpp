@@ -3,7 +3,7 @@
 
 #include <chrono>
 
-namespace folk {
+namespace Folk {
 
 /// Utility class for mesuring frame times (deltaT)
 class DeltaClock {

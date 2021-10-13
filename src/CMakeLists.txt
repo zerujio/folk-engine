@@ -1,4 +1,4 @@
-add_library(folk_engine STATIC folk_engine.cpp)
+add_library(folk_engine STATIC)
 set_property(TARGET folk_engine PROPERTY FOLDER lib)
 target_compile_features(folk_engine PUBLIC cxx_std_17)
 

@@ -1,7 +1,7 @@
 #include "folk/scene/node.hpp"
 #include "folk/core/error.hpp"
 
-namespace folk {
+namespace Folk {
 
 Node::Node(entt::registry &r, const char* name) : _registry(r), _name(name)
 {

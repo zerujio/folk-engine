@@ -3,7 +3,7 @@
 
 #include <string>
 
-namespace folk::engine {
+namespace Folk::Engine {
 
 /// Signal the engine to exit (close the application).
 void exit();

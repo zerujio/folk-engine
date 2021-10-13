@@ -7,7 +7,7 @@
 #include <functional>
 #include <utility>
 
-namespace folk {
+namespace Folk {
 
 /// Concurrent FIFO queue for consumer-producer style processing.
 /**

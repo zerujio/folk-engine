@@ -23,7 +23,7 @@
 #include "../utils/delta_clock.hpp"
 #include "main.hpp"
 
-namespace folk
+namespace Folk
 {
 
 /// Singleton class to access aplication level functions and variables.
@@ -53,12 +53,6 @@ public:
     /// Signal the engine to exit.
     void exit() noexcept;
 
-    /// Handle an exception in another thread.
-    /** Transport an exception across threads, from the calling thread to the
-    handler thread. The exception is thrown again in said thread and then 
-    handled.*/
-    //void transportException(std::exception_ptr) noexcept;
-
     /// output stream
     std::ostream& out {std::cout};
 
@@ -70,17 +64,8 @@ private:
     ~EngineSingleton();
 
     void mainLoop();
-    // void handleException(std::exception_ptr) noexcept;
 
     bool exit_flag {false};
-    
-    // ProcessingQueue<std::exception_ptr> exception_queue;
-    
-    // Coroutine exception_handler {
-    //     &ProcessingQueue<std::exception_ptr>::processLoop,
-    //     &exception_queue,
-    //     [this](std::exception_ptr p){ handleException(p); }
-    // };
 
     DeltaClock frame_clock {};
 

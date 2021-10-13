@@ -6,7 +6,7 @@
 
 #include <vector>
 
-namespace folk {
+namespace Folk {
 
 using Coord = GLfloat;
 using Index = GLuint;

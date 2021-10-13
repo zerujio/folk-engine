@@ -4,7 +4,7 @@
 #include "engine_singleton.hpp"
 #include "folk/folk.hpp"
 
-namespace folk {
+namespace Folk {
 
 // EngineSingleton
 EngineSingleton::EngineSingleton()

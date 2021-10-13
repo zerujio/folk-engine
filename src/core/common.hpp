@@ -1,7 +1,7 @@
 #ifndef FOLK_CORE__COMMON_HPP
 #define FOLK_CORE__COMMON_HPP
 
-namespace folk
+namespace Folk
 {
 
 constexpr struct {

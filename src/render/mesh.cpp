@@ -1,7 +1,7 @@
 #include "folk/render/mesh.hpp"
 #include "../core/engine_singleton.hpp"
 
-namespace folk
+namespace Folk
 {
 
 // copy opengl buffer

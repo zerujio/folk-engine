@@ -3,7 +3,7 @@
 
 #include <chrono>
 
-namespace folk {
+namespace Folk {
 
 class UpdateListener {
 public:

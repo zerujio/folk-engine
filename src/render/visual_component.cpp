@@ -1,5 +1,5 @@
 #include "folk/render/visual_component.hpp"
 
-namespace folk {
+namespace Folk {
 
 } // namespace folk

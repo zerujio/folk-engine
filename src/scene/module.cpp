@@ -1,6 +1,6 @@
 #include "module.hpp"
 
-namespace folk
+namespace Folk
 {
 
 void SceneModule::update(Delta dt) {

@@ -5,7 +5,7 @@
 
 #include <vector>
 
-namespace folk
+namespace Folk
 {
 
 class Scene final {

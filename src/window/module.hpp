@@ -9,7 +9,7 @@
 
 #include <string>
 
-namespace folk {
+namespace Folk {
 
 FOLK_SINGLETON_CLASS_FINAL(WindowModule), public UpdateListener {
 public:

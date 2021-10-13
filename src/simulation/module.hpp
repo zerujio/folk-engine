@@ -4,7 +4,7 @@
 #include <iostream>
 #include "../utils/singleton.hpp"
 
-namespace folk {
+namespace Folk {
 
 FOLK_SINGLETON_CLASS_FINAL(SimulationModule) {
     friend class EngineSingleton;

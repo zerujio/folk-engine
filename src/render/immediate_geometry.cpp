@@ -1,6 +1,6 @@
 #include "folk/render/immediate_geometry.hpp"
 
-namespace folk
+namespace Folk
 {
 
 ImmediateGeometry ImmediateGeometry::triangle() {

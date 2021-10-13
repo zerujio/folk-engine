@@ -4,7 +4,7 @@
 
 #include <exception>
 
-namespace folk {
+namespace Folk {
 
 ExceptionModule::ExceptionModule() {}
 

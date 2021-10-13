@@ -2,7 +2,7 @@
 #include "folk/core/error.hpp"
 #include "../core/engine_singleton.hpp"
 
-namespace folk
+namespace Folk
 {
 
 static const char* default_vertex_shader_src = R"gl(

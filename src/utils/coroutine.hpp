@@ -4,7 +4,7 @@
 #include <functional>
 #include <thread>
 
-namespace folk {
+namespace Folk {
 
 /// A RAII wrapper for a thread.
 /** 

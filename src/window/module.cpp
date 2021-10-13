@@ -5,7 +5,7 @@
 #include "../core/common.hpp"
 #include "../core/engine_singleton.hpp"
 
-namespace folk {
+namespace Folk {
 
 static void closeWindowCallback(GLFWwindow*);
 static void keyCallback(GLFWwindow*, int, int, int, int);

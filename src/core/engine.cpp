@@ -2,7 +2,7 @@
 #include "../window/module.hpp"
 #include "engine_singleton.hpp"
 
-namespace folk::engine {
+namespace Folk::Engine {
 
 void exit() 
 {

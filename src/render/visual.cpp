@@ -1,7 +1,7 @@
 #include "folk/render/visual.hpp"
 #include "../core/engine_singleton.hpp"
 
-namespace folk
+namespace Folk
 {
 
 Visual::Ref Visual::create(MeshRef mesh_, MaterialRef material_) {

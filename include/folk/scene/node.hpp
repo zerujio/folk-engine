@@ -8,7 +8,7 @@
 #include <string>
 #include <vector>
 
-namespace folk {
+namespace Folk {
 
 class Scene;
 
