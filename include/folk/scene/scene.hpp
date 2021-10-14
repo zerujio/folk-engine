@@ -18,18 +18,12 @@ public:
     /// A function to be called whenever a new frame is drawn.
     UpdateCallback updateCallback {nullptr};
 
-    /// Create a new node in the scene.
-    Node& addNode(const char* name);
-    Node& addNode();
-
-    using NodeList = std::vector<Node*>;
-
-    /// The list of all nodes in the scene.
-    NodeList const& nodes();
+    /// Get the root node of this scene
+    Node& rootNode() {return _root;}
+    Node const& rootNode() const {return _root;}
     
 private:
-    NodeList _nodes {};
-    entt::registry _registry;
+    Node _root {"Root"};
 };
 
 }// namespace folk::scene

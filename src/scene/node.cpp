@@ -1,19 +1,20 @@
 #include "folk/scene/node.hpp"
 #include "folk/core/error.hpp"
 
+#include "module.hpp"
+
 namespace Folk {
 
-Node::Node(entt::registry &r, const char* name) : _registry(r), _name(name)
-{
-    _entity = _registry.create();
-}
+Node::Node(const char* name) 
+    : _name(name), _id(SCENE.registry.create())
+{}
 
 Node::~Node()
 {
     for (Node* child : getChildren())
         delete child;
 
-    _registry.destroy(_entity);
+    SCENE.registry.destroy(_id);
 }
 
 void Node::changeParent(Node* p) 
@@ -36,25 +37,31 @@ void Node::changeParent(Node* p)
 
 void Node::addChild(Node& node) 
 {
-    node.changeParent(this);
+    if (node._parent)
+        node.changeParent(this);
+    else
+        throw EngineRuntimeError("Attempt to add root node as child");
 }
 
-Node* Node::createChild() {return createChild("New Child Node");}
+Node& Node::createChild() {
+    return createChild("NewChildNode");
+}
 
-Node* Node::createChild(const char* name) 
+Node& Node::createChild(const char* name) 
 {
-    Node* child = new Node(_registry, name); 
+    Node* child = new Node(name); 
     child->_parent = this;
     _children.push_back(child);
-    return child;
+    return *child;
 }
 
-Node* Node::getChild(const char* name)
+Node& Node::getChild(const char* name)
 {
     for (Node* ptr : _children)
         if (ptr->_name == name)
-            return ptr;
-    return nullptr;
+            return *ptr;
+    
+    throw EngineRuntimeError("Node " + _name + " has no child named " + name);
 }
 
 void Node::destroy() 
@@ -63,14 +70,16 @@ void Node::destroy()
     delete this;
 }
 
-Node::NodeList& Node::getChildren()
+Node::NodeList const& Node::getChildren()
 {
     return _children;
 }
 
-Node* Node::getParent() 
+Node& Node::getParent() 
 {
-    return _parent;
+    if (_parent)
+        return *_parent;
+    throw EngineRuntimeError("Node " + _name + " has no parent");
 }
 
 }//namespace folk

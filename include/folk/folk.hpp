@@ -2,6 +2,7 @@
 #define FOLK_HPP
 
 #include "folk/scene/scene.hpp"
+#include "folk/scene/node.hpp"
 #include "folk/core/engine.hpp"
 
 /// folk engine namespace
@@ -18,7 +19,7 @@ void engineInit();
 /**
  * Use this function to add elements to the scene.
  * 
- * @param scene an empty [Scene](@ref Scene).
+ * @param scene current scene.
  * @see engineInit()
  */
 void sceneInit(Scene& scene);

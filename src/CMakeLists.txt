@@ -2,7 +2,8 @@ add_library(folk_engine STATIC)
 set_property(TARGET folk_engine PROPERTY FOLDER lib)
 target_compile_features(folk_engine PUBLIC cxx_std_17)
 
-target_include_directories(folk_engine PUBLIC ${FOLK_INCLUDE_DIR} ${EXTERN_INCLUDE_DIRS})
+target_include_directories(folk_engine PUBLIC ${FOLK_INCLUDE_DIR})
+target_include_directories(folk_engine PRIVATE ${EXTERN_INCLUDE_DIRS})
 target_link_libraries(folk_engine ${FOLK_LIBS})
 
 function(add_engine_subdir FOLDER)

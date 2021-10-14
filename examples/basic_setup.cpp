@@ -16,7 +16,7 @@ void Folk::engineInit() {
 }
 
 void Folk::sceneInit(Folk::Scene &scene) {
-    Node& square = scene.addNode("Square");
+    Node& square = scene.rootNode().createChild("Square");
 
     auto visual = Visual::create(
         Mesh::create(ImmediateGeometry::triangle()),

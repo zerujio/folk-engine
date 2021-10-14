@@ -36,7 +36,7 @@ void RenderModule::update(Delta delta)
 {
     glClear(GL_COLOR_BUFFER_BIT);
 
-    auto view = ENGINE.scene.scene._registry.view<VisualComponent>();
+    auto view = SCENE.registry.view<VisualComponent>();
 
     static bool once = true;
 
