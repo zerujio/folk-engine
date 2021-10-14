@@ -14,10 +14,18 @@ namespace Folk {
  * is also thread safe, protected with a separate mutex.
 */
 class Resource : public ReferenceCountedObject<ThreadSafeCounter<int>> {
+public:
+    using Id = unsigned int;
+
+    const Id id;
+
 protected:
     std::mutex mutex {};
 
-    Resource() = default;
+    Resource() : id(++next_id) {}
+
+private:
+    static Id next_id;
 };
 
 }

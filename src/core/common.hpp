@@ -1,5 +1,5 @@
-#ifndef FOLK_CORE__COMMON_HPP
-#define FOLK_CORE__COMMON_HPP
+#ifndef FOLK_SRC_CORE__COMMON_HPP
+#define FOLK_SRC_CORE__COMMON_HPP
 
 namespace Folk
 {

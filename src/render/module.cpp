@@ -1,10 +1,9 @@
 #include "folk/render/visual_component.hpp"
 #include "../core/engine_singleton.hpp"
 #include "../window/module.hpp"
-#include "module.hpp"
 
-#include "glad/glad.h"
-#include "GLFW/glfw3.h"
+#include "common.hpp"
+#include "module.hpp"
 
 namespace Folk {
 
@@ -43,11 +42,13 @@ void RenderModule::update(Delta delta)
 
     view.each([](const auto entity, VisualComponent& component) 
         {
-            glUseProgram(component.visual->material->program);
-            glBindVertexArray(component.visual->vao);
-            glDrawElements(
-                GL_TRIANGLES, component.visual->mesh->index_count,
-                GL_UNSIGNED_INT, 0);
+            auto& visual_data = RENDER.visuals.at(component.visual->id);
+            auto& mesh_data = RENDER.meshes.at(component.visual->mesh->id);
+            auto& shader_data = RENDER.shaders.at(component.visual->material->shader->id);
+
+            glUseProgram(shader_data.program);
+            glBindVertexArray(visual_data.vao);
+            glDrawElements(GL_TRIANGLES, mesh_data.count, GL_UNSIGNED_INT, 0);
 
             if (once) {
                 glDump();

@@ -18,16 +18,11 @@ public:
     ~Mesh();
 
 private:
-    GLuint buffers [2];
-    GLuint &vbo {buffers[0]};
-    GLuint &ebo {buffers[1]};
-    GLuint stride;
-    GLuint index_count;
-
-    Mesh(VertexArray const&, IndexArray const&, GLuint);
+    Mesh(VertexArray const&, IndexArray const&);
     Mesh(Mesh const&);
+    Mesh(Mesh&&);
     Mesh& operator=(Mesh const&);
-
+    Mesh& operator=(Mesh&&);
 
     friend class RenderModule;
     friend class Visual;

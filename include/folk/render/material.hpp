@@ -2,11 +2,7 @@
 #define FOLK_RENDER__MATERIAL_HPP
 
 #include "folk/core/resource.hpp"
-
-#include "glad/glad.h"
-#include "GLFW/glfw3.h"
-
-#include <vector>
+#include "folk/render/shader.hpp"
 
 namespace Folk
 {
@@ -18,30 +14,19 @@ namespace Folk
 class Material : public Resource {
 
 public:
-    struct VertexAttrib {
-        GLuint location;
-        GLint size;
-        GLenum type;
-        GLboolean normalized;
-        GLsizei stride;
-        GLuint64 offset;
-    };
-
-    using VertexAttribArray = std::vector<VertexAttrib>;
-
     using Ref = Reference<Material>;
     
     static Ref createDefaultMaterial();
-    
-    static Ref create(const char*, const char*, VertexAttribArray&);
+    static Ref create(Shader::Ref);
+
+    void setShader(Shader::Ref);
+    Shader::Ref getShader();
 
     ~Material();
 
 private:
-    VertexAttribArray vertex_attributes;
-
-    GLuint program;
-    Material(const char*, const char*, VertexAttribArray&);
+    Shader::Ref shader;
+    Material(Shader::Ref);
 
     friend class Visual;
     friend class RenderModule;

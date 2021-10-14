@@ -10,7 +10,6 @@ struct ImmediateGeometry
 {
     VertexArray vertices {};
     IndexArray indices {};
-    std::size_t const stride = 6;
 
     ImmediateGeometry() = default;
 

@@ -18,27 +18,28 @@ class Visual : public Resource {
     
 public:
     using Ref = Reference<Visual>;
-    using MeshRef = Reference<Mesh>;
-    using MaterialRef = Reference<Material>;
 
-    static Ref create(MeshRef, MaterialRef);
+    static Ref create(Mesh::Ref, Material::Ref);
 
-    void setMesh(MeshRef const&);
-    MeshRef getMesh();
+    void setMesh(Mesh::Ref);
+    Mesh::Ref getMesh() const;
 
-    void setMaterial(MaterialRef const&);
-    MaterialRef getMaterial();
+    void setMaterial(Material::Ref);
+    Material::Ref getMaterial() const;
 
     ~Visual();
 
 private:
-    MeshRef mesh;
-    MaterialRef material;
-    GLuint vao;
+    Mesh::Ref mesh;
+    Material::Ref material;
 
-    Visual(MeshRef, MaterialRef);
+    Visual(Mesh::Ref, Material::Ref);
+
     Visual(Visual const&);
     Visual& operator=(Visual const&);
+
+    Visual(Visual&&);
+    Visual& operator=(Visual&&);
 
     void bindBuffers();
     void enableVertexAttributes();

@@ -1,9 +1,3 @@
-set(EXTERN_INCLUDE_DIRS "glad/include" "glfw/include" "entt/single_include")
-list(TRANSFORM EXTERN_INCLUDE_DIRS PREPEND "../extern/")
-
-set(FOLK_INCLUDE_DIR "../include")
-set(FOLK_LIBS glfw glad ${OPENGL_LIBRARIES})
-
 add_library(folk_engine STATIC)
 set_property(TARGET folk_engine PROPERTY FOLDER lib)
 target_compile_features(folk_engine PUBLIC cxx_std_17)

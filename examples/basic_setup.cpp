@@ -16,14 +16,14 @@ void Folk::engineInit() {
 }
 
 void Folk::sceneInit(Folk::Scene &scene) {
-    Node& triangle = scene.addNode("Triangle");
+    Node& square = scene.addNode("Square");
 
     auto visual = Visual::create(
         Mesh::create(ImmediateGeometry::triangle()),
         Material::createDefaultMaterial()
     );
 
-    auto& component = triangle.addComponent<VisualComponent>(visual);
+    auto& component = square.addComponent<VisualComponent>(visual);
 
     scene.updateCallback = update;
 
