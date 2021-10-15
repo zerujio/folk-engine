@@ -1,14 +1,16 @@
 #ifndef FOLK_AUDIO__MODULE_HPP
 #define FOLK_AUDIO__MODULE_HPP
 
-#include "../utils/singleton.hpp"
+#include "../core/module.hpp"
 
 #include <iostream> 
 
 namespace Folk {
 
-FOLK_SINGLETON_CLASS_FINAL(AudioModule) {
+FOLK_ENGINE_MODULE(AudioModule) {
     friend class EngineSingleton;
+
+    const char* name() const {return "audio";}
 
     AudioModule() {
         std::cout << "Audio: initialized\n";

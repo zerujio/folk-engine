@@ -1,0 +1,1 @@
+set(LIB_FILES performance_monitor.cpp PARENT_SCOPE)

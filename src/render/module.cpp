@@ -5,6 +5,10 @@
 #include "common.hpp"
 #include "module.hpp"
 
+#include <imgui.h>
+#include <backends/imgui_impl_glfw.h>
+#include <backends/imgui_impl_opengl3.h>
+
 namespace Folk {
 
 RenderModule::RenderModule() 
@@ -15,25 +19,34 @@ RenderModule::RenderModule()
     }
 
     glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
+
+    // ImGui setup
+    IMGUI_CHECKVERSION();
+    ImGui::CreateContext();
+    ImGui::StyleColorsDark();
+    ImGui_ImplGlfw_InitForOpenGL(WINDOW.getWindowPtr(), true);
+    ImGui_ImplOpenGL3_Init("#version 430");
+
+    // add performance metrics
+    render_id = ENGINE.perf_monitor.addItem("Draw calls");
+    frame_time_id = ENGINE.perf_monitor.addItem("Frame time");
+
 }
 
-static void glDump() {
-    GLint vao, vbo, ebo, program;
-    glGetIntegerv(GL_VERTEX_ARRAY_BINDING, &vao);
-    glGetIntegerv(GL_ARRAY_BUFFER_BINDING, &vbo);
-    glGetIntegerv(GL_ELEMENT_ARRAY_BUFFER_BINDING, &ebo);
-    glGetIntegerv(GL_CURRENT_PROGRAM, &program);
-    /* 
-    ENGINE.out << "*** OPENGL STATE DUMP ***\n"
-        << "VAO=" << vao << "\n"
-        << "VBO=" << vbo << "\n"
-        << "EBO=" << ebo << "\n"
-        << "Program=" << program << "\n";
-     */
+RenderModule::~RenderModule() {
+    ImGui_ImplOpenGL3_Shutdown();
+    ImGui_ImplGlfw_Shutdown();
+    ImGui::DestroyContext();
 }
+
 
 void RenderModule::update(Delta delta)
 {
+    ENGINE.perf_monitor.stop(frame_time_id);
+    ENGINE.perf_monitor.start(frame_time_id);
+
+    ENGINE.perf_monitor.start(render_id);
+
     glClear(GL_COLOR_BUFFER_BIT);
 
     auto view = SCENE.registry.view<VisualComponent>();
@@ -49,14 +62,21 @@ void RenderModule::update(Delta delta)
             glUseProgram(shader_data.program);
             glBindVertexArray(visual_data.vao);
             glDrawElements(GL_TRIANGLES, mesh_data.count, GL_UNSIGNED_INT, 0);
-
-            if (once) {
-                glDump();
-                once = false;
-            }
         }
     );
     glBindVertexArray(0);
+
+    // Draw ImGUI things
+    ImGui_ImplOpenGL3_NewFrame();
+    ImGui_ImplGlfw_NewFrame();
+    ImGui::NewFrame();
+
+    ENGINE.perf_monitor.draw();
+
+    ImGui::Render();
+    ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+
+    ENGINE.perf_monitor.stop(render_id);
 
     glfwSwapBuffers(WINDOW.getWindowPtr());
 }

@@ -1,13 +1,16 @@
 #ifndef FOLK_INPUT__MODULE_HPP
 #define FOLK_INPUT__MODULE_HPP
 
-#include "../utils/singleton.hpp"
+#include "../core/module.hpp"
 
 namespace Folk
 {
     
-FOLK_SINGLETON_CLASS_FINAL(InputModule) {
+FOLK_ENGINE_MODULE(InputModule) {
     InputModule() = default;
+
+public:
+    const char* name() const override {return "input_module";}
 };
 
 } // namespace folk

@@ -4,15 +4,16 @@
 
 #include <iostream>
 
-static Folk::InputAction action {};
+static Folk::InputAction enable_metrics;
 
 static void update(Folk::Scene& scn, double delta) {
-    if (action.state())
-        std::cout << delta << "\n";
+    if (enable_metrics.state())
+        Folk::Engine::setPerformanceMetricsEnabled(true);
 }
 
 void Folk::engineInit() {
     Folk::Engine::setWindowTitle("Hello world!");
+    Folk::Engine::setPerformanceMetricsEnabled(true);
 }
 
 void Folk::sceneInit(Folk::Scene &scene) {
@@ -27,6 +28,6 @@ void Folk::sceneInit(Folk::Scene &scene) {
 
     scene.updateCallback = update;
 
-    action.keys.emplace(Folk::key_right_alt);
-    action.keys.emplace(Folk::key_left_alt);
+    enable_metrics.keys.emplace(Folk::key_right_alt);
+    enable_metrics.keys.emplace(Folk::key_left_alt);
 }

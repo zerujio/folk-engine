@@ -40,6 +40,8 @@ WindowModule::WindowModule()
 
     glfwMakeContextCurrent(WINDOW.getWindowPtr());
 
+    glfwSwapInterval(1); // vsync
+
     if (!gladLoadGLLoader((GLADloadproc) glfwGetProcAddress))
         throw CriticalEngineError("OpenGL context initialization error: "
                                 "gladLoadGLLoader returned an error");
@@ -70,7 +72,13 @@ WindowModule::WindowDimentions const& WindowModule::getWindowSize()
 }
 
 void WindowModule::update(Delta delta) {
+    static int monitor_id = ENGINE.perf_monitor.addItem("Input processing");
+
+    ENGINE.perf_monitor.start(monitor_id);
+
     glfwPollEvents();
+
+    ENGINE.perf_monitor.stop(monitor_id);
 }
 
 static void closeWindowCallback(GLFWwindow *w)

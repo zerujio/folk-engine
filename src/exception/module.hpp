@@ -1,7 +1,7 @@
 #ifndef FOLK_EXCEPTION__MODULE_HPP
 #define FOLK_EXCEPTION__MODULE_HPP
 
-#include "../utils/singleton.hpp"
+#include "../core/module.hpp"
 #include "../utils/processing_queue.hpp"
 #include "../utils/coroutine.hpp"
 
@@ -9,9 +9,12 @@
 
 namespace Folk {
 
-FOLK_SINGLETON_CLASS_FINAL(ExceptionModule) {
+FOLK_ENGINE_MODULE(ExceptionModule) {
 
 public:
+
+    const char* name() const override {return "exception_handler";}
+
     ExceptionModule();
     ~ExceptionModule();
     

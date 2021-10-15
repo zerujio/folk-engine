@@ -3,8 +3,8 @@
 
 #include "folk/scene/scene.hpp"
 #include "folk/scene/node.hpp"
-#include "../utils/singleton.hpp"
-#include "../utils/update_listener.hpp"
+
+#include "../core/module.hpp"
 
 #include <entt/entt.hpp>
 
@@ -13,19 +13,24 @@
 namespace Folk
 {
 
-FOLK_SINGLETON_CLASS_FINAL(SceneModule), public UpdateListener {
+FOLK_ENGINE_UPDATEABLE_MODULE(SceneModule) {
 public:
     friend class EngineSingleton;
     
-    SceneModule() = default;
+    SceneModule();
 
     void update(Delta) override;
+
+    const char* name() const override {return "";}
 
     // Scene scene {};
 
     entt::basic_registry<Node::Id> registry {};
 
     Scene scene {};
+
+private:
+    int monitor_id;
 };
     
 } // namespace folk

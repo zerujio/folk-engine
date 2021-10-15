@@ -11,6 +11,9 @@ void exit();
 /// Set the title of the game window.
 void setWindowTitle(const char*);
 
+/// Show performance statistics in an ImGUI dialog.
+void setPerformanceMetricsEnabled(bool);
+
 } // namespace folk::engine
 
 #endif//FOLK__ENGINE_HPP

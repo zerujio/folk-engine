@@ -14,4 +14,9 @@ void setWindowTitle(const char* text)
     ENGINE.window.setWindowTitle(text);
 }
 
+void setPerformanceMetricsEnabled(bool value)
+{
+    ENGINE.perf_monitor.visible = value;
+}
+
 } // namespace folk::engine

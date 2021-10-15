@@ -2,11 +2,17 @@
 #define FOLK_SIMULATION__MODULE_HPP
 
 #include <iostream>
-#include "../utils/singleton.hpp"
+
+#include "../core/module.hpp"
 
 namespace Folk {
 
-FOLK_SINGLETON_CLASS_FINAL(SimulationModule) {
+FOLK_ENGINE_MODULE(SimulationModule) {
+
+public:
+    const char* name() const override {return "simulation";}
+
+private:
     friend class EngineSingleton;
     
     SimulationModule() {

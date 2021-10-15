@@ -1,7 +1,7 @@
 #ifndef FOLK_WINDOW__MODULE_HPP
 #define FOLK_WINDOW__MODULE_HPP
 
-#include "../utils/singleton.hpp"
+#include "../core/module.hpp"
 #include "../utils/update_listener.hpp"
 
 #include "glad/glad.h"
@@ -11,12 +11,14 @@
 
 namespace Folk {
 
-FOLK_SINGLETON_CLASS_FINAL(WindowModule), public UpdateListener {
+FOLK_ENGINE_UPDATEABLE_MODULE(WindowModule) {
 public:
     struct WindowDimentions {
         GLuint width; 
         GLuint height;
     };
+
+    const char* name() const override {return "window_manager";}
 
     // Set width and height of application window
     void setWindowSize(GLuint, GLuint);
@@ -35,7 +37,7 @@ private:
 
     GLFWwindow* window = nullptr;
     WindowDimentions window_size {800, 600};
-    std::string window_title {"Unnamed Folk Engine Application"};
+    std::string window_title {"Folk Engine Application"};
 
     WindowModule();
     ~WindowModule();

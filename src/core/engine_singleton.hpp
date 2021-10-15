@@ -17,10 +17,14 @@
 #include "../scene/module.hpp"
 #include "../exception/module.hpp"
 
+// utils
 #include "../utils/singleton.hpp"
 #include "../utils/processing_queue.hpp"
 #include "../utils/coroutine.hpp"
 #include "../utils/delta_clock.hpp"
+
+#include "../debug/performance_monitor.hpp"
+
 #include "main.hpp"
 
 namespace Folk
@@ -30,6 +34,8 @@ namespace Folk
 FOLK_SINGLETON_CLASS_FINAL(EngineSingleton) {
 
 public:
+    PerformanceMonitor perf_monitor;
+
     // Engine modules
 
     /// Exception handling module
@@ -60,14 +66,21 @@ public:
     std::ostream& errout {std::cerr}; 
 
 private:
-    EngineSingleton();
-    ~EngineSingleton();
-
-    void mainLoop();
 
     bool exit_flag {false};
 
     DeltaClock frame_clock {};
+
+    static const uint umodule_count = 3;
+
+    const std::array<UpdateableModule*, umodule_count> updateable_modules {
+        &window, &scene, &render
+    };
+    
+    EngineSingleton();
+    ~EngineSingleton();
+
+    void mainLoop();
 
     friend int ::main();
 };
