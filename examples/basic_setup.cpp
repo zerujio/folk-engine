@@ -7,7 +7,7 @@
 static Folk::InputAction enable_metrics;
 
 static void update(Folk::Scene& scn, double delta) {
-    if (enable_metrics.state())
+    if (enable_metrics.state() == Folk::KeyState::Press)
         Folk::Engine::setPerformanceMetricsEnabled(true);
 }
 
@@ -28,6 +28,6 @@ void Folk::sceneInit(Folk::Scene &scene) {
 
     scene.updateCallback = update;
 
-    enable_metrics.keys.emplace(Folk::key_right_alt);
-    enable_metrics.keys.emplace(Folk::key_left_alt);
+    enable_metrics.keys.emplace(Folk::Key::RightAlt);
+    enable_metrics.keys.emplace(Folk::Key::LeftAlt);
 }

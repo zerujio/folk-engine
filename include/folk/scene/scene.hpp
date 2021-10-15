@@ -8,6 +8,7 @@
 namespace Folk
 {
 
+/// A game scene.
 class Scene final {
     friend class SceneModule;
     friend class RenderModule;
@@ -18,7 +19,7 @@ public:
     /// A function to be called whenever a new frame is drawn.
     UpdateCallback updateCallback {nullptr};
 
-    /// Get the root node of this scene
+    /// Get the root node of this scene.
     Node& rootNode() {return _root;}
     Node const& rootNode() const {return _root;}
     

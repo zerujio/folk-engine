@@ -25,5 +25,5 @@ add_subdirectory(examples)
 
 # documentation
 if(DOXYGEN_FOUND)
-    doxygen_add_docs(folk_docs include src)
+    doxygen_add_docs(folk_docs include)
 endif()

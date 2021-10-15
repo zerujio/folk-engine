@@ -9,11 +9,23 @@
 namespace Folk
 {
 
+/// @ref Resource to keep track of a 3D mesh.
 class Mesh : public Resource {
 public:
     using Ref = Reference<Mesh>;
+
+    /// Create empty mesh.
+    /**
+     * @return a reference to the newly instanced mesh.
+    */
     static Ref createEmpty();
-    static Ref create(ImmediateGeometry const&);
+
+    /// Create Mesh from @ref ImmediateGeometry .
+    /**
+     * @param geometry immediate geometry.
+     * @return a reference to the newly instanced mesh.
+    */
+    static Ref create(ImmediateGeometry const& geometry);
 
     ~Mesh();
 

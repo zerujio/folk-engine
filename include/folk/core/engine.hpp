@@ -3,6 +3,7 @@
 
 #include <string>
 
+/// Functions that modify global engine state.
 namespace Folk::Engine {
 
 /// Signal the engine to exit (close the application).

@@ -11,16 +11,18 @@ namespace Folk
 {
 
 KeyState getKey(Key key) {
-    return static_cast<KeyState>(glfwGetKey(ENGINE.window.getWindowPtr(), key));
+    return static_cast<KeyState>(glfwGetKey(ENGINE.window.getWindowPtr(), 
+                                 static_cast<int>(key)));
 }
 
 KeyState InputAction::state() {
     for (auto key : keys)
-        if (glfwGetKey(ENGINE.window.getWindowPtr(), key) == GLFW_PRESS) {
-            return keystate_press;
+        if (glfwGetKey(ENGINE.window.getWindowPtr(), static_cast<int>(key)) 
+            == GLFW_PRESS) {
+            return KeyState::Press;
         }
     
-    return keystate_release;
+    return KeyState::Release;
 }
 
 } // namespace folk

@@ -13,9 +13,9 @@ namespace Folk {
  * Resources are mutex protected, reference counted objects. The reference count 
  * is also thread safe, protected with a separate mutex.
 */
-class Resource : public ReferenceCountedObject<ThreadSafeCounter<int>> {
+class Resource : public ReferenceCountedObject<ThreadSafeCounter<uint>> {
 public:
-    using Id = unsigned int;
+    using Id = ThreadSafeCounter<uint>;
 
     const Id id;
 

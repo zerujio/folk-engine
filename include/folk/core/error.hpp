@@ -6,12 +6,12 @@
 namespace Folk
 {
 
-// Standard engine error
+/// Standard engine error.
 struct EngineRuntimeError : public std::runtime_error {
     using std::runtime_error::runtime_error;
 };
 
-// Critical error. Throwing exceptions of this type will cause the engine to shut down.
+/// Critical error: throwing exceptions of this type will cause the engine to shut down.
 class CriticalEngineError : public std::runtime_error
 {
     using runtime_error::runtime_error;

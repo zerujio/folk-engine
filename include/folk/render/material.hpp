@@ -16,10 +16,25 @@ class Material : public Resource {
 public:
     using Ref = Reference<Material>;
     
+    /// Create a material with default shader.
     static Ref createDefaultMaterial();
-    static Ref create(Shader::Ref);
 
-    void setShader(Shader::Ref);
+    /// Create material with given shader.
+    /**
+     * @param shader A reference to a @ref Shader resource.
+    */
+    static Ref create(Shader::Ref shader);
+
+    /// Change the shader.
+    /**
+     * @param shader reference to Shader resource.
+    */
+    void setShader(Shader::Ref shader);
+
+    /// Get shader.
+    /**
+     * @return The @ref Shader currently in use.
+    */
     Shader::Ref getShader();
 
     ~Material();

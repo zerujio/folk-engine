@@ -6,12 +6,14 @@
 
 namespace Folk {
 
-/// Allows an object to be drawn.
+/// Determines how an object is to be drawn.
 /**
  * @see Visual
 */
 class VisualComponent {
 public:
+
+    /// Reference to a Visual resource.
     Visual::Ref visual;
 
     /// Construct a mesh component with an empty mesh.

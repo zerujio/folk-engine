@@ -19,12 +19,19 @@ class Visual : public Resource {
 public:
     using Ref = Reference<Visual>;
 
+    /// Instance a new visual from the given mesh and material.
     static Ref create(Mesh::Ref, Material::Ref);
 
+    /// Change the mesh.
     void setMesh(Mesh::Ref);
+
+    /// Retrieve a @ref Reference to this visual's mesh.
     Mesh::Ref getMesh() const;
 
+    /// Change material.
     void setMaterial(Material::Ref);
+
+    /// Retrieve a @ref Reference to this Visual's material.
     Material::Ref getMaterial() const;
 
     ~Visual();

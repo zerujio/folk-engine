@@ -8,7 +8,7 @@
 
 namespace Folk {
 
-/// A scene graph node
+/// A scene graph node.
 class Node {
 public:
     Node(const Node&) = delete;

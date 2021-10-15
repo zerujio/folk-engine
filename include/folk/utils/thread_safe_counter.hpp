@@ -8,7 +8,18 @@
 template <typename T>
 class ThreadSafeCounter {
 public:
+    /// Construct counter initialized to zero.
+    ThreadSafeCounter() : count(0) {}
+
+    /// Construct counter initialized to given value.
+    /**
+     * @param n initial value.
+    */
     ThreadSafeCounter(T n) : count(n) {}
+
+    ThreadSafeCounter(ThreadSafeCounter const& cntr)
+    : ThreadSafeCounter(cntr.count)
+    {}
 
     ThreadSafeCounter& operator++() {
         std::lock_guard lk(mtx);
@@ -32,6 +43,7 @@ public:
         return count--;
     }
 
+    /// Cast to type T returns the underlying integer.
     operator T() const {
         return count;
     }
