@@ -9,8 +9,8 @@ Folk Engine es un motor para juegos de tipo RTS, city builder o colony sim. El f
 
 ### ¿Cómo funciona?
 
-Incluir el header `folk/folk.hpp`. Ahí se definen dos funciones que 
-obligatoriamente deben ser definidas por el usuario para poder compilar el
+Incluir el header `folk/folk.hpp`. Ahí se declaran dos funciones que 
+obligatoriamente deben ser implementadas por el usuario para poder compilar un
 programa.
 
 ```cpp
@@ -25,6 +25,19 @@ void Folk::sceneInit(Scene &scene) {
     doSomething(scene);
 }
 ```
+
+Para modificar la escena en cada frame, es necesario establecer un callback:
+
+```cpp
+void onUpdate(Scene &scene, double delta);
+
+void Folk::sceneInit(Scene &scene) {
+    scene.updateCallback = onUpdate;
+}
+```
+
+El callback será invocado con la escena y la cantidad de tiempo (en segundos) 
+desde el último cuadro como argumentos.
 
 Para un ejemplo más completo ver `examples/basic_setup.cpp`.
 
