@@ -7,7 +7,7 @@ namespace Folk {
 
 class UpdateListener {
 public:
-    using Delta = std::chrono::duration<double, std::milli>;
+    using Delta = std::chrono::duration<double>;
     
     virtual void update(Delta delta) = 0;
 };

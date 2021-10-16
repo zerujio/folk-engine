@@ -23,8 +23,10 @@ void PerformanceMonitor::draw() {
     if (visible) {
         ImGui::Begin("Performance metrics", &visible);
 
-        for (Item item : items) {
-            ImGui::Text("%s: %fms", item.name.c_str(), item.delta.count());
+        if (! ImGui::IsWindowCollapsed()) {
+            for (Item item : items) {
+                ImGui::Text("%s: %fms", item.name.c_str(), item.delta.count());
+            }
         }
 
         ImGui::End();

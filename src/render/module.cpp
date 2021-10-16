@@ -28,8 +28,8 @@ RenderModule::RenderModule()
     ImGui_ImplOpenGL3_Init("#version 430");
 
     // add performance metrics
-    render_id = ENGINE.perf_monitor.addItem("Draw calls");
-    frame_time_id = ENGINE.perf_monitor.addItem("Frame time");
+    render_id = ENGINE.perf_monitor.addItem("Rendering");
+    frame_time_id = ENGINE.perf_monitor.addItem("Effective frame time");
 
 }
 

@@ -19,4 +19,9 @@ void setPerformanceMetricsEnabled(bool value)
     ENGINE.perf_monitor.visible = value;
 }
 
+void setMinFrameTime(double time)
+{
+    ENGINE.min_frame_time = UpdateListener::Delta(time);
+}
+
 } // namespace folk::engine

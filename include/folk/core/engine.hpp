@@ -15,6 +15,12 @@ void setWindowTitle(const char*);
 /// Show performance statistics in an ImGUI dialog.
 void setPerformanceMetricsEnabled(bool);
 
+/// Configure the minimum time between frames (i.e. maximum framerate).
+/**
+ * @param time time in seconds.
+*/
+void setMinFrameTime(double time);
+
 } // namespace folk::engine
 
 #endif//FOLK__ENGINE_HPP

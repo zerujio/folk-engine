@@ -13,12 +13,12 @@ FOLK_ENGINE_MODULE(AudioModule) {
     const char* name() const {return "audio";}
 
     AudioModule() {
-        std::cout << "Audio: initialized\n";
+        // empty
     }
 
 public:
     ~AudioModule() {
-        std::cout << "Audio: finalized\n";
+        // empty
     }
 };
 

@@ -12,7 +12,6 @@
 // modules
 #include "../render/module.hpp"
 #include "../audio/module.hpp"
-#include "../simulation/module.hpp"
 #include "../window/module.hpp"
 #include "../scene/module.hpp"
 #include "../exception/module.hpp"
@@ -50,9 +49,6 @@ public:
     /// Audio module
     AudioModule audio {};
 
-    /// simulation module
-    SimulationModule simulation {};
-
     /// Scene module
     SceneModule scene {};
 
@@ -64,6 +60,8 @@ public:
 
     /// error outpout stream
     std::ostream& errout {std::cerr}; 
+
+    UpdateListener::Delta min_frame_time {0};
 
 private:
 
