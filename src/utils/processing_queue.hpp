@@ -11,7 +11,7 @@ namespace Folk {
 
 /// Concurrent FIFO queue for consumer-producer style processing.
 /**
- * @param T type of the object to be processed
+ * \param T type of the object to be processed
 */
 template<typename T>
 class ProcessingQueue {

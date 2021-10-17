@@ -6,30 +6,39 @@
 namespace Folk
 {
 
-/// A structure to specify geometry.
+/// \brief \~spanish Una estructura para especificar geometría. 
+/// \brief \~english A structure to specify geometry.
 struct ImmediateGeometry
 {   
     /// Vertices
     VertexArray vertices {};
 
-    /// Element indices
+    /// Indices
     IndexArray indices {};
 
-    /// Construct emtpy geometry.
+    /// \brief \~spanish Construye un objeto vacío.
+    /// \brief \~english Construct emtpy geometry.
     ImmediateGeometry() = default;
 
-    /// Construct geometry with given vertices and indices.
+    /// \brief \~spanish Construye un objeto con las listas de vértices e índices dadas.
+    /// \brief \~english Construct geometry with given vertices and indices.
     /**
-     * @param v a vertex array.
-     * @param i an index array.
+     * \~spanish
+     * \param v arreglo de vértices.
+     * \param i arreglo de índices.
+     * 
+     * \~english
+     * \param v a vertex array.
+     * \param i an index array.
     */
     ImmediateGeometry(VertexArray const& v, IndexArray const& i) 
         : vertices(v), indices(i) {}
 
-    /// Construct triangle in XYZRGB format.
+    /// \~spanish Construye un triángulo en formato XYZRGB. \~english Construct triangle in XYZRGB format.
     static ImmediateGeometry rainbowTriangle();
 
-    /// Construct triangle in XYZ format (no color).
+
+    /// \~spanish Construye un trángulo en formato XYZ (sin colores). \~english Construct triangle in XYZ format (no color).
     static ImmediateGeometry triangle();
 };
 

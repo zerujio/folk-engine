@@ -1,19 +1,25 @@
 #ifndef FOLK_UTILS__THREAD_SAFE_COUNTER_HPP
 #define FOLK_UTILS__THREAD_SAFE_COUNTER_HPP
 
-/// Mutex protected integer counter
+/// \~spanish \brief Tipo entero protegido con mutex.
+/// \~english \brief Mutex protected integer counter.
 /**
- * @param T integer type
+ * \~spanish \param T un tipo entero.
+ * \~english \param T integer type
 */
 template <typename T>
 class ThreadSafeCounter {
 public:
-    /// Construct counter initialized to zero.
+
+    /// \~spanish \brief Construye un contador, inicializado en cero.
+    /// \~english \brief Construct counter initialized to zero.
     ThreadSafeCounter() : count(0) {}
 
-    /// Construct counter initialized to given value.
+    /// \~spanish \brief Construye un contador con el valor dado.
+    /// \~english \brief Construct counter initialized to given value.
     /**
-     * @param n initial value.
+     * \~spanish \param n valor inicial.
+     * \~english \param n initial value.
     */
     ThreadSafeCounter(T n) : count(n) {}
 
@@ -43,7 +49,8 @@ public:
         return count--;
     }
 
-    /// Cast to type T returns the underlying integer.
+    /// \~spanish \brief Casteo al tipo T retorna el número entero subyacente.
+    /// \~english \brief Cast to type T returns the underlying integer.
     operator T() const {
         return count;
     }

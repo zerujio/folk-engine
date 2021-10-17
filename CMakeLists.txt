@@ -25,5 +25,8 @@ add_subdirectory(examples)
 
 # documentation
 if(DOXYGEN_FOUND)
-    doxygen_add_docs(folk_docs include)
+    set(DOXYGEN_USE_MDFILE_AS_MAINPAGE README.md)
+    set(DOXYGEN_OUTPUT_LANGUAGE SPANISH)
+
+    doxygen_add_docs(folk_docs include README.md)
 endif()

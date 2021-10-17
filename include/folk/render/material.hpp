@@ -7,8 +7,12 @@
 namespace Folk
 {
 
-/// Determines the way a Mesh is rendered.
+/// \~ Determina la forma en que una malla es dibujada. \~english Determines the way a Mesh is rendered.
 /**
+ * \~spanish
+ * Un Material agrupa texturas, shaders y sus argumentos.
+ * 
+ * \~english
  * A material groups shaders, textures, and other shader parameters.
 */
 class Material : public Resource {
@@ -16,24 +20,36 @@ class Material : public Resource {
 public:
     using Ref = Reference<Material>;
     
-    /// Create a material with default shader.
+    /// \~spanish Crea un material con el shader predeterminado. \~english Create a material with default shader.
     static Ref createDefaultMaterial();
 
-    /// Create material with given shader.
+    /// \~spanish Crea un material con el Shader dado. \~english Create material with given shader.
     /**
-     * @param shader A reference to a @ref Shader resource.
+     * \~spanish
+     * \param shader Referencia a un Shader.
+     * 
+     * \~english
+     * \param shader A reference to a \ref Shader resource.
     */
     static Ref create(Shader::Ref shader);
 
-    /// Change the shader.
+    /// \~spanish Cambia el Shader. \~english Change the shader.
     /**
-     * @param shader reference to Shader resource.
+     * \~spanish
+     * \param shader Referencia a un Shader.
+     * 
+     * \~english
+     * \param shader Reference to Shader resource.
     */
     void setShader(Shader::Ref shader);
 
-    /// Get shader.
+    /// \~spanish Obtiene el Shader de este material. \~english Get shader.
     /**
-     * @return The @ref Shader currently in use.
+     * \~spanish 
+     * \return una referencia al shader en uso.
+     * 
+     * \~english
+     * \return The \ref Shader currently in use.
     */
     Shader::Ref getShader();
 

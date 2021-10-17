@@ -9,22 +9,15 @@
 namespace Folk
 {
 
-/// @ref Resource to keep track of a 3D mesh.
+/// \~spanish Recurso que representa una malla 3D. \~english Resource to keep track of a 3D mesh.
 class Mesh : public Resource {
 public:
     using Ref = Reference<Mesh>;
 
-    /// Create empty mesh.
-    /**
-     * @return a reference to the newly instanced mesh.
-    */
+    /// \~spanish Crea una malla vacía. \~english Create empty mesh.
     static Ref createEmpty();
 
-    /// Create Mesh from @ref ImmediateGeometry .
-    /**
-     * @param geometry immediate geometry.
-     * @return a reference to the newly instanced mesh.
-    */
+    /// \~spanish Crea una malla a partir de ImmediateGeometry \~english Create Mesh from \ref ImmediateGeometry .
     static Ref create(ImmediateGeometry const& geometry);
 
     ~Mesh();

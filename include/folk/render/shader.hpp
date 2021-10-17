@@ -8,18 +8,22 @@
 namespace Folk
 {
 
-/// A @ref Resource that manages an OpenGL shader program.
+/// \~spanish Resource que administra un programa de shaders de OpenGL. \~english A \ref Resource that manages an OpenGL shader program.
 class Shader : public Resource
 {
 public:
-    /// Vertex attribute especification (for vertex shader).
+    /// \~spanish Estructura para especificar los atributos (parámetros) del vertex shader. \~english Vertex attribute especification (for vertex shader).
     /**
-     * For the following glsl attributes:
+     * \~spanish Al siguiente shader:
+     * \~english For the following glsl attributes:
+     * \~
      * ```glsl
      * layout (location = 0) in vec3 position;
      * layout (location = 1) in vec2 uv;
      * ```
-     * the following VertexAttrib should be used:
+     * \~spanish le corresponden los siguientes atributos:
+     * \~english the following VertexAttrib should be used:
+     * \~
      * ```cpp
      * VertexAttrib pos {0, 3 * sizeof(float), Type::Float, false, 5 * sizeof(float), 0};
      * VertexAttrib uv {1, 2 * sizeof(float), Type::Float, false, 5 * sizeof(float), 3 * sizeof(float)};
@@ -28,41 +32,49 @@ public:
     struct VertexAttrib {
         enum class Type { Float, Int, Uint };
 
-        /// glsl vertex attribute location.
+        /// \~spanish `location` en GLSL \~english glsl vertex attribute location.
         uint location;
 
-        /// Size (in bytes) of each attribute.
+        /// \~spanish Tamaño en bytes de cada atributo. \~english Size (in bytes) of each attribute.
         int size;
 
-        /// Attribute type.
+        /// \~spanish Tipo del atributo. \~english Attribute type.
         Type type;
 
-        /// ¿Should the attribute value be normalized?
+        /// \~spanish ¿Debería normalizarse el valor del atributo?  \~english Should the attribute value be normalized?
         /**
-         * Normalization range: [-1, 1] for signed types, [0, 1] for unsigned.
+         * \~spanish Rango de normalización: [-1, 1] para valores con signo, [0, 1] sin signo.
+         * \~english Normalization range: [-1, 1] for signed types, [0, 1] for unsigned.
         */
         bool normalized;
 
-        /// Stride (separation between consecutive vertex attributes)
+        /// \~spanish _Stride_: separación (en bytes) entre elementos consecutivos. \~english Stride (separation between consecutive vertex attributes)
         int stride;
 
-        /// Offset from the start of the vertex buffer.
+        /// \~spanish Distancia del inicio del buffer a la primera instancia del atributo. \~english Offset from the start of the vertex buffer.
         uint offset;
     };
 
     using VertexAttribArray = std::vector<VertexAttrib>;
     using Ref = Reference<Shader>;
     
-    /// Create a default shader object.
+    /// \~spanish Crea una instancia del shader predeterminado. \~english Create a default shader object.
     static Ref createDefaultShader();
 
-    /// Create a shader program from glsl source code.
+    /// \~spanish Crea un programa a partir de código fuente GLSL. \~english Create a shader program from glsl source code.
     /**
-     * @param vertex source code for vertex shader.
-     * @param fragment source code for fragment shader.
-     * @param attributes vertex attribute vector.
+     * \~spanish
+     * \param vertex código fuente para el _vertex shader_.
+     * \param fragment código fuente para el _fragment shader_.
+     * \param attributes vector de VertexAttrib.
      * 
-     * @see Shader::VertexAttrib
+     * \~english
+     * \param vertex source code for vertex shader.
+     * \param fragment source code for fragment shader.
+     * \param attributes vertex attribute vector.
+     * 
+     * \~
+     * \see Shader::VertexAttrib
     */
     static Ref create(const char* vertex, const char* fragment, 
                       VertexAttribArray const& attributes);

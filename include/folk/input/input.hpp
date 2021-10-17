@@ -6,7 +6,8 @@
 namespace Folk
 {
 
-/// Input codes for keys.
+/// \brief \~spanish Teclas
+/// \brief \~english Input codes for keys.
 enum class Key {
     Unknown = -1,
     /* printable keys */
@@ -134,8 +135,8 @@ enum class Key {
     Menu = 348
 }; // enum
 
-
-/// Flags for keyboard modifier keys.
+/// \brief \~spanish Teclas modificadoras
+/// \brief \~english Flags for keyboard modifier keys.
 enum class Mod {
     Shift       = 0x001,
     Control     = 0x002,
@@ -145,31 +146,47 @@ enum class Mod {
     NumLock    = 0x0020
 };
 
-/// Posible key states.
+/// \brief \~spanish Posibles estados de una tecla.
+/// \brief \~english Posible key states.
 enum class KeyState {
     Release = 0,
     Press = 1,
     Repeat = 2
 };
 
-/// Get the state of a key.
-/** The state is updated at the start of each frame. */
+/// \brief \~spanish Consultar el estado de una tecla.
+/// \brief \~english Get the state of a key.
+/** 
+ * \~spanish
+ * El estado del teclado se actualiza el inicio de cada cuadro.
+ * 
+ * \~english
+ * The state is updated at the start of each frame. 
+ * */
 KeyState getKey(Key);
 
-/// An abstraction layer for input that allows for key remapping.
+/// \brief \~spanish Capa de abstracción que permite la asignación de múltiples teclas a la misma acción.
+/// \brief \~english An abstraction layer for input that allows for key remapping.
 class InputAction {
 public:
     using KeySet = std::set<Key>;
     
-    /// Keys this action keeps track of
+    /// \brief \~spanish Conjunto de teclas asignadas a esta acción.
+    /// \brief \~english Keys this action keeps track of
     KeySet keys {};
 
     InputAction() = default;
     InputAction(KeySet &set) : keys(set) {}
 
-    /// Get the state of this action.
+    /// \brief \~spanish Consulta el estado de esta acción.
+    /// \brief \~english Get the state of this action.
     /**
-     * @returns keystate_release if no keys are pressed,
+     * \~spanish
+     * \returns KeyState::Release si no hay teclas presionadas,
+     *          KeyState::Press si al menos una tecla del conjunto fue presionada
+     * 
+     * \~english
+     * \returns keystate_release if no keys are pressed,
      *          keystate_press if at least one key is pressed,
     */
     KeyState state();

@@ -6,17 +6,17 @@
 
 namespace Folk {
 
-/// Determines how an object is to be drawn.
+/// \~spanish Determina cómo se dibuja un objeto. \~english Determines how an object is to be drawn.
 /**
- * @see Visual
+ * \see Visual
 */
 class VisualComponent {
 public:
 
-    /// Reference to a Visual resource.
+    /// \~spanish Visual que determina el material y la malla. Reference to a Visual resource.
     Visual::Ref visual;
 
-    /// Construct a mesh component with an empty mesh.
+    /// \~spanish Construye un componente con una malla vacía y el shader predeterminado. \~english Construct a mesh component with an empty mesh.
     VisualComponent() 
         : VisualComponent(
             Visual::create( Mesh::createEmpty(),
@@ -24,7 +24,7 @@ public:
             )
     {}
 
-    /// Construct a component from the given Visual.
+    /// \~spanish Construye un nuevo componente que utiliza el Visual referenciado. \~english Construct a component from the given Visual.
     VisualComponent(Visual::Ref const& v) : visual(v) {}
 };
 

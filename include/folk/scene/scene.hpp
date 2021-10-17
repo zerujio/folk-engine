@@ -8,7 +8,8 @@
 namespace Folk
 {
 
-/// A game scene.
+/// \~spanish \brief Una escena del juego.
+/// \~english \brief A game scene.
 class Scene final {
     friend class SceneModule;
     friend class RenderModule;
@@ -16,10 +17,10 @@ class Scene final {
 public:
     using UpdateCallback = void (*)(Scene&, double);
 
-    /// A function to be called whenever a new frame is drawn.
+    /// \~spanish Una función que se invocará en cada nuevo cuadro. \~english A function to be called whenever a new frame is drawn.
     UpdateCallback updateCallback {nullptr};
 
-    /// Get the root node of this scene.
+    /// \~spanish Obtiene el nodo raíz del grafo de escena. \~english Get the root node of this scene.
     Node& rootNode() {return _root;}
     Node const& rootNode() const {return _root;}
     

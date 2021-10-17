@@ -34,8 +34,8 @@ void PerformanceMonitor::draw() {
 }
 
 /**
- * @param text Text description of the item.
- * @return the index needed to call @ref start() and @ref stop() on this item
+ * \param text Text description of the item.
+ * \return the index needed to call \ref start() and \ref stop() on this item
  */
 int PerformanceMonitor::addItem(const char* text) {
     items.emplace_back(text);

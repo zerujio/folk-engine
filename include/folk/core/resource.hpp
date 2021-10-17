@@ -8,8 +8,14 @@
 
 namespace Folk {
 
-/// Base clase for resources like meshes, textures, and shaders.
+/// \brief \~spanish Clase base para recursos como mallas, texturas y shaders.
+/// \brief \~english Base clase for resources like meshes, textures, and shaders.
 /**
+ * \~spanish
+ * Un recurso es un objeto con conteo de referencias y mecanismos de exclusión mutua. 
+ * El contador de referencias tiene un mutex distinto al resto del recurso.
+ * 
+ * \~english
  * Resources are mutex protected, reference counted objects. The reference count 
  * is also thread safe, protected with a separate mutex.
 */

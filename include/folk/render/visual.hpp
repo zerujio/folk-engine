@@ -8,30 +8,35 @@
 namespace Folk
 {
 
-/// A resource that pairs a Mesh and a Material.
+/// \~spanish Recurso que agrupa una malla y un material. \~english A resource that pairs a Mesh and a Material.
 /**
- * @see Mesh
- * @see Material
- * @see Resource
+ * \see Mesh
+ * \see Material
+ * \see Resource
 */
 class Visual : public Resource {
     
 public:
     using Ref = Reference<Visual>;
 
-    /// Instance a new visual from the given mesh and material.
+    /// \brief \~spanish Crea un nuevo objeto a partir de una malla y un material.
+    /// \brief \~english Instance a new visual from the given mesh and material.
     static Ref create(Mesh::Ref, Material::Ref);
 
-    /// Change the mesh.
+    /// \brief \~spanish Configura la malla a utilizar.
+    /// \brief \~english Change the mesh.
     void setMesh(Mesh::Ref);
 
-    /// Retrieve a @ref Reference to this visual's mesh.
+    /// \~spanish Obtiene una referencia a la malla en uso.
+    /// \~english Retrieve a \ref Reference to this visual's mesh.
     Mesh::Ref getMesh() const;
 
-    /// Change material.
+    /// \~spanish Cambia el material.
+    /// \~english Change material.
     void setMaterial(Material::Ref);
 
-    /// Retrieve a @ref Reference to this Visual's material.
+    /// \~spanish Obtiene una referencia al material en uso.
+    /// \~english Retrieve a \ref Reference to this Visual's material.
     Material::Ref getMaterial() const;
 
     ~Visual();
