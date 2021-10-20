@@ -5,3 +5,4 @@ function(add_example TARGETNAME FILENAME)
 endfunction(add_example)
 
 add_example(basic_setup basic_setup.cpp)
+add_example(input_example input_example.cpp)

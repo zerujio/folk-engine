@@ -15,6 +15,7 @@
 #include "../window/module.hpp"
 #include "../scene/module.hpp"
 #include "../exception/module.hpp"
+#include "../input/input_manager.hpp"
 
 // utils
 #include "../utils/singleton.hpp"
@@ -42,6 +43,9 @@ public:
 
     /// Window module
     WindowModule window {};
+
+    /// Input manager
+    InputManager input_manager {};
 
     /// Render module
     RenderModule render {};

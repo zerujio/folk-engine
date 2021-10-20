@@ -8,7 +8,6 @@
 namespace Folk {
 
 static void closeWindowCallback(GLFWwindow*);
-static void keyCallback(GLFWwindow*, int, int, int, int);
 void GLAPIENTRY messageCallback(GLenum source, GLenum type, GLuint id, 
                                 GLenum severity, GLsizei length,
                                 const GLchar* message, const void* userParam);
@@ -36,7 +35,6 @@ WindowModule::WindowModule()
     }
 
     glfwSetWindowCloseCallback(window, closeWindowCallback);
-    glfwSetKeyCallback(window, keyCallback);
 
     glfwMakeContextCurrent(WINDOW.getWindowPtr());
 
@@ -84,26 +82,6 @@ void WindowModule::update(Delta delta) {
 static void closeWindowCallback(GLFWwindow *w)
 {
     ENGINE.exit();
-}
-
-static void keyCallback(GLFWwindow* window, int key, int scancode, int action, int mode)
-{
-    if (action == GLFW_PRESS)
-    {
-        try {
-            switch (key) {
-                case GLFW_KEY_ESCAPE:
-                    throw CriticalEngineError("dummy critical error");
-                    break;
-                case GLFW_KEY_SPACE:
-                    throw EngineRuntimeError("dummy engine runtime error");
-                    break;
-            }
-        } catch (...) {
-            ENGINE.exception.handle();
-            // ENGINE.transportException(std::current_exception());
-        }
-    }
 }
 
 void GLAPIENTRY messageCallback(GLenum source, GLenum type, GLuint id, 

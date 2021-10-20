@@ -1,3 +1,4 @@
 set(LIB_FILES
-    module.cpp
+    input_manager.cpp
+    input.cpp
     PARENT_SCOPE)
