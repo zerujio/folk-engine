@@ -16,10 +16,12 @@ void mouseButtonCallback(GLFWwindow*, int, int, int);
 
 InputManager::InputManager() {
     glfwSetKeyCallback(ENGINE.window.getWindowPtr(), keyCallback);
+    glfwSetMouseButtonCallback(ENGINE.window.getWindowPtr(), mouseButtonCallback);
 }
 
 InputManager::~InputManager() {
     glfwSetKeyCallback(ENGINE.window.getWindowPtr(), nullptr);
+    glfwSetMouseButtonCallback(ENGINE.window.getWindowPtr(), nullptr);
 }
 
 void keyCallback(GLFWwindow* window, int keycode, int scancode, int action, 
@@ -31,12 +33,12 @@ void keyCallback(GLFWwindow* window, int keycode, int scancode, int action,
     auto key = keyCast(keycode);
     auto state = stateCast(action);
 
-    for (auto& p : INPUT.key_callbacks) {
-        p.second(key, state);
-    }
-
-    if (keycode != GLFW_KEY_UNKNOWN)
+    if (keycode != GLFW_KEY_UNKNOWN) {
+        for (auto& p : INPUT.key_callbacks) {
+            p.second(key, state);
+        }
         INPUT.inputCallback(key, state);
+    }
 }
 
 void mouseButtonCallback(GLFWwindow* window, int button, int action, int mods) 

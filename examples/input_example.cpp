@@ -15,7 +15,7 @@ void keyCallback(Key key, InputState state) {
 }
 
 void Folk::engineInit() {
-    
+    Folk::Engine::setPerformanceMetricsEnabled(true);
 }
 
 void Folk::sceneInit(Scene& scene) {

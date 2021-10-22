@@ -30,7 +30,7 @@ using InputCodeIntType = INPUT_CODE_INT_TYPE;
 enum class Key : INPUT_CODE_INT_TYPE {
     None            = 0,
 
-    Space           = 32,
+    Space           = 32, // Non printable
     Apostrophe      = 39,
     Comma           = 44,
     Minus           = 45,
@@ -75,12 +75,13 @@ enum class Key : INPUT_CODE_INT_TYPE {
     Y               = 89,
     Z               = 90,
     LeftBracket     = 91,
-    Backslash       = 92,
+    Backslash       = 92, 
     RightBracket    = 93,
     GraveAccent     = 96,
     World1          = 161,
     World2          = 162,
 
+    // non printable
     Escape          = 256,
     Enter           = 257,
     Tab             = 258,
