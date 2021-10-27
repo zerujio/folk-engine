@@ -4,9 +4,6 @@
 
 #include <iostream>
 
-// Una acción para determinar si se deben mostrar las métricas de rendmiento.
-static Folk::InputAction enable_metrics;
-
 // Esta función es invocada en cada frame
 static void update(Folk::Scene& scn, double delta) {
     // Ajustar el framerate:
@@ -61,6 +58,9 @@ void Folk::sceneInit(Folk::Scene &scene) {
 
     // Configurar el callback que se invocará en cada frame
     scene.updateCallback = update;
+
+    // Una acción para determinar si se deben mostrar las métricas de rendmiento.
+    auto &enable_metrics = Folk::InputAction::create("enable_metrics");
 
     // Configurar las teclas que activan las metricas de rendimiento
     // (Alt derecho e izquierdo)

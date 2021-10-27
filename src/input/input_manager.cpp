@@ -30,13 +30,14 @@ void keyCallback(GLFWwindow* window, int keycode, int scancode, int action,
     if (action == GLFW_REPEAT)
         return;
 
-    auto key = keyCast(keycode);
-    auto state = stateCast(action);
-
     if (keycode != GLFW_KEY_UNKNOWN) {
-        for (auto& p : INPUT.key_callbacks) {
+        auto key = keyCast(keycode);
+        auto state = stateCast(action);
+
+        for (auto& p : INPUT.key_callbacks_) {
             p.second(key, state);
         }
+
         INPUT.inputCallback(key, state);
     }
 }
@@ -49,31 +50,21 @@ void mouseButtonCallback(GLFWwindow* window, int button, int action, int mods)
     auto btn = mouseButtonCast(button);
     auto state = stateCast(action);
 
-    for (auto& p : INPUT.mouse_btn_callbacks)
+    for (auto& p : INPUT.mouse_btn_callbacks_)
         p.second(btn, state);
 
-    INPUT.inputCallback(mouseButtonCast(button), stateCast(action));
+    INPUT.inputCallback(btn, state);
 }
 
 void InputManager::inputCallback(InputCode code, InputState state) {
-    for (auto& p : INPUT.input_code_callbacks)
+    for (auto& p : INPUT.input_code_callbacks_)
         p.second(code, state);
 
-    for (InputAction::Binding* binding : input_bindings_[code]) {
-        auto old_state = binding->state();
+    auto [begin, end] = bindings_.equal_range(code);
 
-        for (int i = 0; i < 4; ++i)
-            if (binding->combination_[i] == code) {
-                binding->state_[i] = state;
-                break;
-            }
-        
-        auto new_state = binding->state();
-
-        if (old_state != new_state) {
-            for (auto &callback : binding->action_->callbacks_)
-                callback.second(new_state);
-        }
+    for (auto iter = begin; iter != end; ++iter) {
+        for (auto& [_, f] : iter->second->callbacks_)
+            f(state);
     }
 }
 

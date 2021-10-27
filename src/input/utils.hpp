@@ -6,23 +6,23 @@
 namespace Folk
 {
 
-constexpr int intCast(Key key) {
+constexpr int intCast(const Key key) {
     return static_cast<int>(key);
 }
 
-constexpr int intCast(MouseButton mb) {
-    return static_cast<int>(mb) - 1;
+constexpr int intCast(const MouseButton mb) {
+    return static_cast<int>(mb);
 }
 
-constexpr Key keyCast(int glfw_code) {
+constexpr Key keyCast(const int glfw_code) {
     return static_cast<Key>(glfw_code);
 }
 
-constexpr MouseButton mouseButtonCast(int glfw_code) {
-    return static_cast<MouseButton>(glfw_code + 1);
+constexpr MouseButton mouseButtonCast(const int glfw_code) {
+    return static_cast<MouseButton>(glfw_code);
 }
 
-constexpr InputState stateCast(int glfw_state) {
+constexpr InputState stateCast(const int glfw_state) {
     return static_cast<InputState>(glfw_state);
 }
 
