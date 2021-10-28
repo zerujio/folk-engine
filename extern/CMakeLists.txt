@@ -2,6 +2,9 @@
 add_subdirectory(glad)
 
 #glfw
+set(GLFW_BUILD_TESTS OFF)
+set(GLFW_BUILD_EXAMPLES OFF)
+set(GLFW_INSTALL OFF)
 add_subdirectory(glfw)
 
 #imgui
@@ -14,5 +17,12 @@ target_sources(imgui PRIVATE
                imgui/imgui.cpp
                imgui/backends/imgui_impl_glfw.cpp
                imgui/backends/imgui_impl_opengl3.cpp)
-target_include_directories(imgui PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/imgui")
+target_include_directories(imgui PUBLIC imgui)
 target_link_libraries(imgui glad glfw)
+
+# entt
+add_library(entt INTERFACE)
+target_include_directories(entt INTERFACE entt/single_include)
+
+# cxxopts
+add_subdirectory(cxxopts)
