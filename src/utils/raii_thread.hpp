@@ -11,13 +11,13 @@ namespace Folk {
  * Thread begins execution when the object is constructed, and is joined when 
  * the object is destroyed.
 */
-class Coroutine {
+class RAIIThread {
 public:
     template<typename Function, typename ... Args>
-    Coroutine(Function&& f, Args&&... args) 
+    RAIIThread(Function&& f, Args&&... args) 
         : thread(std::forward<Function>(f), std::forward<Args>(args)...) {}
 
-    ~Coroutine() 
+    ~RAIIThread() 
     {
         thread.join();
     }

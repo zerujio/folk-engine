@@ -1,22 +1,23 @@
-#ifndef FOLK_EXCEPTION__MODULE_HPP
-#define FOLK_EXCEPTION__MODULE_HPP
+#ifndef FOLK_CORE__EXCEPTION_HANDLER_HPP
+#define FOLK_CORE__EXCEPTION_HANDLER_HPP
 
-#include "../core/module.hpp"
+#include "module.hpp"
+
 #include "../utils/processing_queue.hpp"
-#include "../utils/coroutine.hpp"
+#include "../utils/raii_thread.hpp"
 
 #include <exception>
 
 namespace Folk {
 
-FOLK_ENGINE_MODULE(ExceptionModule) {
+FOLK_ENGINE_MODULE(ExceptionHandler) {
 
 public:
 
     const char* name() const override {return "exception_handler";}
 
-    ExceptionModule();
-    ~ExceptionModule();
+    ExceptionHandler();
+    ~ExceptionHandler();
     
     /// Handle the current exception.
     /**
@@ -29,11 +30,11 @@ private:
     using QueueT = ProcessingQueue<std::exception_ptr>;
 
     QueueT queue {};
-    Coroutine handler_thread {&ExceptionModule::handlerRoutine, this};
+    RAIIThread handler_thread {&ExceptionHandler::handlerRoutine, this};
 
     void handlerRoutine();
 };
 
 } // namespace folk
 
-#endif // FOLK_EXCEPTION__MODULE_HPP
+#endif // FOLK_CORE__EXCEPTION_HANDLER_HPP

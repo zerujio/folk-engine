@@ -32,10 +32,10 @@ public:
     
     Note that processLoop will return immediately if a call to stopProcessing is
     in course. */
-    void processLoop(std::function<void(T)>);
+    void processLoop(std::function<void(T&)>);
 
     /** Push a new element to the back of the queue. */
-    void enqueue(T);
+    void enqueue(T const&);
 
     /** Construct in place a new element at the back of the queue. */
     template<typename... Args>
@@ -71,7 +71,7 @@ void ProcessingQueue<T>::stopProcessing()
 }
 
 template<typename T>
-void ProcessingQueue<T>::processLoop(std::function<void(T)> processing_routine)
+void ProcessingQueue<T>::processLoop(std::function<void(T&)> processing_routine)
 {
     std::unique_lock lock(mutex);
     ++processor_threads;
@@ -96,7 +96,7 @@ void ProcessingQueue<T>::processLoop(std::function<void(T)> processing_routine)
 }
 
 template<typename T>
-void ProcessingQueue<T>::enqueue(T element)
+void ProcessingQueue<T>::enqueue(T const& element)
 {
     {
         std::unique_lock lock(mutex);

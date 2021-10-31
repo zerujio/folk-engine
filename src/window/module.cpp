@@ -1,9 +1,9 @@
-#include "folk/core/error.hpp"
-
 #include "module.hpp"
 
 #include "../core/common.hpp"
 #include "../core/engine_singleton.hpp"
+
+#include "folk/core/error.hpp"
 
 namespace Folk {
 
@@ -74,7 +74,11 @@ void WindowModule::update(Delta delta) {
 
     ENGINE.perf_monitor.start(monitor_id);
 
-    glfwPollEvents();
+    try {
+        glfwPollEvents();
+    } catch (...) {
+        ENGINE.exception.handle();
+    }
 
     ENGINE.perf_monitor.stop(monitor_id);
 }
@@ -153,43 +157,40 @@ void GLAPIENTRY messageCallback(GLenum source, GLenum type, GLuint id,
     }
 
     const char* severity_str;
+    Log::Level log_level;
     switch (severity)
     {
     case GL_DEBUG_SEVERITY_HIGH:
         severity_str = "HIGH";
+        log_level = Log::Level::ERROR;
         break;
     
     case GL_DEBUG_SEVERITY_MEDIUM:
         severity_str = "MEDIUM";
+        log_level = Log::Level::WARNING;
         break;
     
     case GL_DEBUG_SEVERITY_LOW:
         severity_str = "LOW";
+        log_level = Log::Level::WARNING;
         break;
 
     case GL_DEBUG_SEVERITY_NOTIFICATION:
         severity_str = "NOTIFICATION";
+        log_level = Log::Level::MESSAGE;
         break;
     
     default:
         severity_str = "?";
+        log_level = Log::Level::MESSAGE;
         break;
     }
 
-    std::string msg = 
-        std::string("*** GL DEBUG MESSAGE ***\n")
-        + "source:     " + source_str + "\n"
-        + "type:       " + type_str + "\n"
-        + "severity:   " + severity_str + "\n"
-        + message + "\n\n";
-
-    try {
-        throw EngineRuntimeError(msg);
-    }
-    catch(...)
-    {
-        ENGINE.exception.handle();
-    }
+    ENGINE.log.begin(log_level) << "*** OpenGL DEBUG MESSAGE ***"
+                                << "\nsource    : " << source_str
+                                << "\ntype      : " << type_str
+                                << "\nseverity  : " << severity_str
+                                << '\n' << message << "\n\n";
 }
 
 } // namespace folk

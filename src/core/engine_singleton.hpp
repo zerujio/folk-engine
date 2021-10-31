@@ -14,13 +14,14 @@
 #include "../audio/module.hpp"
 #include "../window/module.hpp"
 #include "../scene/module.hpp"
-#include "../exception/module.hpp"
 #include "../input/input_manager.hpp"
+#include "../debug/log.hpp"
+#include "exception_handler.hpp"
 
 // utils
 #include "../utils/singleton.hpp"
 #include "../utils/processing_queue.hpp"
-#include "../utils/coroutine.hpp"
+#include "../utils/raii_thread.hpp"
 #include "../utils/delta_clock.hpp"
 
 #include "../debug/performance_monitor.hpp"
@@ -38,8 +39,11 @@ public:
 
     // Engine modules
 
+    /// Logging
+    Log log {};
+
     /// Exception handling module
-    ExceptionModule exception {};
+    ExceptionHandler exception {};
 
     /// Window module
     WindowModule window {};
@@ -84,7 +88,7 @@ private:
 
     void mainLoop();
 
-    friend int ::main();
+    friend int ::main(int, char**);
 };
 
 #define ENGINE EngineSingleton::instance()

@@ -1,8 +1,9 @@
 #include <chrono>
 #include <thread>
 
-#include "engine_singleton.hpp"
 #include "folk/folk.hpp"
+
+#include "engine_singleton.hpp"
 
 namespace Folk {
 

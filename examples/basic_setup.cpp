@@ -1,33 +1,10 @@
 #include "folk/folk.hpp"
 #include "folk/input/input.hpp"
 #include "folk/render/visual_component.hpp"
+#include "folk/core/error.hpp"
+#include "folk/core/log.hpp"
 
 #include <iostream>
-
-// Esta función es invocada en cada frame
-static void update(Folk::Scene& scn, double delta) {
-    // Ajustar el framerate:
-    // 15 FPS
-    if(Folk::getKey(Folk::Key::Num1) == Folk::InputState::Press) {
-        Folk::Engine::setMinFrameTime(0.066);
-    } 
-    // 30
-    else if(Folk::getKey(Folk::Key::Num2) == Folk::InputState::Press) {
-        Folk::Engine::setMinFrameTime(0.033);
-    }
-    // 60
-    else if(Folk::getKey(Folk::Key::Num3) == Folk::InputState::Press) {
-        Folk::Engine::setMinFrameTime(0.016);
-    }
-    // 144
-    else if(Folk::getKey(Folk::Key::Num4) == Folk::InputState::Press) {
-        Folk::Engine::setMinFrameTime(0.007);
-    }
-    // Ilimitado
-    else if(Folk::getKey(Folk::Key::Num0) == Folk::InputState::Press) {
-        Folk::Engine::setMinFrameTime(0.0);
-    }
-}
 
 // Esta función se llama antes de inicializar la escena
 void Folk::engineInit() {
@@ -40,6 +17,50 @@ void metricsCallback(Folk::InputState state) {
         // se activan las métricas de rendimiento.
         Folk::Engine::setPerformanceMetricsEnabled(true);
     }
+}
+
+void keyCallback(Folk::Key key, Folk::InputState state) {
+    if (state == Folk::InputState::Press)
+        return;
+    
+    switch (key)
+    {
+    case Folk::Key::Num1:
+        // 15 fps
+        Folk::Engine::setMinFrameTime(0.066);
+        break;
+
+    case Folk::Key::Num2:
+        // 30
+        Folk::Engine::setMinFrameTime(0.033);
+        break;
+
+    case Folk::Key::Num3:
+        // 60
+        Folk::Engine::setMinFrameTime(0.016);
+        break;
+
+    case Folk::Key::Num4:
+        // 144
+        Folk::Engine::setMinFrameTime(0.007);
+        break;
+
+    case Folk::Key::Num0:
+        // ilimitado
+        Folk::Engine::setMinFrameTime(0.0);
+        break;
+
+    case Folk::Key::Escape:
+        throw Folk::CriticalEngineError("Dummy critical error.");
+
+    case Folk::Key::Space:
+        throw Folk::EngineRuntimeError("Dummy runtime error.");
+    }
+}
+
+void update(Folk::Scene& scn, double delta) {
+    if (Folk::getMouseButton(Folk::MouseButton::Left) == Folk::InputState::Press)
+        Folk::log(Folk::LogLevel::MESSAGE) << "dt=" << delta << '\n';
 }
 
 // Esta función se llama para inicializar la escena
@@ -67,4 +88,6 @@ void Folk::sceneInit(Folk::Scene &scene) {
     enable_metrics.addBinding(Folk::Key::RightAlt);
     enable_metrics.addBinding(Folk::Key::LeftAlt);
     enable_metrics.addCallback(metricsCallback);
+
+    addKeyCallback(keyCallback);
 }
