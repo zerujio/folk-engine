@@ -60,7 +60,8 @@ void keyCallback(Folk::Key key, Folk::InputState state) {
 
 void update(Folk::Scene& scn, double delta) {
     if (Folk::getMouseButton(Folk::MouseButton::Left) == Folk::InputState::Press)
-        Folk::log(Folk::LogLevel::MESSAGE) << "dt=" << delta << '\n';
+        // Para poder ver este mensaje el programa debe iniciarse con la opción "-l trace"
+        Folk::log(Folk::LogLevel::TRACE) << "dt=" << delta << '\n';
 }
 
 // Esta función se llama para inicializar la escena

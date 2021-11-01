@@ -19,7 +19,7 @@ public:
     std::map<Mesh::Id, MeshData> meshes {};
     std::map<Visual::Id, VisualData> visuals {};
 
-    const char* name() const override {return "rendering";}
+    const char* name() const override {return "Renderer";}
 
 private:
     friend class EngineSingleton;
@@ -29,7 +29,7 @@ private:
 
     void update(Delta) override;
 
-    int render_id, frame_time_id;
+    int render_id;
 };
 
 } // namespace folk

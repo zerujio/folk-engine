@@ -70,17 +70,11 @@ WindowModule::WindowDimentions const& WindowModule::getWindowSize()
 }
 
 void WindowModule::update(Delta delta) {
-    static int monitor_id = ENGINE.perf_monitor.addItem("Input processing");
-
-    ENGINE.perf_monitor.start(monitor_id);
-
     try {
         glfwPollEvents();
     } catch (...) {
         ENGINE.exception.handle();
     }
-
-    ENGINE.perf_monitor.stop(monitor_id);
 }
 
 static void closeWindowCallback(GLFWwindow *w)
@@ -185,7 +179,7 @@ void GLAPIENTRY messageCallback(GLenum source, GLenum type, GLuint id,
         log_level = Log::Level::MESSAGE;
         break;
     }
-
+    
     ENGINE.log.begin(log_level) << "*** OpenGL DEBUG MESSAGE ***"
                                 << "\nsource    : " << source_str
                                 << "\ntype      : " << type_str

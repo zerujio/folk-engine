@@ -28,8 +28,7 @@ RenderModule::RenderModule()
     ImGui_ImplOpenGL3_Init("#version 430");
 
     // add performance metrics
-    render_id = ENGINE.perf_monitor.addItem("Rendering");
-    frame_time_id = ENGINE.perf_monitor.addItem("Effective frame time");
+    render_id = ENGINE.perf_monitor.addItem("Renderer (CPU)");
 
 }
 
@@ -42,9 +41,6 @@ RenderModule::~RenderModule() {
 
 void RenderModule::update(Delta delta)
 {
-    ENGINE.perf_monitor.stop(frame_time_id);
-    ENGINE.perf_monitor.start(frame_time_id);
-
     ENGINE.perf_monitor.start(render_id);
 
     glClear(GL_COLOR_BUFFER_BIT);

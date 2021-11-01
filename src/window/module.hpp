@@ -18,7 +18,7 @@ public:
         GLuint height;
     };
 
-    const char* name() const override {return "window_manager";}
+    const char* name() const override {return "Window Manager";}
 
     // Set width and height of application window
     void setWindowSize(GLuint, GLuint);

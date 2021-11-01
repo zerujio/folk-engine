@@ -21,7 +21,7 @@ public:
 
     void update(Delta) override;
 
-    const char* name() const override {return "";}
+    const char* name() const override {return "Scene update";}
 
     // Scene scene {};
 
