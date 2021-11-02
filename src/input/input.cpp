@@ -135,38 +135,119 @@ InputState InputCode::state() const {
 
 
 // Callback registering functions
-IdIntType InputManager::next_id = 0;
-
 Key_CallbackId addKeyCallback(Key_CallbackType &&f) {
-    auto id = INPUT.next_id++;
+    auto id = INPUT.genId<Key_CallbackId>();
     INPUT.key_callbacks_.emplace(id, f);
-    return static_cast<Key_CallbackId>(id);
+    return id;
 }
 
 void removeKeyCallback(Key_CallbackId const id)  {
-    INPUT.key_callbacks_.erase(static_cast<IdIntType>(id));
+    INPUT.key_callbacks_.erase(id);
 }
 
-
 MouseButton_CallbackId addMouseButtonCallback(MouseButton_CallbackType &&f) {
-    auto id = INPUT.next_id++;
+    auto id = INPUT.genId<MouseButton_CallbackId>();
     INPUT.mouse_btn_callbacks_.emplace(id, f);
-    return static_cast<MouseButton_CallbackId>(id);
+    return id;
 }
 
 void removeMouseButtonCallback(MouseButton_CallbackId const id) {
-    INPUT.mouse_btn_callbacks_.erase(static_cast<IdIntType>(id));
+    INPUT.mouse_btn_callbacks_.erase(id);
 }
 
 
 InputCode_CallbackId addInputCodeCallback(InputCode_CallbackType &&f) {
-    auto id = INPUT.next_id++;
+    auto id = INPUT.genId<InputCode_CallbackId>();
     INPUT.input_code_callbacks_.emplace(id, f);
-    return static_cast<InputCode_CallbackId>(id);
+    return id;
 }
 
 void removeInputCodeCallback(InputCode_CallbackId const id) {
-    INPUT.input_code_callbacks_.erase(static_cast<IdIntType>(id));
+    INPUT.input_code_callbacks_.erase(id);
 }
+
+// Mouse movement
+namespace Cursor
+{
+
+dvec2 getPosition() {
+    dvec2 v;
+    glfwGetCursorPos(WINDOW.getWindowPtr(), &v.x, &v.y);
+    return v;
+}
+
+void setPosition(dvec2 pos) {
+    glfwSetCursorPos(WINDOW.getWindowPtr(), pos.x, pos.y);
+}
+
+void setMode(Mode mode) {
+    int defines[3] {
+        GLFW_CURSOR_NORMAL, 
+        GLFW_CURSOR_HIDDEN, 
+        GLFW_CURSOR_DISABLED
+    };
+
+    glfwSetInputMode(WINDOW.getWindowPtr(), GLFW_CURSOR, 
+                     defines[static_cast<int>(mode)]);
+}
+
+Mode getMode() {
+    auto mode = glfwGetInputMode(WINDOW.getWindowPtr(), GLFW_CURSOR);
+
+    switch (mode) {
+    default:
+    case GLFW_CURSOR_NORMAL:
+        return Mode::Normal;
+    
+    case GLFW_CURSOR_HIDDEN:
+        return Mode::Hidden;
+    
+    case GLFW_CURSOR_DISABLED:
+        return Mode::Disabled;
+    }
+}
+
+bool isRawMotionSupported() {
+    return glfwRawMouseMotionSupported();
+}
+
+void setRawMotionEnabled(bool value) {
+    glfwSetInputMode(WINDOW.getWindowPtr(), GLFW_RAW_MOUSE_MOTION,
+                     value ? GLFW_TRUE : GLFW_FALSE);
+}
+
+bool getRawMotionEnabled() {
+    return glfwGetInputMode(WINDOW.getWindowPtr(), GLFW_RAW_MOUSE_MOTION);
+}
+
+CallbackId addCallback(CallbackType && f) {
+    auto id = INPUT.genId<CallbackId>();
+    INPUT.cursor_callbacks_.emplace(id, f);
+    return id;
+}
+
+void removeCallback(CallbackId const id) {
+    INPUT.cursor_callbacks_.erase(id);
+}
+
+} // namespace Cursor
+
+
+namespace Scroll
+{
+
+CallbackId addCallback(CallbackType && f) {
+    auto id = INPUT.genId<CallbackId>();
+    INPUT.scroll_callbacks_.emplace(id, f);
+    return id;
+}
+
+void removeCallback(CallbackId const id) {
+    INPUT.scroll_callbacks_.erase(id);
+}
+
+} // namespace Scroll
+
+
 
 } // namespace Folk

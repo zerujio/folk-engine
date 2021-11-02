@@ -48,12 +48,20 @@ void rebindCallback(InputState state) {
     }
 }
 
+void onClick(MouseButton mb, InputState state) {
+    if (state == InputState::Release) {
+        auto pos = Cursor::getPosition();
+        std::cout << "pos= (" << pos.x << ", " << pos.y << ")\n";
+    }
+}
+
 void Folk::engineInit() {
     Folk::Engine::setPerformanceMetricsEnabled(true);
 }
 
 void Folk::sceneInit(Scene& scene) {
     auto id = addKeyCallback(keyCallback);
+    auto mb_id = addMouseButtonCallback(onClick);
 
     InputAction& action = InputAction::create("example_action");
     action.addCallback(actionCallback);

@@ -40,13 +40,26 @@ public:
     friend void InputAction::bind(InputCode const);
     friend void InputAction::unbind(InputCode const);
 
+    friend Cursor::CallbackId Cursor::addCallback(Cursor::CallbackType&&);
+    friend void Cursor::removeCallback(Cursor::CallbackId const);
+
+    friend Scroll::CallbackId Scroll::addCallback(Scroll::CallbackType&&);
+    friend void Scroll::removeCallback(Scroll::CallbackId const);
+
 private:
-    static IdIntType next_id;
+    IdIntType next_id {0};
+
+    template <class T>
+    T genId() {
+        return static_cast<T>(next_id++);
+    }
 
     // user defined callbacks 
-    std::map<IdIntType, Key_CallbackType> key_callbacks_;
-    std::map<IdIntType, MouseButton_CallbackType> mouse_btn_callbacks_;
-    std::map<IdIntType, InputCode_CallbackType> input_code_callbacks_;
+    std::map<Key_CallbackId, Key_CallbackType> key_callbacks_;
+    std::map<MouseButton_CallbackId, MouseButton_CallbackType> mouse_btn_callbacks_;
+    std::map<InputCode_CallbackId, InputCode_CallbackType> input_code_callbacks_;
+    std::map<Cursor::CallbackId, Cursor::CallbackType> cursor_callbacks_;
+    std::map<Scroll::CallbackId, Scroll::CallbackType> scroll_callbacks_;
 
     // InputAction
     std::map<std::string, InputActionProxy> actions_;

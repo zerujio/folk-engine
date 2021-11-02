@@ -6,6 +6,8 @@
 #include "input_code.hpp"
 #include "input_action.hpp"
 
+#include "../utils/vector.hpp"
+
 #include <functional>
 
 namespace Folk
@@ -72,6 +74,73 @@ InputCode_CallbackId addInputCodeCallback(InputCode_CallbackType&&);
 /// Desconecta un callback previamente registrado.
 void removeInputCodeCallback(InputCode_CallbackId const);
 
+
+/*=============================== Mouse ======================================*/
+
+namespace Cursor {
+
+enum class CallbackId : IdIntType {};
+using CallbackType = std::function<void (dvec2)>;
+
+/// Consulta la posición del cursor.
+/**
+ * \return la posición del cursor en coordenas de la pantalla, con origen en la 
+ * esquina superior izquierda y medida en pixeles.
+ */
+dvec2 getPosition();
+
+/// Cambia la posición del cursor.
+void setPosition(dvec2);
+
+/// Añade un callback que será invocado cada vez que la posición del ratón cambie.
+/**
+ * \return un identificador que puede ser utilizado para quitar este callback.
+*/
+CallbackId addCallback(CallbackType&&);
+
+/// Quita un callback previamente asociado.
+void removeCallback(CallbackId const);
+
+enum class Mode {Normal, Hidden, Disabled};
+
+/// Cambia el modo del cursor.
+/**
+ * - Normal: funcionamiento estándar.
+ * - Hidden: igual al modo normal, pero el cursor no es visible.
+ * - Disabled: movimiento ilimitado, cursor invisible y re-centrado 
+ *  automáticamente. Sirve para implementar _mouse look_.
+*/
+void setMode(Mode);
+
+/// Consulta el modo del cursor.
+Mode getMode();
+
+/// Consulta si la plataforma soporta el modo _raw motion_ (sin escalamiento ni aceleración).
+bool isRawMotionSupported();
+
+void setRawMotionEnabled(bool);
+
+bool getRawMotionEnabled();
+
+} // namespace Mouse
+
+namespace Scroll {
+
+enum class CallbackId : IdIntType {};
+using CallbackType = std::function<void(dvec2)>;
+
+/// Añade un callback que será invocado cada vez que se haga _scroll_.
+/**
+ * El scroll se provee a la función como un vector de dos dimensiones que 
+ * representa el desplazamiento en cada eje. La mayoría de los ratones comunes
+ * sólo tienen desplazamiento vertical (eje Y).
+*/
+CallbackId addCallback(CallbackType&&);
+
+/// Quita un callback anteriormente configurado.
+void removeCallback(CallbackId const);
+
+} // namespace Scroll
 
 } // namespace folk
 
