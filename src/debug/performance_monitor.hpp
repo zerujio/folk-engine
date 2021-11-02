@@ -39,7 +39,7 @@ private:
     std::vector<Item> items;
 
     void draw();
-    friend class RenderModule;
+    friend class Renderer;
 };
 
 } // namespace Folk

@@ -26,3 +26,7 @@ target_include_directories(entt INTERFACE entt/single_include)
 
 # cxxopts
 add_subdirectory(cxxopts)
+
+# bgfx
+set(BGFX_INSTALL OFF)
+add_subdirectory(bgfx.cmake)

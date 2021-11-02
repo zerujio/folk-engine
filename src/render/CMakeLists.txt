@@ -1,8 +1,8 @@
 set(LIB_FILES 
+    renderer.cpp
     immediate_geometry.cpp
     material.cpp
     mesh.cpp
-    module.cpp
     visual_component.cpp
     visual.cpp
     shader.cpp

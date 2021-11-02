@@ -12,7 +12,7 @@ namespace Folk
 /// \~english \brief A game scene.
 class Scene final {
     friend class SceneModule;
-    friend class RenderModule;
+    friend class Renderer;
 
 public:
     using UpdateCallback = void (*)(Scene&, double);

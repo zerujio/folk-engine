@@ -10,7 +10,7 @@
 #include "folk/scene/scene.hpp"
 
 // modules
-#include "../render/module.hpp"
+#include "../render/renderer.hpp"
 #include "../audio/module.hpp"
 #include "../window/module.hpp"
 #include "../scene/module.hpp"
@@ -52,7 +52,7 @@ public:
     InputManager input_manager {};
 
     /// Render module
-    RenderModule render {};
+    Renderer render {};
 
     /// Audio module
     AudioModule audio {};

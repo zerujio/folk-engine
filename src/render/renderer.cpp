@@ -3,7 +3,7 @@
 #include "../window/module.hpp"
 
 #include "common.hpp"
-#include "module.hpp"
+#include "renderer.hpp"
 
 #include <imgui.h>
 #include <backends/imgui_impl_glfw.h>
@@ -11,7 +11,7 @@
 
 namespace Folk {
 
-RenderModule::RenderModule() 
+Renderer::Renderer() 
 {
     {
         auto& wsize = WINDOW.getWindowSize();
@@ -32,14 +32,14 @@ RenderModule::RenderModule()
 
 }
 
-RenderModule::~RenderModule() {
+Renderer::~Renderer() {
     ImGui_ImplOpenGL3_Shutdown();
     ImGui_ImplGlfw_Shutdown();
     ImGui::DestroyContext();
 }
 
 
-void RenderModule::update(Delta delta)
+void Renderer::update(Delta delta)
 {
     ENGINE.perf_monitor.start(render_id);
 

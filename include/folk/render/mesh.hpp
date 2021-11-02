@@ -29,7 +29,7 @@ private:
     Mesh& operator=(Mesh const&);
     Mesh& operator=(Mesh&&);
 
-    friend class RenderModule;
+    friend class Renderer;
     friend class Visual;
 };
     

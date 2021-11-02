@@ -60,7 +60,7 @@ private:
     Material(Shader::Ref);
 
     friend class Visual;
-    friend class RenderModule;
+    friend class Renderer;
 };
 
 } // namespace folk

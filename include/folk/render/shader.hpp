@@ -89,7 +89,7 @@ private:
     friend Ref;
     friend class Material;
     friend class Visual;
-    friend class RenderModule;
+    friend class Renderer;
 };
 
 } // namespace Folk

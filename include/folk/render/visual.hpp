@@ -56,7 +56,7 @@ private:
     void bindBuffers();
     void enableVertexAttributes();
 
-    friend class RenderModule;
+    friend class Renderer;
 };
 
 } // namespace folk

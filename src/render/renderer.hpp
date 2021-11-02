@@ -13,7 +13,7 @@
 
 namespace Folk {
 
-FOLK_ENGINE_UPDATEABLE_MODULE(RenderModule){
+FOLK_ENGINE_UPDATEABLE_MODULE(Renderer){
 public:
     std::map<Shader::Id, ShaderData> shaders {};
     std::map<Mesh::Id, MeshData> meshes {};
@@ -24,8 +24,8 @@ public:
 private:
     friend class EngineSingleton;
 
-    RenderModule();
-    ~RenderModule();
+    Renderer();
+    ~Renderer();
 
     void update(Delta) override;
 
