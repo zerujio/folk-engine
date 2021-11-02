@@ -57,8 +57,7 @@ Es necesario tener instalado Doxygen para poder generar la documentación.
 
 1. Descargar dependencias del proyecto 
 ```sh
-git submodule init
-git submodule update
+git submodule update --init --recursive
 ```
 
 2. Generar build
