@@ -39,22 +39,14 @@ public:
     /// \~english Retrieve a \ref Reference to this Visual's material.
     Material::Ref getMaterial() const;
 
-    ~Visual();
-
 private:
     Mesh::Ref mesh;
     Material::Ref material;
 
     Visual(Mesh::Ref, Material::Ref);
 
-    Visual(Visual const&);
-    Visual& operator=(Visual const&);
-
-    Visual(Visual&&);
-    Visual& operator=(Visual&&);
-
-    void bindBuffers();
-    void enableVertexAttributes();
+    Visual(Visual const&) = delete;
+    Visual& operator=(Visual const&) = delete;
 
     friend class Renderer;
 };

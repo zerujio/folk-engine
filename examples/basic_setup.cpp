@@ -69,10 +69,13 @@ void Folk::sceneInit(Folk::Scene &scene) {
     // Añadir un nuevo nodo como hijo del nodo raíz.
     Node& square = scene.rootNode().createChild("Square");
 
+    // cargamos un shader
+    auto shader = Shader::createFromFiles("shaders/vs_default.bin", "shaders/fs_default.bin");
+
     // Crear una Visual...
     auto visual = Visual::create(
-        Mesh::create(ImmediateGeometry::triangle()), // con un triangulo como mesh
-        Material::createDefaultMaterial()            // y el shader default
+        Mesh::create(ImmediateGeometry::colorSquare()), // con un cuadrado como mesh
+        Material::create(shader)    // y el shader que leímos desde el archivo
     );
 
     // Añadir al nodo una componente con la Visual anterior

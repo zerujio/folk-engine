@@ -1,3 +1,3 @@
 set(LIB_FILES
-    "module.cpp"
+    window_manager.cpp
     PARENT_SCOPE)

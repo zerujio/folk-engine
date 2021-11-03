@@ -15,13 +15,13 @@ void keyCallback(GLFWwindow*, int, int, int, int);
 void mouseButtonCallback(GLFWwindow*, int, int, int);
 
 InputManager::InputManager() {
-    glfwSetKeyCallback(ENGINE.window.getWindowPtr(), keyCallback);
-    glfwSetMouseButtonCallback(ENGINE.window.getWindowPtr(), mouseButtonCallback);
+    glfwSetKeyCallback(ENGINE.window.windowPtr(), keyCallback);
+    glfwSetMouseButtonCallback(ENGINE.window.windowPtr(), mouseButtonCallback);
 }
 
 InputManager::~InputManager() {
-    glfwSetKeyCallback(ENGINE.window.getWindowPtr(), nullptr);
-    glfwSetMouseButtonCallback(ENGINE.window.getWindowPtr(), nullptr);
+    glfwSetKeyCallback(ENGINE.window.windowPtr(), nullptr);
+    glfwSetMouseButtonCallback(ENGINE.window.windowPtr(), nullptr);
 }
 
 void keyCallback(GLFWwindow* window, int keycode, int scancode, int action, 

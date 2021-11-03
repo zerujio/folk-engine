@@ -3,11 +3,15 @@ project(FolkEngine VERSION 0.1.0
                    LANGUAGES C CXX)
 
 find_package(OpenGL REQUIRED)
+set( FOLK_OPENGL_VERSION "43" )
 
 find_package(Doxygen)
 
 # external dependencies
 add_subdirectory(extern)
+
+# shaderc
+include(shaderc.cmake)
 
 # configure engine library
 add_subdirectory(src)

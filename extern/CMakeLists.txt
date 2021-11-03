@@ -29,4 +29,9 @@ add_subdirectory(cxxopts)
 
 # bgfx
 set(BGFX_INSTALL OFF)
+set(BGFX_BUILD_EXAMPLES OFF)
+set(BGFX_BUILD_TOOLS ON)
+set(BGFX_OPENGL_VERSION ${FOLK_OPENGL_VERSION})
 add_subdirectory(bgfx.cmake)
+add_library(bgfx_interface INTERFACE)
+target_link_libraries(bgfx_interface INTERFACE bgfx bx bimg)

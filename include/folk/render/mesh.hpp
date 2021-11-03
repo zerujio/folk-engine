@@ -1,10 +1,8 @@
 #ifndef FOLK_RENDER__MESH_HPP
 #define FOLK_RENDER__MESH_HPP
 
-
 #include "folk/core/resource.hpp"
 #include "folk/render/immediate_geometry.hpp"
-#include "folk/render/common.hpp"
 
 namespace Folk
 {
@@ -23,11 +21,10 @@ public:
     ~Mesh();
 
 private:
-    Mesh(VertexArray const&, IndexArray const&);
-    Mesh(Mesh const&);
-    Mesh(Mesh&&);
-    Mesh& operator=(Mesh const&);
-    Mesh& operator=(Mesh&&);
+    Mesh(ImmediateGeometry::VertexArray const&, 
+         ImmediateGeometry::IndexArray const&);
+    Mesh(Mesh const&) = delete;
+    Mesh& operator=(Mesh const&) = delete;
 
     friend class Renderer;
     friend class Visual;

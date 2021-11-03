@@ -1,9 +1,11 @@
-#include "module.hpp"
+#include "window_manager.hpp"
 
 #include "../core/common.hpp"
 #include "../core/engine_singleton.hpp"
 
 #include "folk/core/error.hpp"
+
+#include <sstream>
 
 namespace Folk {
 
@@ -11,9 +13,12 @@ static void closeWindowCallback(GLFWwindow*);
 void GLAPIENTRY messageCallback(GLenum source, GLenum type, GLuint id, 
                                 GLenum severity, GLsizei length,
                                 const GLchar* message, const void* userParam);
+void glfwErrorCallback(int, const char*);
 
-WindowModule::WindowModule() 
+WindowManager::WindowManager() 
 {
+    glfwSetErrorCallback(glfwErrorCallback);
+
     if (!glfwInit())
         throw EngineRuntimeError("GLFW initialization failed.");
 
@@ -21,6 +26,7 @@ WindowModule::WindowModule()
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, gl_version.minor);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
     glfwWindowHint(GLFW_RESIZABLE, GL_FALSE);
+    // glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
 
     window = glfwCreateWindow(
         window_size.width, 
@@ -36,9 +42,7 @@ WindowModule::WindowModule()
 
     glfwSetWindowCloseCallback(window, closeWindowCallback);
 
-    glfwMakeContextCurrent(WINDOW.getWindowPtr());
-
-    glfwSwapInterval(1); // vsync
+    glfwMakeContextCurrent(window);
 
     if (!gladLoadGLLoader((GLADloadproc) glfwGetProcAddress))
         throw CriticalEngineError("OpenGL context initialization error: "
@@ -48,28 +52,30 @@ WindowModule::WindowModule()
     glDebugMessageCallback(messageCallback, 0);
 }
 
-WindowModule::~WindowModule() 
+WindowManager::~WindowManager() 
 {
     glfwTerminate();
 }
 
-void WindowModule::setWindowTitle(const char* title)
+void WindowManager::setWindowTitle(const char* title)
 {
     window_title = title;
     glfwSetWindowTitle(window, window_title.c_str());
 }
 
-GLFWwindow* WindowModule::getWindowPtr() 
+GLFWwindow* WindowManager::windowPtr() 
 {
     return window;
 }
 
-WindowModule::WindowDimentions const& WindowModule::getWindowSize() 
+WindowManager::WindowDimentions const& WindowManager::getWindowSize() 
 {
+    glfwGetWindowSize(window, &window_size.width, &window_size.height);
+
     return window_size;
 }
 
-void WindowModule::update(Delta delta) {
+void WindowManager::update(Delta delta) {
     try {
         glfwPollEvents();
     } catch (...) {
@@ -185,6 +191,18 @@ void GLAPIENTRY messageCallback(GLenum source, GLenum type, GLuint id,
                                 << "\ntype      : " << type_str
                                 << "\nseverity  : " << severity_str
                                 << '\n' << message << "\n\n";
+}
+
+void glfwErrorCallback(int code, const char* message) {
+    std::stringstream exc_msg;
+
+    exc_msg << "GLFW error " << code << " : " << message;
+
+    try {
+        throw EngineRuntimeError(exc_msg.str());
+    } catch (...) {
+        ENGINE.exception.handle();
+    }
 }
 
 } // namespace folk

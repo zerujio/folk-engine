@@ -1,7 +1,8 @@
 #ifndef FOLK_RENDER__IMMEDIATE_GEOMETRY_HPP
 #define FOLK_RENDER__IMMEDIATE_GEOMETRY_HPP
 
-#include "folk/render/common.hpp"
+#include <vector>
+#include <cstdint>
 
 namespace Folk
 {
@@ -10,6 +11,22 @@ namespace Folk
 /// \brief \~english A structure to specify geometry.
 struct ImmediateGeometry
 {   
+    struct Vertex {
+        float x;
+        float y;
+        float z;
+        uint8_t r;
+        uint8_t g;
+        uint8_t b;
+        uint8_t a;
+
+        uint32_t& color = *((uint32_t*) &r);
+    };
+    using VertexArray = std::vector<Vertex>;
+
+    using Index = uint16_t;
+    using IndexArray = std::vector<Index>;
+
     /// Vertices
     VertexArray vertices {};
 
@@ -31,15 +48,11 @@ struct ImmediateGeometry
      * \param v a vertex array.
      * \param i an index array.
     */
-    ImmediateGeometry(VertexArray const& v, IndexArray const& i) 
+    ImmediateGeometry(VertexArray && v, IndexArray && i) 
         : vertices(v), indices(i) {}
 
-    /// \~spanish Construye un triángulo en formato XYZRGB. \~english Construct triangle in XYZRGB format.
-    static ImmediateGeometry rainbowTriangle();
-
-
-    /// \~spanish Construye un trángulo en formato XYZ (sin colores). \~english Construct triangle in XYZ format (no color).
-    static ImmediateGeometry triangle();
+    /// Genera un cubo multicolor
+    static ImmediateGeometry colorSquare();
 };
 
 } // namespace folk

@@ -80,3 +80,28 @@ Las targets son:
 - `folk_engine`: librería estática.
 - `folk_docs`: documentación en html. Abrir con un navegador web, ej. `firefox build/html/index.html`.
 - `basic_setup`: programa de ejemplo (`examples/basic_setup`).
+
+#### Shaders
+Este motor utiliza la librería gráfica BGFX. Para utilizar shaders distintos de los predeterminados, es necesario que estén escritos en el formato que esta librería requiere (una variante de GLSL) y que además hayan sido preprocesados con el compilador apropiado. Para facilitar este proceso, el proyecto en CMake incluye la función `folk_add_shader` que realiza la compilación.
+
+El siguiente ejemplo crea targets que compilan los shaders antes de compilar el programa:
+
+```{cmake}
+# shaders
+folk_add_shader(vert_shader vert.sc VERTEX "${CMAKE_CURRENT_BINARY_DIR}/shaders/vert.bin")
+
+folk_add_shader(frag_shader frag.sc FRAGMENT "$}{CMAKE_CURRENT_BINARY_DIR}/shaders/frag.bin")
+
+add_custom_target(shader_target)
+add_dependencies(shader_target vert_shader frag_shader)
+
+# ejecutable
+add_executable(example_target example.cpp)
+target_link_libraries(example_target folk_engine)
+
+# compilar ejecutable + shaders
+add_custom_target(example_with_shaders ALL)
+add_dependencies(example_with_shaders example_target shader_target)
+```
+
+Además, los targets `vert_shader` y `frag_shader` pueden ser utilizados individualmente para preprocesar de nuevo los shaders. Los archivos `vert.bin` y `frag.bin` son los que la función `Folk::Shader::createFromFiles()` espera.

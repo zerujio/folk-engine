@@ -11,7 +11,7 @@ namespace Folk
 // Polling functions 
 
 InputState getKey(Key key) {
-    return static_cast<InputState>(glfwGetKey(ENGINE.window.getWindowPtr(), 
+    return static_cast<InputState>(glfwGetKey(ENGINE.window.windowPtr(), 
                                    intCast(key)));
 }
 
@@ -119,17 +119,17 @@ const char* getKeyName(Key key) {
 
 InputState getMouseButton(MouseButton mb) {
     return static_cast<InputState>(
-        glfwGetMouseButton(ENGINE.window.getWindowPtr(), intCast(mb))
+        glfwGetMouseButton(ENGINE.window.windowPtr(), intCast(mb))
     );
 }
 
 // InputCode
 InputState InputCode::state() const {
     if (isMouseButton())
-        return stateCast(glfwGetMouseButton(ENGINE.window.getWindowPtr(),
+        return stateCast(glfwGetMouseButton(ENGINE.window.windowPtr(),
                                             intCast(operator MouseButton())));
     else
-        return stateCast(glfwGetKey(ENGINE.window.getWindowPtr(),
+        return stateCast(glfwGetKey(ENGINE.window.windowPtr(),
                                     intCast(operator Key())));
 }
 
@@ -172,12 +172,12 @@ namespace Cursor
 
 dvec2 getPosition() {
     dvec2 v;
-    glfwGetCursorPos(WINDOW.getWindowPtr(), &v.x, &v.y);
+    glfwGetCursorPos(WINDOW.windowPtr(), &v.x, &v.y);
     return v;
 }
 
 void setPosition(dvec2 pos) {
-    glfwSetCursorPos(WINDOW.getWindowPtr(), pos.x, pos.y);
+    glfwSetCursorPos(WINDOW.windowPtr(), pos.x, pos.y);
 }
 
 void setMode(Mode mode) {
@@ -187,12 +187,12 @@ void setMode(Mode mode) {
         GLFW_CURSOR_DISABLED
     };
 
-    glfwSetInputMode(WINDOW.getWindowPtr(), GLFW_CURSOR, 
+    glfwSetInputMode(WINDOW.windowPtr(), GLFW_CURSOR, 
                      defines[static_cast<int>(mode)]);
 }
 
 Mode getMode() {
-    auto mode = glfwGetInputMode(WINDOW.getWindowPtr(), GLFW_CURSOR);
+    auto mode = glfwGetInputMode(WINDOW.windowPtr(), GLFW_CURSOR);
 
     switch (mode) {
     default:
@@ -212,12 +212,12 @@ bool isRawMotionSupported() {
 }
 
 void setRawMotionEnabled(bool value) {
-    glfwSetInputMode(WINDOW.getWindowPtr(), GLFW_RAW_MOUSE_MOTION,
+    glfwSetInputMode(WINDOW.windowPtr(), GLFW_RAW_MOUSE_MOTION,
                      value ? GLFW_TRUE : GLFW_FALSE);
 }
 
 bool getRawMotionEnabled() {
-    return glfwGetInputMode(WINDOW.getWindowPtr(), GLFW_RAW_MOUSE_MOTION);
+    return glfwGetInputMode(WINDOW.windowPtr(), GLFW_RAW_MOUSE_MOTION);
 }
 
 CallbackId addCallback(CallbackType && f) {

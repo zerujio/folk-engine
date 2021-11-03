@@ -2,7 +2,7 @@
 
 #include "../render/common.hpp"
 
-#include "../window/module.hpp"
+#include "../window/window_manager.hpp"
 
 #include "../core/engine_singleton.hpp"
 

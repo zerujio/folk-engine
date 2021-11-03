@@ -1,5 +1,5 @@
 #include "folk/core/engine.hpp"
-#include "../window/module.hpp"
+#include "../window/window_manager.hpp"
 #include "engine_singleton.hpp"
 
 namespace Folk::Engine {

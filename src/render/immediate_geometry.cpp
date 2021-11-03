@@ -3,30 +3,19 @@
 namespace Folk
 {
 
-ImmediateGeometry ImmediateGeometry::triangle() {
-    return ImmediateGeometry(
+ImmediateGeometry ImmediateGeometry::colorSquare() {
+    return {
         {
-            0.5f,  0.5f, 0.0f,  // top right
-            0.5f, -0.5f, 0.0f,  // bottom right
-            -0.5f, -0.5f, 0.0f,  // bottom left
-            -0.5f,  0.5f, 0.0f   // top left
+            {  0.5f,  0.5f, 0.0f, 0xff, 0x00, 0x00, 0xff },
+            {  0.5f, -0.5f, 0.0f, 0x00, 0xff, 0x00, 0xff },
+            { -0.5f, -0.5f, 0.0f, 0x00, 0x00, 0xff, 0xff },
+            { -0.5f,  0.5f, 0.0f, 0xff, 0x00, 0xff, 0xff }
         },
-        {0, 1, 3,
-         1, 2, 3}
-    );
-}
-
-ImmediateGeometry ImmediateGeometry::rainbowTriangle() {
-    return ImmediateGeometry(
-        // vertices
         {
-        -0.5f, -0.5f, 0.0f,  1.0f, 0.0f, 0.0f,
-         0.5f, -0.5f, 0.0f,  0.0f, 1.0f, 0.0f,
-         0.0f,  0.5f, 0.0f,  0.0f, 0.0f, 1.0f
-        },
-        // indices
-        {0, 1, 2}
-    );
+            0,1,3,
+            1,2,3
+        }
+    };
 }
     
 } // namespace folk

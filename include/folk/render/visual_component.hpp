@@ -1,7 +1,6 @@
 #ifndef FOLK_RENDER__VISUAL_COMPONENT
 #define FOLK_RENDER__VISUAL_COMPONENT
 
-#include "folk/render/common.hpp"
 #include "folk/render/visual.hpp"
 
 namespace Folk {

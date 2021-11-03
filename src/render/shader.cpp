@@ -1,107 +1,86 @@
 #include "folk/render/shader.hpp"
 #include "folk/core/error.hpp"
 #include "common.hpp"
-#include "module.hpp"
+#include "renderer.hpp"
+#include "shader_src.hpp"
+
+#include <fstream>
+#include <sstream>
+
+#include <iostream>
 
 namespace Folk
 {
 
-static const char* default_vert_src = R"gl(
-    #version 330 core
-    layout (location = 0) in vec3 pos;
+static const bgfx::ShaderHandle loadShaderFile(const char* filename) {
+    std::ifstream file {filename, std::ios::binary};
 
-    void main() {
-        gl_Position = vec4(pos.x, pos.y, pos.z, 1.0f);
-    }
-)gl";
+    if (!file.is_open())
+        throw EngineRuntimeError("Couldn't open file " + std::string(filename));
 
-static const char* default_frag_src = R"gl(
-    #version 330 core
+    file.seekg(0, std::ios::end);
+    std::size_t file_size = file.tellg();
+    file.seekg(0, std::ios::beg);
+
+    char* data = new char[file_size + 1];
+    data[file_size] = '\0';
+
+    file.read(data, file_size);
+
+    auto mem = bgfx::makeRef(data, file_size + 1,
+                             [](void* ptr, void* _d) { delete[] (char*) ptr; });
     
-    out vec4 finalColor;
+    auto handle = bgfx::createShader(mem);
+    if (!bgfx::isValid(handle))
+        throw EngineRuntimeError("Shader load failed");
+    
+    bgfx::setName(handle, filename);
 
-    void main() {
-        finalColor = vec4(1, 1, 1, 1);
-    }
-)gl";
-
-static const Shader::VertexAttribArray default_vaa {
-    {0, 3, Shader::VertexAttrib::Type::Float}
-};
-
-static GLuint compileShader(GLenum type, const char* src) {
-    int success;
-    int log_length;
-    char log[512];
-
-    GLuint shader = glCreateShader(type);
-
-    if (!shader) {
-        throw CriticalEngineError("Shader creation failed!");
-    }
-
-    glShaderSource(shader, 1, &src, nullptr);
-    glCompileShader(shader);
-
-    glGetShaderiv(shader, GL_COMPILE_STATUS, &success);
-
-    if (!success) {
-        glGetShaderInfoLog(shader, log_length, nullptr, log);
-        glDeleteShader(shader);
-        throw CriticalEngineError("Shader compilaton failed: " 
-            + std::string(log));
-    }
-
-    return shader;
+    return handle;
 }
 
-Shader::Ref Shader::createDefaultShader() {
-    return Ref(new Shader(default_vert_src, default_frag_src, default_vaa));
+static bgfx::ProgramHandle buildProgram(const bgfx::ShaderHandle vert, 
+                                        const bgfx::ShaderHandle frag)
+{       
+    auto program = bgfx::createProgram(vert, frag, true);
+
+    if (!bgfx::isValid(program))
+        throw EngineRuntimeError("Shader program linking failed");
+
+    return program;
 }
 
-Shader::Ref Shader::create(const char* vert, const char* frag, 
-                           VertexAttribArray const& vaa)
+Shader::Shader(const char* vert_filename, const char* frag_filename)
 {
-    return Ref( new Shader(vert, frag, vaa) );
+    RENDER.shaders[id] = {buildProgram(loadShaderFile(vert_filename),
+                                       loadShaderFile(frag_filename))};
 }
 
-Shader::Shader(const char* vert, const char* frag,
-               VertexAttribArray const& vaa)
-{
-        // compile vertex shader
-    auto vertex_shader = compileShader(GL_VERTEX_SHADER, vert);
+// default shader
+Shader::Shader() {
+    auto vmem = bgfx::makeRef(vs_default, sizeof(vs_default));
+    auto vert = bgfx::createShader(vmem);
 
-    auto fragment_shader = compileShader(GL_FRAGMENT_SHADER, frag);
+    auto fmem = bgfx::makeRef(fs_default, sizeof(fs_default));
+    auto frag = bgfx::createShader(fmem);
 
-    auto program = glCreateProgram();
-    // ENGINE.out << "Created program: " << program;
-
-    glAttachShader(program, vertex_shader);
-    glAttachShader(program, fragment_shader);
-
-    glLinkProgram(program);
-
-    glDeleteShader(vertex_shader);
-    glDeleteShader(fragment_shader);
-
-    int success;
-    int logsize = 512;
-    char log[logsize];
-    glGetProgramiv(program, GL_LINK_STATUS, &success);
-
-    if (!success) {
-        glad_glGetProgramInfoLog(program, logsize, nullptr, log);
-        throw CriticalEngineError("Shader linking failed:" + std::string(log));
-    }
-
-    RENDER.shaders.emplace(id, ShaderData(program, vaa));
+    RENDER.shaders[id] = {buildProgram(frag, vert)};
 }
 
-Shader::~Shader() 
-{
-    auto &data = RENDER.shaders.at(id);
-    glDeleteProgram(data.program);
+Shader::~Shader() {
+    bgfx::destroy(RENDER.shaders[id].program_handle);
+    
     RENDER.shaders.erase(id);
+}
+
+Shader::Ref Shader::createFromFiles(const char* vertex_file,
+                                    const char* fragment_file)
+{
+    return {new Shader(vertex_file, fragment_file)}; 
+}
+
+Shader::Ref Shader::createDefault() {
+    return {new Shader()};
 }
 
 } // namespace Folk

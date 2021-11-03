@@ -4,24 +4,24 @@
 #include "../core/module.hpp"
 #include "../utils/update_listener.hpp"
 
-#include "glad/glad.h"
-#include "GLFW/glfw3.h"
+#include <glad/glad.h>
+#include <GLFW/glfw3.h>
 
 #include <string>
 
 namespace Folk {
 
-FOLK_ENGINE_UPDATEABLE_MODULE(WindowModule) {
+FOLK_ENGINE_UPDATEABLE_MODULE(WindowManager) {
 public:
     struct WindowDimentions {
-        GLuint width; 
-        GLuint height;
+        int width; 
+        int height;
     };
 
     const char* name() const override {return "Window Manager";}
 
     // Set width and height of application window
-    void setWindowSize(GLuint, GLuint);
+    void setWindowSize(int, int);
 
     // Retrieve width and height of application window
     WindowDimentions const& getWindowSize();
@@ -30,7 +30,7 @@ public:
     void setWindowTitle(const char*);
 
     // Get ptr to GLFW window object
-    GLFWwindow* getWindowPtr();
+    GLFWwindow* windowPtr();
 
 private:
     friend class EngineSingleton;
@@ -39,13 +39,13 @@ private:
     WindowDimentions window_size {800, 600};
     std::string window_title {"Folk Engine Application"};
 
-    WindowModule();
-    ~WindowModule();
+    WindowManager();
+    ~WindowManager();
 
     void update(Delta) override;
 };
 
-#define WINDOW WindowModule::instance()
+#define WINDOW WindowManager::instance()
 
 } // namespace folk
 

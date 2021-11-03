@@ -6,7 +6,7 @@ namespace Folk
 {
 
 Material::Ref Material::createDefaultMaterial() {
-    return Ref(new Material(Shader::createDefaultShader()));
+    return Ref(new Material(Shader::createDefault()));
 }
 
 Material::Ref Material::create(Shader::Ref shader)

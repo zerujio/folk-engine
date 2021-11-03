@@ -12,7 +12,7 @@
 // modules
 #include "../render/renderer.hpp"
 #include "../audio/module.hpp"
-#include "../window/module.hpp"
+#include "../window/window_manager.hpp"
 #include "../scene/module.hpp"
 #include "../input/input_manager.hpp"
 #include "../debug/log.hpp"
@@ -46,7 +46,7 @@ public:
     ExceptionHandler exception {};
 
     /// Window module
-    WindowModule window {};
+    WindowManager window {};
 
     /// Input manager
     InputManager input_manager {};
