@@ -13,9 +13,12 @@ void Folk::engineInit() {
 }
 
 void metricsCallback(Folk::InputState state) {
+    static bool show = true;
+
     if (state == Folk::InputState::Press) {
         // se activan las métricas de rendimiento.
-        Folk::Engine::setPerformanceMetricsEnabled(true);
+        show = !show;
+        Folk::Engine::setPerformanceMetricsEnabled(show);
     }
 }
 

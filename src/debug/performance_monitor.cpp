@@ -6,8 +6,6 @@
 
 #include "../core/engine_singleton.hpp"
 
-#include <imgui.h>
-
 namespace Folk
 {
 
@@ -19,17 +17,20 @@ void PerformanceMonitor::stop(int k) {
     items[k].delta = Clock::now() - items[k].start;
 }
 
+void PerformanceMonitor::setVisibility(bool v) {
+    visible = v;
+    bgfx::setDebug(visible ? BGFX_DEBUG_TEXT : BGFX_DEBUG_NONE);
+}
+
 void PerformanceMonitor::draw() {
     if (visible) {
-        ImGui::Begin("Performance metrics", &visible);
+        bgfx::dbgTextClear();
+        bgfx::dbgTextPrintf(0, 0, 0x0f, "Performance metrics:");
 
-        if (! ImGui::IsWindowCollapsed()) {
-            for (Item item : items) {
-                ImGui::Text("%s: %fms", item.name.c_str(), item.delta.count());
-            }
+        int line = 1;
+        for (auto const& item : items) {
+            bgfx::dbgTextPrintf(0, line++, 0x0f, "%s: %fms", item.name.c_str(), item.delta.count());
         }
-
-        ImGui::End();
     }
 }
 

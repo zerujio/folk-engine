@@ -26,7 +26,7 @@ public:
 
 private:
     Shader();
-    Shader(std::string const&, std::string const&);
+    Shader(const char*, const char*);
 
     friend Ref;
     friend class Material;

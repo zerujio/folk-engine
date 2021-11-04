@@ -16,7 +16,7 @@ void setWindowTitle(const char* text)
 
 void setPerformanceMetricsEnabled(bool value)
 {
-    ENGINE.perf_monitor.visible = value;
+    ENGINE.perf_monitor.setVisibility(value);
 }
 
 void setMinFrameTime(double time)

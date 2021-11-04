@@ -5,10 +5,6 @@
 #include "common.hpp"
 #include "renderer.hpp"
 
-#include <imgui.h>
-#include <backends/imgui_impl_glfw.h>
-#include <backends/imgui_impl_opengl3.h>
-
 #include <bgfx/bgfx.h>
 #include <bgfx/platform.h>
 #include <bx/math.h>
@@ -56,22 +52,11 @@ Renderer::Renderer()
                 100.0f,
                 bgfx::getCaps()->homogeneousDepth);
 
-    // ImGui setup
-    IMGUI_CHECKVERSION();
-    ImGui::CreateContext();
-    ImGui::StyleColorsDark();
-    ImGui_ImplGlfw_InitForOpenGL(WINDOW.windowPtr(), true);
-    ImGui_ImplOpenGL3_Init("#version 430");
-
     // add performance metrics
     perf_monitor_id = ENGINE.perf_monitor.addItem("Renderer (CPU)");
 }
 
 Renderer::~Renderer() {
-    ImGui_ImplOpenGL3_Shutdown();
-    ImGui_ImplGlfw_Shutdown();
-    ImGui::DestroyContext();
-
     bgfx::shutdown();
 }
 
@@ -100,23 +85,11 @@ void Renderer::update(Delta delta)
         }
     );
     
-    // Draw ImGUI things
-    imguiDraw();
+    ENGINE.perf_monitor.draw();
 
     ENGINE.perf_monitor.stop(perf_monitor_id);
 
     bgfx::frame();
-}
-
-void Renderer::imguiDraw() {
-    ImGui_ImplOpenGL3_NewFrame();
-    ImGui_ImplGlfw_NewFrame();
-    ImGui::NewFrame();
-
-    ENGINE.perf_monitor.draw();
-
-    ImGui::Render();
-    ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 }
 
 } // namespace folk

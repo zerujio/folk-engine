@@ -1,7 +1,6 @@
 $input v_color0
-out vec4 fragColor;
 
 void main()
 {
-	fragColor = v_color0;
+	gl_FragColor = v_color0;
 }

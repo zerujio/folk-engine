@@ -22,11 +22,13 @@ WindowManager::WindowManager()
     if (!glfwInit())
         throw EngineRuntimeError("GLFW initialization failed.");
 
+    /* 
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, gl_version.major);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, gl_version.minor);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+    */
     glfwWindowHint(GLFW_RESIZABLE, GL_FALSE);
-    // glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
+    glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
 
     window = glfwCreateWindow(
         window_size.width, 
@@ -44,12 +46,14 @@ WindowManager::WindowManager()
 
     glfwMakeContextCurrent(window);
 
+    /* 
     if (!gladLoadGLLoader((GLADloadproc) glfwGetProcAddress))
         throw CriticalEngineError("OpenGL context initialization error: "
                                 "gladLoadGLLoader returned an error");
     
     glEnable(GL_DEBUG_OUTPUT);
-    glDebugMessageCallback(messageCallback, 0);
+    glDebugMessageCallback(messageCallback, 0); 
+    */
 }
 
 WindowManager::~WindowManager() 

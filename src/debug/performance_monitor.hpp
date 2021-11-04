@@ -11,9 +11,6 @@ namespace Folk
 class PerformanceMonitor {
 
 public:
-    /// Determines if the monitor is rendered.
-    bool visible {false};
-
     /// Start timer for specified item
     void start(int);
 
@@ -23,7 +20,12 @@ public:
     /// Add a new item to the monitor
     int addItem(const char*);
 
+    void setVisibility(bool value);
+
 private:
+    /// Determines if the monitor is rendered.
+    bool visible {false};
+
     using Delta = std::chrono::duration<double, std::milli>;
     using Clock = std::chrono::steady_clock;
 

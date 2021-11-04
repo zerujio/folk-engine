@@ -9,7 +9,7 @@ target_compile_features(folk_engine PUBLIC cxx_std_17)
 #set(FOLK_INCLUDE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/include")
 #set(FOLK_LIBS glfw glad imgui ${OPENGL_LIBRARIES})
 
-set(FOLK_EXTERN_LIBS glad glfw imgui entt imgui cxxopts bgfx_interface)
+set(FOLK_EXTERN_LIBS glad glfw entt cxxopts bgfx_interface)
 
 target_include_directories(folk_engine PUBLIC ../include)
 target_link_libraries(folk_engine ${FOLK_EXTERN_LIBS})
