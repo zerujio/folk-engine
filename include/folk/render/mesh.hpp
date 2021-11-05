@@ -7,27 +7,24 @@
 namespace Folk
 {
 
+namespace ImplDetails {
+struct MeshData;
+}
+
 /// \~spanish Recurso que representa una malla 3D. \~english Resource to keep track of a 3D mesh.
 class Mesh : public Resource {
 public:
-    using Ref = Reference<Mesh>;
+    /// Crea una malla vacía.
+    static std::shared_ptr<Mesh> create();
 
-    /// \~spanish Crea una malla vacía. \~english Create empty mesh.
-    static Ref createEmpty();
+    /// Crea una malla a partir de geometría inmediata.
+    /**
+     * \see ImmediateGeometry
+    */
+   static std::shared_ptr<Mesh> create(ImmediateGeometry const&);
 
-    /// \~spanish Crea una malla a partir de ImmediateGeometry \~english Create Mesh from \ref ImmediateGeometry .
-    static Ref create(ImmediateGeometry const& geometry);
-
-    ~Mesh();
-
-private:
-    Mesh(ImmediateGeometry::VertexArray const&, 
-         ImmediateGeometry::IndexArray const&);
-    Mesh(Mesh const&) = delete;
-    Mesh& operator=(Mesh const&) = delete;
-
-    friend class Renderer;
-    friend class Visual;
+protected:
+    Mesh() = default;
 };
     
 } // namespace folk

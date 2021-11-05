@@ -8,6 +8,10 @@
 namespace Folk
 {
 
+namespace ImplDetails {
+struct VisualData;
+}
+
 /// \~spanish Recurso que agrupa una malla y un material. \~english A resource that pairs a Mesh and a Material.
 /**
  * \see Mesh
@@ -17,38 +21,39 @@ namespace Folk
 class Visual : public Resource {
     
 public:
-    using Ref = Reference<Visual>;
+    /// Crea una Visual con material predeterminado y geometría vacía.
+    static std::shared_ptr<Visual> create(); 
 
-    /// \brief \~spanish Crea un nuevo objeto a partir de una malla y un material.
-    /// \brief \~english Instance a new visual from the given mesh and material.
-    static Ref create(Mesh::Ref, Material::Ref);
+    /// Crea una Visual con material predeterminado y la malla provista.
+    static std::shared_ptr<Visual> create(std::shared_ptr<Mesh>);
 
-    /// \brief \~spanish Configura la malla a utilizar.
-    /// \brief \~english Change the mesh.
-    void setMesh(Mesh::Ref);
+    /// Crea una Visual con el material provisto y geometría vacía.
+    static std::shared_ptr<Visual> create(std::shared_ptr<Material>);
 
-    /// \~spanish Obtiene una referencia a la malla en uso.
-    /// \~english Retrieve a \ref Reference to this visual's mesh.
-    Mesh::Ref getMesh() const;
+    /// Crea una Visual con el Material y Mesh provistos.
+    static std::shared_ptr<Visual> create(std::shared_ptr<Mesh>, std::shared_ptr<Material>);
 
-    /// \~spanish Cambia el material.
-    /// \~english Change material.
-    void setMaterial(Material::Ref);
+    /// Cambia la malla
+    void setMesh(std::shared_ptr<Mesh> mesh);
 
-    /// \~spanish Obtiene una referencia al material en uso.
-    /// \~english Retrieve a \ref Reference to this Visual's material.
-    Material::Ref getMaterial() const;
+    /// Obtiene la malla
+    std::shared_ptr<Mesh> getMesh();
 
-private:
-    Mesh::Ref mesh;
-    Material::Ref material;
+    /// Asigna el material
+    void setMaterial(std::shared_ptr<Material> material);
 
-    Visual(Mesh::Ref, Material::Ref);
+    /// Obtiene el material
+    std::shared_ptr<Material> getMaterial();
 
-    Visual(Visual const&) = delete;
-    Visual& operator=(Visual const&) = delete;
+protected:
+    std::shared_ptr<Mesh> mesh;
+    std::shared_ptr<Material> material;
 
-    friend class Renderer;
+    Visual(std::weak_ptr<Mesh> mesh_, std::weak_ptr<Material> material_)
+        :  mesh(mesh_), material(material_)
+    {}
+
+    ~Visual() {}
 };
 
 } // namespace folk

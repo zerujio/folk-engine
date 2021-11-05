@@ -5,8 +5,8 @@
 namespace Folk {
 
 template VisualComponent& Node::addComponent();
-template VisualComponent& Node::addComponent(Visual::Ref&);
-template VisualComponent& Node::addComponent(Visual::Ref const&);
+template VisualComponent& Node::addComponent(std::shared_ptr<Visual>&);
+template VisualComponent& Node::addComponent(std::shared_ptr<Visual>&&);
 
 template VisualComponent& Node::getComponent();
 

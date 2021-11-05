@@ -1,6 +1,8 @@
 #ifndef FOLK_UTILS__THREAD_SAFE_COUNTER_HPP
 #define FOLK_UTILS__THREAD_SAFE_COUNTER_HPP
 
+#include <mutex>
+
 /// \~spanish \brief Tipo entero protegido con mutex.
 /// \~english \brief Mutex protected integer counter.
 /**

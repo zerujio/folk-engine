@@ -17,21 +17,12 @@ namespace Folk
 */
 class Material : public Resource {
 
-public:
-    using Ref = Reference<Material>;
-    
-    /// \~spanish Crea un material con el shader predeterminado. \~english Create a material with default shader.
-    static Ref createDefaultMaterial();
+public: 
+    /// Crea un material con el shader predeterminado.
+    static std::shared_ptr<Material> create();
 
-    /// \~spanish Crea un material con el Shader dado. \~english Create material with given shader.
-    /**
-     * \~spanish
-     * \param shader Referencia a un Shader.
-     * 
-     * \~english
-     * \param shader A reference to a \ref Shader resource.
-    */
-    static Ref create(Shader::Ref shader);
+    /// Crea un material con el shader provisto.
+    static std::shared_ptr<Material> create(std::shared_ptr<Shader> shader);
 
     /// \~spanish Cambia el Shader. \~english Change the shader.
     /**
@@ -41,7 +32,7 @@ public:
      * \~english
      * \param shader Reference to Shader resource.
     */
-    void setShader(Shader::Ref shader);
+    void setShader(std::shared_ptr<Shader> shader);
 
     /// \~spanish Obtiene el Shader de este material. \~english Get shader.
     /**
@@ -51,16 +42,13 @@ public:
      * \~english
      * \return The \ref Shader currently in use.
     */
-    Shader::Ref getShader();
+    std::shared_ptr<Shader> getShader();
 
-    ~Material();
+protected:
+    Material(std::shared_ptr<Shader> shader);
 
 private:
-    Shader::Ref shader;
-    Material(Shader::Ref);
-
-    friend class Visual;
-    friend class Renderer;
+    std::shared_ptr<Shader> shader;
 };
 
 } // namespace folk

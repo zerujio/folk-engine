@@ -17,10 +17,6 @@ namespace Folk {
 
 FOLK_ENGINE_UPDATEABLE_MODULE(Renderer){
 public:
-
-    std::map<Shader::Id, ShaderData> shaders;
-    std::map<Mesh::Id, MeshData> meshes;
-
     const char* name() const override {return "Renderer";}
 
 private:

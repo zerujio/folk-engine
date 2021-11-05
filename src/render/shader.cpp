@@ -2,7 +2,8 @@
 #include "folk/core/error.hpp"
 #include "common.hpp"
 #include "renderer.hpp"
-#include "shader_src.hpp"
+#include "shader_data.hpp"
+#include "default_shader.hpp"
 
 #include <fstream>
 #include <sstream>
@@ -39,7 +40,7 @@ static const bgfx::ShaderHandle loadShaderFile(const char* filename) {
     return handle;
 }
 
-static bgfx::ProgramHandle buildProgram(const bgfx::ShaderHandle vert, 
+static const bgfx::ProgramHandle buildProgram(const bgfx::ShaderHandle vert, 
                                         const bgfx::ShaderHandle frag)
 {       
     auto program = bgfx::createProgram(vert, frag, true);
@@ -50,37 +51,16 @@ static bgfx::ProgramHandle buildProgram(const bgfx::ShaderHandle vert,
     return program;
 }
 
-Shader::Shader(const char* vert_filename, const char* frag_filename)
-{
-    RENDER.shaders[id] = {buildProgram(loadShaderFile(vert_filename),
-                                       loadShaderFile(frag_filename))};
-}
-
-// default shader
-Shader::Shader() {
-    auto vmem = bgfx::makeRef(vs_default, sizeof(vs_default));
-    auto vert = bgfx::createShader(vmem);
-
-    auto fmem = bgfx::makeRef(fs_default, sizeof(fs_default));
-    auto frag = bgfx::createShader(fmem);
-
-    RENDER.shaders[id] = {buildProgram(frag, vert)};
-}
-
-Shader::~Shader() {
-    bgfx::destroy(RENDER.shaders[id].program_handle);
-    
-    RENDER.shaders.erase(id);
-}
-
-Shader::Ref Shader::createFromFiles(const char* vertex_file,
-                                    const char* fragment_file)
-{
-    return {new Shader(vertex_file, fragment_file)}; 
-}
-
 Shader::Ref Shader::createDefault() {
-    return {new Shader()};
+    std::shared_ptr<ShaderData> data_ptr =
+            std::make_shared<ShaderData>(getDefaultProgramHandle());
+    return std::shared_ptr<Shader>(data_ptr, data_ptr.get());
+}
+
+Shader::Ref Shader::createFromFiles(const char* vert, const char* frag) {
+    auto handle = buildProgram(loadShaderFile(vert), loadShaderFile(frag));
+    auto ptr = std::make_shared<ShaderData>(handle);
+    return {ptr, ptr.get()};
 }
 
 } // namespace Folk

@@ -1,31 +1,49 @@
 #include "folk/render/visual.hpp"
+
 #include "../core/engine_singleton.hpp"
+
+#include "visual_data.hpp"
 #include "renderer.hpp"
 
 namespace Folk
 {
 
-Visual::Visual(Mesh::Ref mesh_, Material::Ref mat_) 
-    : mesh(mesh_), material(mat_)
-{}
-
-Visual::Ref Visual::create(Mesh::Ref mesh_, Material::Ref mat_) {
-    return {new Visual(mesh_, mat_)};
+std::shared_ptr<Visual> Visual::create() {
+    return create(Mesh::create(), Material::create());
 }
 
-void Visual::setMesh(Mesh::Ref mesh_) {
+std::shared_ptr<Visual> Visual::create(std::shared_ptr<Mesh> mesh_) {
+    return create(mesh_, Material::create());
+}
+
+std::shared_ptr<Visual> Visual::create(std::shared_ptr<Material> material_) {
+    return create(Mesh::create(), material_);
+}
+
+std::shared_ptr<Visual> Visual::create(std::shared_ptr<Mesh> mesh_,
+                                       std::shared_ptr<Material> material_)
+{
+    auto data_ptr = std::make_shared<VisualData>(mesh_, material_);
+    return std::shared_ptr<Visual>(data_ptr, data_ptr.get());
+}
+
+void Visual::setMesh(std::shared_ptr<Mesh> mesh_) {
+    std::unique_lock lk {mtx};
     mesh = mesh_;
 }
 
-Mesh::Ref Visual::getMesh() const {
+std::shared_ptr<Mesh> Visual::getMesh() {
+    std::unique_lock lk {mtx};
     return mesh;
 }
 
-void Visual::setMaterial(Material::Ref material_) {
+void Visual::setMaterial(std::shared_ptr<Material> material_) {
+    std::unique_lock lk {mtx};
     material = material_;
 }
 
-Material::Ref Visual::getMaterial() const {
+std::shared_ptr<Material> Visual::getMaterial() {
+    std::unique_lock lk {mtx};
     return material;
 }
 
