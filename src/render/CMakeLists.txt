@@ -7,4 +7,5 @@ set(LIB_FILES
     visual.cpp
     shader.cpp
     default_shader.cpp
+    shader_loader.cpp
     PARENT_SCOPE)

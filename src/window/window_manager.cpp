@@ -1,6 +1,5 @@
 #include "window_manager.hpp"
 
-#include "../core/common.hpp"
 #include "../core/engine_singleton.hpp"
 
 #include "folk/core/error.hpp"
@@ -27,7 +26,7 @@ WindowManager::WindowManager()
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, gl_version.minor);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
     */
-    glfwWindowHint(GLFW_RESIZABLE, GL_FALSE);
+    glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
     glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
 
     window = glfwCreateWindow(
@@ -44,7 +43,7 @@ WindowManager::WindowManager()
 
     glfwSetWindowCloseCallback(window, closeWindowCallback);
 
-    glfwMakeContextCurrent(window);
+    // glfwMakeContextCurrent(window);
 
     /* 
     if (!gladLoadGLLoader((GLADloadproc) glfwGetProcAddress))

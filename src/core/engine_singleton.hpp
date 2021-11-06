@@ -60,6 +60,7 @@ public:
     /// Scene module
     SceneModule scene {};
 
+    // Functions
     /// Signal the engine to exit.
     void exit() noexcept;
 

@@ -5,7 +5,6 @@
 #include "input_manager.hpp"
 #include "utils.hpp"
 
-#include <glad/glad.h>
 #include <GLFW/glfw3.h>
 
 namespace Folk

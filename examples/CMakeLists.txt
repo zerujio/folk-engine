@@ -17,3 +17,6 @@ add_example(input_example input_example.cpp)
 
 add_custom_target(folk_examples ALL)
 add_dependencies(folk_examples basic_example input_example default_shaders)
+
+add_executable(hello-bgfx hello-bgfx.cpp)
+target_link_libraries(hello-bgfx glfw bgfx_interface)

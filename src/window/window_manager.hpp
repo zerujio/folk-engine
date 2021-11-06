@@ -4,7 +4,6 @@
 #include "../core/module.hpp"
 #include "../utils/update_listener.hpp"
 
-#include <glad/glad.h>
 #include <GLFW/glfw3.h>
 
 #include <string>

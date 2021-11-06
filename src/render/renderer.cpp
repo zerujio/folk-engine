@@ -1,6 +1,9 @@
 #include "folk/render/visual_component.hpp"
+
 #include "../core/engine_singleton.hpp"
 #include "../window/window_manager.hpp"
+#include "../render/shader_loader.hpp"
+
 
 #include "common.hpp"
 #include "renderer.hpp"
@@ -14,47 +17,56 @@
 #define GLFW_EXPOSE_NATIVE_X11
 #include <GLFW/glfw3native.h>
 
-namespace Folk {
-
-// debug geometry
-
-struct PosColorVertex {
-  float m_x;
-  float m_y;
-  float m_z;
-  uint32_t m_abgr;
-
-  static void init() {
-    ms_decl
-      .begin()
-      .add(bgfx::Attrib::Position, 3, bgfx::AttribType::Float)
-      .add(bgfx::Attrib::Color0,   4, bgfx::AttribType::Uint8, true)
-      .end();
-  };
-
-  static bgfx::VertexLayout ms_decl;
-};
-
-bgfx::VertexLayout PosColorVertex::ms_decl {};
-
-static PosColorVertex s_cubeVertices[] =
+struct PosColorVertex
 {
-    {  0.5f,  0.5f, 0.0f, 0xff0000ff },
-    {  0.5f, -0.5f, 0.0f, 0xff0000ff },
-    { -0.5f, -0.5f, 0.0f, 0xff00ff00 },
-    { -0.5f,  0.5f, 0.0f, 0xff00ff00 }
+	float x;
+	float y;
+	float z;
+	uint32_t abgr;
 };
 
-static const uint16_t s_cubeTriList[] =
-  {
-   0,1,3,
-   1,2,3
-  };
+static PosColorVertex cubeVertices[] =
+{
+	{-1.0f,  1.0f,  1.0f, 0xff000000 },
+	{ 1.0f,  1.0f,  1.0f, 0xff0000ff },
+	{-1.0f, -1.0f,  1.0f, 0xff00ff00 },
+	{ 1.0f, -1.0f,  1.0f, 0xff00ffff },
+	{-1.0f,  1.0f, -1.0f, 0xffff0000 },
+	{ 1.0f,  1.0f, -1.0f, 0xffff00ff },
+	{-1.0f, -1.0f, -1.0f, 0xffffff00 },
+	{ 1.0f, -1.0f, -1.0f, 0xffffffff },
+};
 
-bgfx::VertexBufferHandle m_vbh;
-bgfx::IndexBufferHandle m_ibh;
+static const uint16_t cubeTriList[] =
+{
+	0, 1, 2,
+	1, 3, 2,
+	4, 6, 5,
+	5, 6, 7,
+	0, 2, 4,
+	4, 2, 6,
+	1, 5, 3,
+	5, 7, 3,
+	0, 4, 1,
+	4, 5, 1,
+	2, 3, 6,
+	6, 3, 7,
+};
 
-bgfx::ProgramHandle m_program;
+struct DebugGeometry {
+    bgfx::VertexBufferHandle vb;
+    bgfx::IndexBufferHandle ib;
+    bgfx::ProgramHandle program;
+    bgfx::VertexLayout layout;
+
+    float model[16];
+    float view[16];
+    float proj[16];
+};
+
+DebugGeometry dbg_geom;
+
+namespace Folk {
 
 Renderer::Renderer()
 {
@@ -70,14 +82,14 @@ Renderer::Renderer()
     bgfx_init.resolution.height = wsize.height;
     bgfx_init.resolution.reset = BGFX_RESET_VSYNC;
 
-    bgfx_init.type = bgfx::RendererType::OpenGL;
+    // bgfx_init.type = bgfx::RendererType::OpenGL;
 
     if (!bgfx::init(bgfx_init))
         throw CriticalEngineError("bgfx initialization failed");
 
     // view_id = 0;
-	bgfx::setViewClear(view_id, BGFX_CLEAR_COLOR);
-	bgfx::setViewRect(view_id, 0, 0, bgfx::BackbufferRatio::Equal);
+	bgfx::setViewClear(view_id, BGFX_CLEAR_COLOR | BGFX_CLEAR_DEPTH);
+	bgfx::setViewRect(view_id, 0, 0, wsize.width, wsize.height);
 
     const bx::Vec3 at = {0.0f, 0.0f, 0.0f};
     const bx::Vec3 eye = {0.0f, 0.0f, 5.0f};
@@ -96,28 +108,35 @@ Renderer::Renderer()
     // add performance metrics
     perf_monitor_id = ENGINE.perf_monitor.addItem("Renderer (CPU)");
 
-    PosColorVertex::init();
-    
-    /* DEBUG */
-    m_vbh = bgfx::createVertexBuffer(
-        bgfx::makeRef(s_cubeVertices, sizeof(s_cubeVertices)),
-        PosColorVertex::ms_decl
-    );
+    // DEBUG GEOMETRY
+    dbg_geom.layout.begin()
+                         .add(bgfx::Attrib::Position, 3, bgfx::AttribType::Float)
+                         .add(bgfx::Attrib::Color0, 4, bgfx::AttribType::Uint8, true)
+                         .end();
+    dbg_geom.vb = bgfx::createVertexBuffer(bgfx::makeRef(cubeVertices, 
+                                                         sizeof(cubeVertices)),
+                                           dbg_geom.layout);
+    dbg_geom.ib = bgfx::createIndexBuffer(bgfx::makeRef(cubeTriList, sizeof(cubeTriList)));
 
-    m_ibh = bgfx::createIndexBuffer(
-        bgfx::makeRef(s_cubeTriList, sizeof(s_cubeTriList))
-    );
     
-    m_program = getDefaultProgramHandle();
+    bgfx::ShaderHandle vsh = loadShaderFile("vs_basic.bin");
+    bgfx::ShaderHandle fsh = loadShaderFile("fs_basic.bin");
+    dbg_geom.program = buildProgram(vsh, fsh);
+
+    const bx::Vec3 at_ = {0.0f, 0.0f, 0.0f};
+    const bx::Vec3 eye_ = {0.0f, 0.0f, -5.0f};
+    bx::mtxLookAt(dbg_geom.view, eye_, at_);
+    bx::mtxProj(dbg_geom.proj, 60.0f, float(wsize.width) / float(wsize.height),
+                0.1f, 100.0f, bgfx::getCaps()->homogeneousDepth);
+    // DEBUG
 }
 
 Renderer::~Renderer() {
-    // DEBUG
-    bgfx::destroy(m_vbh);
-    bgfx::destroy(m_ibh);
-    bgfx::destroy(m_program);
-    // DEBUG
-
+    //  DEBUG
+    bgfx::destroy(dbg_geom.vb);
+    bgfx::destroy(dbg_geom.ib);
+    bgfx::destroy(dbg_geom.program);
+    //  DEBUG
     bgfx::shutdown();
 }
 
@@ -125,8 +144,12 @@ void Renderer::update(Delta delta)
 {
     ENGINE.perf_monitor.start(perf_monitor_id);
 
-    bgfx::touch(view_id);
     bgfx::setViewTransform(view_id, view_mat, proj_mat);
+
+    auto& wsize = WINDOW.getWindowSize();
+    bgfx::setViewRect(view_id, 0, 0, wsize.width, wsize.height);
+
+    bgfx::touch(view_id);
 
     auto view = SCENE.registry.view<VisualComponent>();
     view.each([this](const auto entity, VisualComponent& component) 
@@ -145,26 +168,29 @@ void Renderer::update(Delta delta)
             auto shader_data = static_cast<ShaderData*>(shader.get());
 
             bgfx::setState(BGFX_STATE_DEFAULT);
-            bgfx::submit(view_id, shader_data->program_handle);
+            // bgfx::submit(view_id, shader_data->program_handle);
         }
     );
-
-    /* DEBUG */
-    float dbg_transform[16];
-    bx::mtxRotateY(dbg_transform, 0.0f);
-    dbg_transform[12] = 0.0f;
-    dbg_transform[13] = 0.0f;
-    dbg_transform[14] = 0.0f;
-
-    bgfx::setVertexBuffer(view_id, m_vbh);
-    bgfx::setIndexBuffer(m_ibh);
-    bgfx::submit(view_id, m_program);
-
-    /* DEBUG */
     
     ENGINE.perf_monitor.draw();
 
     ENGINE.perf_monitor.stop(perf_monitor_id);
+
+    //  DEBUG
+
+    static float angle = 0.0f;
+    angle += delta.count();
+    bx::mtxRotateXY(dbg_geom.model, angle, -angle);
+
+    bgfx::setViewTransform(view_id, dbg_geom.view, dbg_geom.proj);
+    bgfx::setTransform(dbg_geom.model);
+    bgfx::setVertexBuffer(view_id, dbg_geom.vb);
+    bgfx::setIndexBuffer(dbg_geom.ib);
+    bgfx::submit(view_id, dbg_geom.program);
+
+    //  DEBUG
+
+    bgfx::dbgTextPrintf(80, 0, 0x0f, "DELTA=%f", delta.count());
 
     bgfx::frame();
 }

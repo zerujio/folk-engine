@@ -73,7 +73,7 @@ void Folk::sceneInit(Folk::Scene &scene) {
     Node& square = scene.rootNode().createChild("Square");
 
     // cargamos un shader
-    auto shader = Shader::createFromFiles("shaders/vs_default.bin", "shaders/fs_default.bin");
+    auto shader = Shader::createFromFiles("vs_basic.bin", "fs_basic.bin");
 
     // Crear una Visual...
     auto visual = Visual::create(
