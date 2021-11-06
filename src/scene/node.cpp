@@ -1,4 +1,5 @@
 #include "folk/scene/node.hpp"
+#include "folk/scene/transform_component.hpp"
 #include "folk/core/error.hpp"
 
 #include "module.hpp"
@@ -7,7 +8,9 @@ namespace Folk {
 
 Node::Node(const char* name) 
     : _name(name), _id(SCENE.registry.create())
-{}
+{
+    addComponent<TransformComponent>();
+}
 
 Node::~Node()
 {

@@ -1,4 +1,5 @@
 #include "folk/render/visual_component.hpp"
+#include "folk/scene/transform_component.hpp"
 
 #include "../core/engine_singleton.hpp"
 #include "../window/window_manager.hpp"
@@ -144,51 +145,29 @@ void Renderer::update(Delta delta)
 {
     ENGINE.perf_monitor.start(perf_monitor_id);
 
-    bgfx::setViewTransform(view_id, view_mat, proj_mat);
-
     auto& wsize = WINDOW.getWindowSize();
+
     bgfx::setViewRect(view_id, 0, 0, wsize.width, wsize.height);
+    bgfx::setViewTransform(view_id, dbg_geom.view, dbg_geom.proj);
 
     bgfx::touch(view_id);
 
-    auto view = SCENE.registry.view<VisualComponent>();
-    view.each([this](const auto entity, VisualComponent& component) 
-        {   
-            auto mesh = component.visual->getMesh();
-            auto mesh_data = static_cast<MeshData*>(mesh.get());
+    bgfx::setVertexBuffer(view_id, dbg_geom.vb);
+    bgfx::setIndexBuffer(dbg_geom.ib);
 
-            bgfx::setVertexBuffer(view_id, mesh_data->vb_handle);
-            bgfx::setIndexBuffer(mesh_data->ib_handle);
-
-            float transform[16];
-            bx::mtxTranslate(transform, 0, 0, 0);
-            bgfx::setTransform(transform);
-
-            auto shader = component.visual->getMaterial()->getShader();
-            auto shader_data = static_cast<ShaderData*>(shader.get());
-
-            bgfx::setState(BGFX_STATE_DEFAULT);
-            // bgfx::submit(view_id, shader_data->program_handle);
+    auto view = SCENE.registry.view<TransformComponent, VisualComponent>();
+    view.each([this](const auto entity,
+                     TransformComponent& transform,
+                     const VisualComponent& visual)
+        {
+            bgfx::setTransform(transform.modelMatrix());
+            bgfx::submit(view_id, dbg_geom.program);
         }
     );
     
     ENGINE.perf_monitor.draw();
 
     ENGINE.perf_monitor.stop(perf_monitor_id);
-
-    //  DEBUG
-
-    static float angle = 0.0f;
-    angle += delta.count();
-    bx::mtxRotateXY(dbg_geom.model, angle, -angle);
-
-    bgfx::setViewTransform(view_id, dbg_geom.view, dbg_geom.proj);
-    bgfx::setTransform(dbg_geom.model);
-    bgfx::setVertexBuffer(view_id, dbg_geom.vb);
-    bgfx::setIndexBuffer(dbg_geom.ib);
-    bgfx::submit(view_id, dbg_geom.program);
-
-    //  DEBUG
 
     bgfx::dbgTextPrintf(80, 0, 0x0f, "DELTA=%f", delta.count());
 

@@ -1,4 +1,5 @@
 #include "folk/folk.hpp"
+#include "folk/scene/transform_component.hpp"
 #include "folk/input/input.hpp"
 #include "folk/render/visual_component.hpp"
 #include "folk/core/error.hpp"
@@ -65,6 +66,25 @@ void update(Folk::Scene& scn, double delta) {
     if (Folk::getMouseButton(Folk::MouseButton::Left) == Folk::InputState::Press)
         // Para poder ver este mensaje el programa debe iniciarse con la opción "-l trace"
         Folk::log(Folk::LogLevel::TRACE) << "dt=" << delta << '\n';
+
+    auto& node = scn.rootNode().getChild("Square");
+    auto& tr = node.getComponent<Folk::TransformComponent>();
+
+    if (Folk::getKey(Folk::Key::W) == Folk::InputState::Press) {
+        tr.y += delta;
+    }
+
+    if (Folk::getKey(Folk::Key::S) == Folk::InputState::Press) {
+        tr.y -= delta;
+    }
+
+    if (Folk::getKey(Folk::Key::D) == Folk::InputState::Press) {
+        tr.x += delta;
+    }
+
+    if (Folk::getKey(Folk::Key::A) == Folk::InputState::Press) {
+        tr.x -= delta;
+    }
 }
 
 // Esta función se llama para inicializar la escena
