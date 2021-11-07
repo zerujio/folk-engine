@@ -80,17 +80,17 @@ void removeInputCodeCallback(InputCode_CallbackId const);
 namespace Cursor {
 
 enum class CallbackId : IdIntType {};
-using CallbackType = std::function<void (dvec2)>;
+using CallbackType = std::function<void (Vec2f)>;
 
 /// Consulta la posición del cursor.
 /**
  * \return la posición del cursor en coordenas de la pantalla, con origen en la 
  * esquina superior izquierda y medida en pixeles.
  */
-dvec2 getPosition();
+Vec2d getPosition();
 
 /// Cambia la posición del cursor.
-void setPosition(dvec2);
+void setPosition(Vec2d);
 
 /// Añade un callback que será invocado cada vez que la posición del ratón cambie.
 /**
@@ -127,7 +127,7 @@ bool getRawMotionEnabled();
 namespace Scroll {
 
 enum class CallbackId : IdIntType {};
-using CallbackType = std::function<void(dvec2)>;
+using CallbackType = std::function<void(Vec2d)>;
 
 /// Añade un callback que será invocado cada vez que se haga _scroll_.
 /**

@@ -160,7 +160,7 @@ void Renderer::update(Delta delta)
                      TransformComponent& transform,
                      const VisualComponent& visual)
         {
-            bgfx::setTransform(transform.modelMatrix());
+            bgfx::setTransform(transform.localMatrix());
             bgfx::submit(view_id, dbg_geom.program);
         }
     );

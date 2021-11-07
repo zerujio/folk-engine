@@ -70,20 +70,42 @@ void update(Folk::Scene& scn, double delta) {
     auto& node = scn.rootNode().getChild("Square");
     auto& tr = node.getComponent<Folk::TransformComponent>();
 
-    if (Folk::getKey(Folk::Key::W) == Folk::InputState::Press) {
-        tr.y += delta;
+    {
+        auto pos = tr.position();
+
+        if (Folk::getKey(Folk::Key::W) == Folk::InputState::Press) {
+            pos.y += delta;
+        }
+
+        if (Folk::getKey(Folk::Key::S) == Folk::InputState::Press) {
+            pos.y -= delta;
+        }
+
+        if (Folk::getKey(Folk::Key::D) == Folk::InputState::Press) {
+            pos.x += delta;
+        }
+
+        if (Folk::getKey(Folk::Key::A) == Folk::InputState::Press) {
+            pos.x -= delta;
+        }
+
+        if (tr.position() != pos)
+            tr.position(pos);
     }
 
-    if (Folk::getKey(Folk::Key::S) == Folk::InputState::Press) {
-        tr.y -= delta;
-    }
 
-    if (Folk::getKey(Folk::Key::D) == Folk::InputState::Press) {
-        tr.x += delta;
-    }
+    {
+        auto rot = tr.rotation();
 
-    if (Folk::getKey(Folk::Key::A) == Folk::InputState::Press) {
-        tr.x -= delta;
+        if (Folk::getKey(Folk::Key::Q) == Folk::InputState::Press) {
+            rot.y -= delta;
+        }
+        if (Folk::getKey(Folk::Key::E) == Folk::InputState::Press) {
+            rot.y += delta;
+        }
+
+        if (rot != tr.rotation())
+            tr.rotation(rot);
     }
 }
 

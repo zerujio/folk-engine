@@ -2,50 +2,88 @@
 #define FOLK_UTILS__VECTOR_HPP
 
 #include <array>
-#include <cstddef>
+#include <iostream>
 
 namespace Folk
 {
 
-/// Un vector de N elementos de tipo T.
-template<int N, typename T>
-class Vector {
-protected:
-    std::array<T, N> arr;
-
+template<class T>
+class Vector2 {
 public:
-    /// Accede a una componente del vector.
-    /**
-     * Accder a un índice mayor o igual a la dimensión del vector es comportamiento
-     * indefinido.
-     * 
-     * \param k índice de la componente.
-     * \return una referencia a la componente.
-     */
-    constexpr T& operator[](std::size_t k) {
-        return arr[k];
+    T x;
+    T y;
+};
+
+using Vec2d = Vector2<double>;
+using Vec2f = Vector2<float>;
+using Vec2i = Vector2<int>;
+
+template<class T>
+class Vector3 {
+public:
+    T x; 
+    T y;
+    T z;
+
+    template<T (*F)(T)>
+    Vector3 map() const {
+        return {F(x), F(y), F(z)};
+    }
+
+    template<T (*F)(T, T)>
+    Vector3 map(const T k) const {
+        return {F(x, k), F(y, k), F(z, k)}; 
+    }
+
+    Vector3 operator-() const {
+        return map<minus>();
+    }
+
+    Vector3 operator*(T k) const {
+        return map<mul>(k);
+    }
+
+    operator T*() {
+        return &x;
+    }
+
+    operator const T*() const {
+        return &x;
+    }
+
+private:
+    static T minus(T x) {
+        return -x;
+    }
+
+    static T mul(T x, T y) {
+        return x, y;
     }
 };
 
-template<typename T = double>
-class Vector3 : Vector<3, T> {
-public:
-    T& x = this->arr[0];
-    T& y = this->arr[1];
-    T& z = this->arr[2];
-};
+template<class T>
+std::ostream& operator<<(std::ostream &out, const Vector3<T>& vec) {
+    out << "(" << vec.x << ", " << vec.y << ", " << vec.z << ")";
+    return out;
+}
 
-template<typename T = double>
-class Vector2 : Vector<2, T> {
-public:
-    T& x = this->arr[0];
-    T& y = this->arr[1];
-};
+using Vec3f = Vector3<float>;
+using Vec3i = Vector3<int>;
 
-using vec2 = Vector2<float>;
-using dvec2 = Vector2<double>;
-using vec3 = Vector3<float>;
-using dvec3 = Vector3<double>;
+template<class T, T(*F)(T, T)>
+Vector3<T> map(const Vector3<T>& l, const Vector3<T>& r) {
+    return {F(l.x, l.y), F(l.y, r.y), F(l.z, r.z)};
+}
+
+template<class T>
+inline bool operator==(Vector3<T> const& l, Vector3<T> const& r) {
+    return (l.x == r.x) and (l.y == r.y) and (l.z == r.z);
+}
+
+template<class T>
+inline bool operator!=(const Vector3<T>& l, const Vector3<T>& r) {
+    return !(l == r);
+}
 
 } // namespace Folk
 

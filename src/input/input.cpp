@@ -170,13 +170,13 @@ void removeInputCodeCallback(InputCode_CallbackId const id) {
 namespace Cursor
 {
 
-dvec2 getPosition() {
-    dvec2 v;
+Vec2d getPosition() {
+    Vec2d v;
     glfwGetCursorPos(WINDOW.windowPtr(), &v.x, &v.y);
     return v;
 }
 
-void setPosition(dvec2 pos) {
+void setPosition(Vec2d pos) {
     glfwSetCursorPos(WINDOW.windowPtr(), pos.x, pos.y);
 }
 
