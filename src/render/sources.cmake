@@ -1,4 +1,4 @@
-set(LIB_FILES 
+set(SOURCES 
     renderer.cpp
     immediate_geometry.cpp
     material.cpp
@@ -7,5 +7,4 @@ set(LIB_FILES
     visual.cpp
     shader.cpp
     default_shader.cpp
-    shader_loader.cpp
-    PARENT_SCOPE)
+    shader_loader.cpp)

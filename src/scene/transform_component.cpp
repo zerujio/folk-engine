@@ -23,9 +23,7 @@ const Vec3f& TransformComponent::position() const {
 void TransformComponent::position(const Vec3f& vec3) {
     m_position = vec3;
 
-    bx::mtxTranslate(m_position_mtx, vec3.x, vec3.y, vec3.z);
-
-    updateLocal();
+    m_modified = true;
 }
 
 const Vec3f& TransformComponent::rotation() const {
@@ -35,15 +33,7 @@ const Vec3f& TransformComponent::rotation() const {
 void TransformComponent::rotation(const Vec3f& vec3) {
     m_rotation = vec3;
 
-    float tmp0[16];
-    bx::mtxRotateY(tmp0, vec3.y);
-    bx::mtxRotateZ(m_rotation_mtx, vec3.z);
-    float tmp1[16];
-    bx::mtxMul(tmp1, tmp0, m_rotation_mtx);
-    bx::mtxRotateX(tmp0, vec3.x);
-    bx::mtxMul(m_rotation_mtx, tmp0, tmp1);
-
-    updateLocal();
+    m_modified = true;
 }
 
 const Vec3f& TransformComponent::scale() const {
@@ -53,23 +43,42 @@ const Vec3f& TransformComponent::scale() const {
 void TransformComponent::scale(const Vec3f& scale) {
     m_scale = scale;
 
-    bx::mtxScale(m_scale_mtx, scale.x, scale.y, scale.z);
-
-    updateLocal();
+    m_modified = true;
 }
 
-const TransformComponent::Matrix& TransformComponent::localMatrix() const {
+const Matrix4f& TransformComponent::localMatrix() {
+    if (m_modified) {
+        updateLocalMtx();
+        std::cout << m_local_mtx << "\n";
+    }
     return m_local_mtx;
 }
 
-TransformComponent::Matrix::Matrix() {
-    bx::mtxIdentity(m_arr);
+void TransformComponent::updateLocalMtx() {
+    float a[16], b[16], c[16];
+    
+    // scale
+    bx::mtxScale(a, m_scale.x, m_scale.y, m_scale.z);
+
+    // rotation
+    bx::mtxRotateY(b, m_rotation.y);
+    bx::mtxMul(c, a, b);
+
+    bx::mtxRotateZ(a, m_rotation.z);
+    bx::mtxMul(b, c, a);
+
+    bx::mtxRotateX(c, m_rotation.x);
+    bx::mtxMul(a, b, c);
+
+    // position
+    bx::mtxTranslate(b, m_position.x, m_position.y, m_position.z);
+    bx::mtxMul(m_local_mtx, a, b);
+
+    m_modified = false;
 }
 
-void TransformComponent::updateLocal() {
-    float tmp[16];
-    bx::mtxMul(tmp, m_rotation_mtx, m_position_mtx);
-    bx::mtxMul(m_local_mtx, tmp, m_scale_mtx);
+TransformComponent::TransformComponent() {
+    bx::mtxIdentity(m_local_mtx);
 }
 
 } // namespace Folk

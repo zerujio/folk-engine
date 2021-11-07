@@ -6,7 +6,7 @@
 #include "input_code.hpp"
 #include "input_action.hpp"
 
-#include "../utils/vector.hpp"
+#include "folk/math/vector.hpp"
 
 #include <functional>
 
