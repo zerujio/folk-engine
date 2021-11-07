@@ -36,6 +36,8 @@ void Node::changeParent(Node* p)
 
     if (p)
         p->_children.push_back(this);
+
+    onParentChange();
 }
 
 void Node::addChild(Node& node) 
@@ -55,6 +57,7 @@ Node& Node::createChild(const char* name)
     Node* child = new Node(name); 
     child->_parent = this;
     _children.push_back(child);
+    child->onParentChange();
     return *child;
 }
 
@@ -83,6 +86,16 @@ Node& Node::getParent()
     if (_parent)
         return *_parent;
     throw EngineRuntimeError("Node " + _name + " has no parent");
+}
+
+void Node::onParentChange() {
+    auto& tr = getComponent<TransformComponent>();
+
+    tr.m_parent_id = _parent ? _parent->_id : entt::null;
+    tr.m_modified = true;
+
+    for (auto c : _children)
+        c->onParentChange();
 }
 
 }//namespace folk

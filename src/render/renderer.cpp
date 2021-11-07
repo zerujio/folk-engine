@@ -147,20 +147,18 @@ void Renderer::update(Delta delta)
 
     auto& wsize = WINDOW.getWindowSize();
 
-    bgfx::setViewRect(view_id, 0, 0, wsize.width, wsize.height);
-    bgfx::setViewTransform(view_id, dbg_geom.view, dbg_geom.proj);
-
     bgfx::touch(view_id);
 
-    bgfx::setVertexBuffer(view_id, dbg_geom.vb);
-    bgfx::setIndexBuffer(dbg_geom.ib);
-
     auto view = SCENE.registry.view<TransformComponent, VisualComponent>();
-    view.each([this](const auto entity,
+    view.each([this, wsize](const auto entity,
                      TransformComponent& transform,
                      const VisualComponent& visual)
         {
-            bgfx::setTransform(transform.localMatrix());
+            bgfx::setViewRect(view_id, 0, 0, wsize.width, wsize.height);
+            bgfx::setViewTransform(view_id, dbg_geom.view, dbg_geom.proj);
+            bgfx::setVertexBuffer(view_id, dbg_geom.vb);
+            bgfx::setIndexBuffer(dbg_geom.ib);
+            bgfx::setTransform(transform.transformMatrix());
             bgfx::submit(view_id, dbg_geom.program);
         }
     );

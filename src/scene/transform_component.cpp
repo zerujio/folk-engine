@@ -10,11 +10,18 @@ namespace Folk
 
 // Explicit instantiation of Node template functions
 
-template TransformComponent& Node::addComponent();
+TransformComponent& TransformComponent::emplaceComponent(const Node::Id id) {
+    return SCENE.registry.emplace<TransformComponent>(id);
+}
 
-template TransformComponent& Node::getComponent();
+TransformComponent* TransformComponent::getComponent(const Node::Id id) {
+    return SCENE.registry.try_get<TransformComponent>(id);
+}
 
-template TransformComponent* Node::tryGetComponent();
+bool TransformComponent::removeComponent(const Node::Id id) {
+    return SCENE.registry.remove<TransformComponent>(id);
+}
+
 
 const Vec3f& TransformComponent::position() const {
     return m_position;
@@ -46,15 +53,14 @@ void TransformComponent::scale(const Vec3f& scale) {
     m_modified = true;
 }
 
-const Matrix4f& TransformComponent::localMatrix() {
-    if (m_modified) {
-        updateLocalMtx();
-        std::cout << m_local_mtx << "\n";
-    }
-    return m_local_mtx;
+const Matrix4f& TransformComponent::transformMatrix() {
+    if (m_modified) 
+        updateTransform();
+    
+    return m_transform_mtx;
 }
 
-void TransformComponent::updateLocalMtx() {
+void TransformComponent::updateTransform() {
     float a[16], b[16], c[16];
     
     // scale
@@ -72,13 +78,23 @@ void TransformComponent::updateLocalMtx() {
 
     // position
     bx::mtxTranslate(b, m_position.x, m_position.y, m_position.z);
-    bx::mtxMul(m_local_mtx, a, b);
+
+    if (m_parent_id != entt::null) {
+        bx::mtxMul(c, a, b);
+
+        auto& parent_tr = SCENE.registry.get<TransformComponent>(m_parent_id);
+        assert(parent_tr.m_parent_id != m_parent_id);
+
+        bx::mtxMul(m_transform_mtx, parent_tr.transformMatrix(), c);
+    } 
+    else
+        bx::mtxMul(m_transform_mtx, a, b);
 
     m_modified = false;
 }
 
-TransformComponent::TransformComponent() {
-    bx::mtxIdentity(m_local_mtx);
+TransformComponent::TransformComponent() : m_parent_id(entt::null) {
+    bx::mtxIdentity(m_transform_mtx);
 }
 
 } // namespace Folk

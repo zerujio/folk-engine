@@ -112,7 +112,7 @@ void update(Folk::Scene& scn, double delta) {
 // Esta función se llama para inicializar la escena
 void Folk::sceneInit(Folk::Scene &scene) {
     // Añadir un nuevo nodo como hijo del nodo raíz.
-    Node& square = scene.rootNode().createChild("Square");
+    Node& cube = scene.rootNode().createChild("Square");
 
     // cargamos un shader
     auto shader = Shader::createFromFiles("vs_basic.bin", "fs_basic.bin");
@@ -124,8 +124,17 @@ void Folk::sceneInit(Folk::Scene &scene) {
     );
 
     // Añadir al nodo una componente con la Visual anterior
-    auto& component = square.addComponent<VisualComponent>(visual);
+    auto& component = cube.addComponent<VisualComponent>(visual);
 
+    // Añadir un cubo más pequeño, como nodo hijo.
+    auto& small_cube = cube.createChild("Small Cube");
+
+    auto& small_cube_tr = small_cube.getComponent<TransformComponent>();
+    small_cube_tr.scale({0.5f, 0.5f, 0.5f});
+    small_cube_tr.position({1.0f, 1.0f, 0.25f});
+
+    auto& small_cube_vs = small_cube.addComponent<VisualComponent>(visual);
+   
     // Configurar el callback que se invocará en cada frame
     scene.updateCallback = update;
 

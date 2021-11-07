@@ -14,7 +14,7 @@ struct MeshData;
 /// \~spanish Recurso que representa una malla 3D. \~english Resource to keep track of a 3D mesh.
 class Mesh : public Resource {
 public:
-    /// Crea una malla vacía.
+    /// Crea una malla vacía. !!! ELIMINAR ESTE CONSTRUCTOR. Eliminar emptyIB, emptyVB
     static std::shared_ptr<Mesh> create();
 
     /// Crea una malla a partir de geometría inmediata.

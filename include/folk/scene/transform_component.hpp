@@ -1,8 +1,10 @@
 #ifndef FOLK_SCENE__TRANSFORM_COMPONENT_HPP
 #define FOLK_SCENE__TRANSFORM_COMPONENT_HPP
 
-#include <folk/math/vector.hpp>
-#include <folk/math/matrix.hpp>
+#include "folk/math/vector.hpp"
+#include "folk/math/matrix.hpp"
+
+#include "folk/scene/node.hpp"
 
 namespace Folk
 {
@@ -15,6 +17,8 @@ namespace Folk
 class TransformComponent {
 
 public: 
+    static constexpr const char* type_name = "Transform";
+
     TransformComponent();
 
     /// Consulta la posición.
@@ -36,18 +40,26 @@ public:
     void scale(const Vec3f&);
 
     /// Matriz de transformación local.
-    const Matrix4f& localMatrix();
+    const Matrix4f& transformMatrix();
+
+    static TransformComponent& emplaceComponent(const Node::Id id);
+    static TransformComponent* getComponent(const Node::Id id);
+    static bool removeComponent(const Node::Id id);
 
 private:
     Vec3f m_position {0, 0, 0};
     Vec3f m_rotation {0, 0, 0};
     Vec3f m_scale    {1, 1, 1};
     
-    Matrix4f m_local_mtx;
+    Matrix4f m_transform_mtx;
+
+    Node::Id m_parent_id;
 
     bool m_modified;
 
-    void updateLocalMtx();
+    void updateTransform();
+
+    friend class Node;
 };
 
 
