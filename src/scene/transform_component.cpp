@@ -1,7 +1,5 @@
 #include "folk/scene/transform_component.hpp"
-#include "folk/scene/node.hpp"
-
-#include "node_template_functions.hpp"
+#include "folk/scene/entity_handle.hpp"
 
 #include "bx/math.h"
 
@@ -10,18 +8,17 @@ namespace Folk
 
 // Explicit instantiation of Node template functions
 
-TransformComponent& TransformComponent::emplaceComponent(const Node::Id id) {
-    return SCENE.registry.emplace<TransformComponent>(id);
+TransformComponent& TransformComponent::emplaceComponent(const entt::handle handle) {
+    return handle.emplace<TransformComponent>();
 }
 
-TransformComponent* TransformComponent::getComponent(const Node::Id id) {
-    return SCENE.registry.try_get<TransformComponent>(id);
+TransformComponent* TransformComponent::getComponent(const entt::handle handle) {
+    return handle.try_get<TransformComponent>();
 }
 
-bool TransformComponent::removeComponent(const Node::Id id) {
-    return SCENE.registry.remove<TransformComponent>(id);
+bool TransformComponent::removeComponent(const entt::handle handle) {
+    return handle.remove<TransformComponent>();
 }
-
 
 const Vec3f& TransformComponent::position() const {
     return m_position;
@@ -79,16 +76,7 @@ void TransformComponent::updateTransform() {
     // position
     bx::mtxTranslate(b, m_position.x, m_position.y, m_position.z);
 
-    if (m_parent_id != entt::null) {
-        bx::mtxMul(c, a, b);
-
-        auto& parent_tr = SCENE.registry.get<TransformComponent>(m_parent_id);
-        assert(parent_tr.m_parent_id != m_parent_id);
-
-        bx::mtxMul(m_transform_mtx, parent_tr.transformMatrix(), c);
-    } 
-    else
-        bx::mtxMul(m_transform_mtx, a, b);
+    bx::mtxMul(m_transform_mtx, a, b);
 
     m_modified = false;
 }

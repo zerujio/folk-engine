@@ -2,7 +2,7 @@
 #define FOLK_RENDER__VISUAL_COMPONENT
 
 #include "folk/render/visual.hpp"
-#include "folk/scene/node.hpp"
+#include "folk/scene/entity_handle.hpp"
 
 namespace Folk {
 
@@ -23,11 +23,11 @@ public:
     /// Construye un nuevo componente que utiliza el Visual referenciado.
     VisualComponent(std::shared_ptr<Visual> visual_) : visual(visual_) {}
 
-    static VisualComponent& emplaceComponent(const Node::Id);
-    static VisualComponent& emplaceComponent(const Node::Id, 
+    static VisualComponent& emplaceComponent(const entt::handle);
+    static VisualComponent& emplaceComponent(const entt::handle, 
                                              std::shared_ptr<Visual>);
-    static VisualComponent* getComponent(const Node::Id);
-    static bool removeComponent(const Node::Id);
+    static VisualComponent* getComponent(const entt::handle);
+    static bool removeComponent(const entt::handle);
 };
 
 }// namespace folk

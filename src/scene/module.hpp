@@ -2,7 +2,7 @@
 #define FOLK_SCENE__MODULE_HPP
 
 #include "folk/scene/scene.hpp"
-#include "folk/scene/node.hpp"
+#include "folk/scene/entity_handle.hpp"
 
 #include "../core/module.hpp"
 
@@ -23,12 +23,8 @@ public:
 
     const char* name() const override {return "Scene update";}
 
-    // Scene scene {};
-
-    entt::basic_registry<Node::Id> registry {};
-
     Scene scene {};
-
+    
 private:
     int monitor_id;
 };

@@ -3,44 +3,57 @@
 
 #include "folk/core/error.hpp"
 
+#include <entt/entt.hpp>
+
 #include <string>
-#include <vector>
+#include <list>
 #include <functional>
+#include <optional>
 
 namespace Folk {
 
+struct SceneGraphNode;
+
 /// \~spanish Nodo del grafo de escena. \~english A scene graph node.
-class Node {
+class EntityHandle {
 public:
-    Node(const Node&) = delete;
-    Node& operator= (const Node&) = delete;
-    ~Node();
+    /// (uso interno) Crea una referencia a una entidad.
+    EntityHandle(entt::handle h) : m_handle(h) {}
+    EntityHandle(entt::registry &r, entt::entity e) : m_handle(r, e) {}
 
-    /// \~spanish \brief Añade un nodo como hijo, lo que cambiará el padre de dicho nodo a `this`.
-    /// \~english \brief Add node as child. This will change said nodes' parent to *this.
-    void addChild(Node& n);
+    /// El nombre de esta entidad
+    const std::string& name() const;
 
-    /// \~spanish \brief Añade un nodo vacío nuevo como hijo y retorna una referencia.
-    /// \~english \brief Add a new, empty node as child of this node and return a reference.
-    Node& createChild(const char*);
-    Node& createChild();
-
-    /// \~spanish Busca un nodo por su nombre. \~english Find a child by name.
-    Node& getChild(const char* name);
-
-    /// \~spanish Destruye este nodo. \~english Destroy this node.
+    /// Destruye esta entidad y todas las entidades hijas.
     void destroy();
 
-    using NodeList = std::vector<Node*>;
+    /// Consulta si la referencia es válida (i.e. si la entidad referenciada existe).
+    bool valid() const;
 
-    /// \~spanish \brief Retorna un vector de punteros a los hijos de este nodo.
-    /// \~english Return a list of pointers to this node's children.
-    NodeList const& getChildren();
+    /// Añade otra entidad como hija en el grafo de escena.
+    void addChild(const EntityHandle& n) const;
 
-    /// \~spanish Retorna el padre de este nodo. \~english Retrieve this node's parent.
-    Node& getParent();
+    /// Crea una nueva entidad y la añade como hija en el grafo de escena.
+    /**
+     * \param name Nombre de la nueva entidad.
+    */
+    EntityHandle createChild(const char*) const;
+    EntityHandle createChild() const;
 
-    std::string& name() {return _name;}
+    /// Busca una entidad hija por su nombre.
+    /**
+     * Si más de una entidad hija tiene el mismo nombre no está definido cuál
+     * será retornada.
+    */
+    std::optional<EntityHandle> getChild(const char* name) const;
+
+    using HandleList = std::list<EntityHandle>;
+
+    /// Crea una lista de referencias a las entidades hijas.
+    HandleList getChildren() const;
+
+    /// Retorna la entidad madre en el grafo de escena.
+    std::optional<EntityHandle> getParent() const;
 
     /// \~spanish Añade un componente a este nodo. \~english Add a component to this node.
     /**
@@ -60,6 +73,7 @@ public:
      * \param args arguments for the constructor of the component.
     */
     template<typename C, typename... Args>
+
     C& addComponent(Args&&...);
 
     /// \~spanish Obtiene un componente. \~english Get a component.
@@ -108,40 +122,29 @@ public:
     template<typename C>
     bool tryRemoveComponent();
 
-    enum class Id : std::uint32_t {}; 
-
 private:
-    friend class Scene;
-    
-    // Construye un nodo vacío, sin nodo padre.
-    Node(const char*);
+    SceneGraphNode& node() const;
 
-    void changeParent(Node*);
-    void onParentChange();
-
-    Id _id;
-    Node* _parent {nullptr};
-    NodeList _children {};
-    std::string _name;
+    entt::handle m_handle;
 };
 
 // DEFINITIONS
 
 template<typename C, typename... Args>
-C& Node::addComponent(Args&& ... args)
+C& EntityHandle::addComponent(Args&& ... args)
 {
-    if (C::getComponent(_id))
+    if (C::getComponent(m_handle))
         throw EngineRuntimeError("Node " + name() 
                                 + " already has a component of type "
                                 + C::type_name);
     
-    return C::emplaceComponent(_id, std::forward<Args>(args)...);
+    return C::emplaceComponent(m_handle, std::forward<Args>(args)...);
 }
 
 template<typename C> 
-C& Node::getComponent() 
+C& EntityHandle::getComponent() 
 {
-    C* c = C::getComponent(_id);
+    C* c = C::getComponent(m_handle);
 
     if (c)
         return *c;
@@ -152,15 +155,15 @@ C& Node::getComponent()
 }
 
 template<typename C>
-C* Node::tryGetComponent()
+C* EntityHandle::tryGetComponent()
 {
-    return C::getComponent(_id);
+    return C::getComponent(m_handle);
 }
 
 template<class C>
-void Node::removeComponent() 
+void EntityHandle::removeComponent() 
 {
-    if (!C::removeComponent(_id)) {
+    if (!C::removeComponent(m_handle)) {
         throw EngineRuntimeError("Node " + name()
                                 + " does not have a component of type "
                                 + C::type_name + ": can't remove.");
@@ -168,9 +171,9 @@ void Node::removeComponent()
 }
 
 template<class C>
-bool Node::tryRemoveComponent()
+bool EntityHandle::tryRemoveComponent()
 {
-    return C::removeComponent(_id);
+    return C::removeComponent(m_handle);
 }
 
 }//namespace folk

@@ -1,25 +1,23 @@
 #include "folk/render/visual_component.hpp"
 
-#include "../scene/module.hpp"
-
 namespace Folk {
 
-VisualComponent& VisualComponent::emplaceComponent(const Node::Id id) {
-    return SCENE.registry.emplace<VisualComponent>(id);
+VisualComponent& VisualComponent::emplaceComponent(const entt::handle handle) {
+    return handle.emplace<VisualComponent>();
 }
 
-VisualComponent& VisualComponent::emplaceComponent(const Node::Id id,
+VisualComponent& VisualComponent::emplaceComponent(const entt::handle handle,
                                                    std::shared_ptr<Visual> vs)
 {
-    return SCENE.registry.emplace<VisualComponent>(id, vs);
+    return handle.emplace<VisualComponent>(vs);
 }
 
-VisualComponent* VisualComponent::getComponent(const Node::Id id) {
-    return SCENE.registry.try_get<VisualComponent>(id);
+VisualComponent* VisualComponent::getComponent(const entt::handle handle) {
+    return handle.try_get<VisualComponent>();
 }
 
-bool removeComponent(const Node::Id id) {
-    return SCENE.registry.remove<VisualComponent>(id);
+bool removeComponent(const entt::handle handle) {
+    return handle.remove<VisualComponent>();
 }
 
 } // namespace folk

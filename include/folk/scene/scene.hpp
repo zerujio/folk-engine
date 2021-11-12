@@ -1,7 +1,7 @@
 #ifndef FOLK_SCENE__SCENE_HPP
 #define FOLK_SCENE__SCENE_HPP
 
-#include "folk/scene/node.hpp"
+#include "folk/scene/entity_handle.hpp"
 
 #include <vector>
 
@@ -15,17 +15,19 @@ class Scene final {
     friend class Renderer;
 
 public:
+    Scene();
+
     using UpdateCallback = void (*)(Scene&, double);
 
     /// \~spanish Una función que se invocará en cada nuevo cuadro. \~english A function to be called whenever a new frame is drawn.
     UpdateCallback updateCallback {nullptr};
 
     /// \~spanish Obtiene el nodo raíz del grafo de escena. \~english Get the root node of this scene.
-    Node& rootNode() {return _root;}
-    Node const& rootNode() const {return _root;}
+    EntityHandle root() {return {{m_registry, m_root}};}
     
 private:
-    Node _root {"Root"};
+    entt::registry m_registry {};
+    entt::entity m_root {m_registry.create()};
 };
 
 }// namespace folk::scene

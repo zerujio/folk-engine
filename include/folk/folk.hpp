@@ -2,7 +2,7 @@
 #define FOLK_HPP
 
 #include "folk/scene/scene.hpp"
-#include "folk/scene/node.hpp"
+#include "folk/scene/entity_handle.hpp"
 #include "folk/core/engine.hpp"
 
 /// folk engine namespace

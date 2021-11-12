@@ -4,7 +4,7 @@
 #include "folk/math/vector.hpp"
 #include "folk/math/matrix.hpp"
 
-#include "folk/scene/node.hpp"
+#include "folk/scene/entity_handle.hpp"
 
 namespace Folk
 {
@@ -42,9 +42,9 @@ public:
     /// Matriz de transformación local.
     const Matrix4f& transformMatrix();
 
-    static TransformComponent& emplaceComponent(const Node::Id id);
-    static TransformComponent* getComponent(const Node::Id id);
-    static bool removeComponent(const Node::Id id);
+    static TransformComponent& emplaceComponent(const entt::handle);
+    static TransformComponent* getComponent(const entt::handle);
+    static bool removeComponent(const entt::handle);
 
 private:
     Vec3f m_position {0, 0, 0};
@@ -53,13 +53,13 @@ private:
     
     Matrix4f m_transform_mtx;
 
-    Node::Id m_parent_id;
+    entt::entity m_parent_id;
 
     bool m_modified;
 
     void updateTransform();
 
-    friend class Node;
+    friend class EntityHandle;
 };
 
 

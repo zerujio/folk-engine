@@ -1,5 +1,6 @@
 set(SOURCES
-    node.cpp
     scene.cpp
     module.cpp
-    transform_component.cpp)
+    entity_handle.cpp
+    transform_component.cpp
+    scene_graph_node.cpp)

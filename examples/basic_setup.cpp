@@ -67,8 +67,8 @@ void update(Folk::Scene& scn, double delta) {
         // Para poder ver este mensaje el programa debe iniciarse con la opción "-l trace"
         Folk::log(Folk::LogLevel::TRACE) << "dt=" << delta << '\n';
 
-    auto& node = scn.rootNode().getChild("Square");
-    auto& tr = node.getComponent<Folk::TransformComponent>();
+    auto node = scn.root().getChild("Square");
+    auto& tr = node->getComponent<Folk::TransformComponent>();
 
     {
         auto pos = tr.position();
@@ -112,7 +112,7 @@ void update(Folk::Scene& scn, double delta) {
 // Esta función se llama para inicializar la escena
 void Folk::sceneInit(Folk::Scene &scene) {
     // Añadir un nuevo nodo como hijo del nodo raíz.
-    Node& cube = scene.rootNode().createChild("Square");
+    EntityHandle cube = scene.root().createChild("Square");
 
     // cargamos un shader
     auto shader = Shader::createFromFiles("vs_basic.bin", "fs_basic.bin");
@@ -127,7 +127,7 @@ void Folk::sceneInit(Folk::Scene &scene) {
     auto& component = cube.addComponent<VisualComponent>(visual);
 
     // Añadir un cubo más pequeño, como nodo hijo.
-    auto& small_cube = cube.createChild("Small Cube");
+    auto small_cube = cube.createChild("Small Cube");
 
     auto& small_cube_tr = small_cube.getComponent<TransformComponent>();
     small_cube_tr.scale({0.5f, 0.5f, 0.5f});
