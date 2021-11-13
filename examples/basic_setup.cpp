@@ -68,7 +68,7 @@ void update(Folk::Scene& scn, double delta) {
         Folk::log(Folk::LogLevel::TRACE) << "dt=" << delta << '\n';
 
     auto node = scn.root().getChild("Square");
-    auto& tr = node->getComponent<Folk::TransformComponent>();
+    auto tr = *(node->getComponent<Folk::TransformComponent>());
 
     {
         auto pos = tr.position();
@@ -124,16 +124,16 @@ void Folk::sceneInit(Folk::Scene &scene) {
     );
 
     // Añadir al nodo una componente con la Visual anterior
-    auto& component = cube.addComponent<VisualComponent>(visual);
+    cube.addComponent<VisualComponent>(visual);
 
     // Añadir un cubo más pequeño, como nodo hijo.
     auto small_cube = cube.createChild("Small Cube");
 
-    auto& small_cube_tr = small_cube.getComponent<TransformComponent>();
+    auto small_cube_tr = *small_cube.getComponent<TransformComponent>();
     small_cube_tr.scale({0.5f, 0.5f, 0.5f});
     small_cube_tr.position({1.0f, 1.0f, 0.25f});
 
-    auto& small_cube_vs = small_cube.addComponent<VisualComponent>(visual);
+    small_cube.addComponent<VisualComponent>(visual);
    
     // Configurar el callback que se invocará en cada frame
     scene.updateCallback = update;

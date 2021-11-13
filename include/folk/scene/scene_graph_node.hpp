@@ -10,6 +10,7 @@
 
 namespace Folk {
     struct SceneGraphNode;
+    class TransformPtr;
 }
 
 template<>
@@ -24,11 +25,17 @@ namespace Folk
 struct SceneGraphNode {
 
     friend class EntityHandle;
+    friend class TransformPtr;
 
 public:
+    using ptr_type = TransformPtr;
+    static constexpr const char* type_name = "SceneGraphNode+Transform";
+
     SceneGraphNode(const entt::entity e, const char* name) : m_id(e), m_name(name) {}
 
     SceneGraphNode* findChild(const char* name) const;
+
+    const Matrix4f& transformMatrix();
 
 private:
     entt::entity m_id;
@@ -39,8 +46,27 @@ private:
     SceneGraphNode* m_child_ptr     {nullptr};
 
     std::string m_name;
+
+    struct Transform {
+        Vec3f position {0, 0, 0};
+        Vec3f rotation {0, 0, 0};
+        Vec3f scale    {1, 1, 1};
+        
+        Matrix4f matrix;
+
+        // is transform matrix valid (up to date)?
+        bool is_mtx_valid {false};
+    };
+
+    Transform m_transform;
     
     void changeParent(SceneGraphNode*);
+
+    // recursively invalidate matrix cache.
+    void invalidateMtxCache();
+
+    // recalculate transform matrix
+    void updateTransformMatrix();
 };
 
 } // namespace Folk

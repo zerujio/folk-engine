@@ -2,7 +2,7 @@
 #include "folk/scene/transform_component.hpp"
 #include "folk/core/error.hpp"
 
-#include "scene_graph_node.hpp"
+#include "folk/scene/scene_graph_node.hpp"
 #include "module.hpp"
 
 namespace Folk {
@@ -40,8 +40,6 @@ EntityHandle EntityHandle::createChild(const char* name) const {
     // add as child
     auto& new_node = new_handle.emplace<SceneGraphNode>(new_handle, name);
     new_node.changeParent(&node());
-
-    new_handle.emplace<TransformComponent>();
 
     return {new_handle};
 }

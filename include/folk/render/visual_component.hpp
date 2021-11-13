@@ -3,15 +3,18 @@
 
 #include "folk/render/visual.hpp"
 #include "folk/scene/entity_handle.hpp"
+#include "folk/scene/component_ptr.hpp"
 
 namespace Folk {
+
+struct VisualPtr;
 
 /// Determina cómo se dibuja un objeto.
 /**
  * \see Visual
 */
-class VisualComponent final {
-public:
+struct VisualComponent final {
+    using ptr_type = VisualPtr;
     static constexpr const char* type_name = "Visual";
 
     /// Visual que determina el material y la malla.
@@ -22,12 +25,13 @@ public:
 
     /// Construye un nuevo componente que utiliza el Visual referenciado.
     VisualComponent(std::shared_ptr<Visual> visual_) : visual(visual_) {}
+};
 
-    static VisualComponent& emplaceComponent(const entt::handle);
-    static VisualComponent& emplaceComponent(const entt::handle, 
-                                             std::shared_ptr<Visual>);
-    static VisualComponent* getComponent(const entt::handle);
-    static bool removeComponent(const entt::handle);
+class VisualPtr final : public ComponentPtr<VisualComponent> {
+public:
+    using ComponentPtr::ComponentPtr;
+
+    std::shared_ptr<Visual>& visual() { return ref.visual; }
 };
 
 }// namespace folk

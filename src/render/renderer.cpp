@@ -149,9 +149,9 @@ void Renderer::update(Delta delta)
 
     bgfx::touch(view_id);
 
-    auto view = SCENE.scene.m_registry.view<TransformComponent, VisualComponent>();
+    auto view = SCENE.scene.m_registry.view<SceneGraphNode, VisualComponent>();
     view.each([this, wsize](const auto entity,
-                     TransformComponent& transform,
+                     SceneGraphNode& transform,
                      const VisualComponent& visual)
         {
             bgfx::setViewRect(view_id, 0, 0, wsize.width, wsize.height);

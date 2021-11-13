@@ -5,21 +5,23 @@
 #include "folk/math/matrix.hpp"
 
 #include "folk/scene/entity_handle.hpp"
+#include "folk/scene/component_ptr.hpp"
+#include "folk/scene/scene_graph_node.hpp"
 
 namespace Folk
 {
 
-/// Determina la posición y orientación de un objeto (Node) en la escena.
+/// Determina la posición y orientación de una entidad en la escena.
 /**
  * Todos los nodos se crean con una componente Transform, y esta no puede ser
  * quitada.
 */
-class TransformComponent {
+class TransformPtr : public ComponentPtr<SceneGraphNode> {
 
 public: 
     static constexpr const char* type_name = "Transform";
 
-    TransformComponent();
+    using ComponentPtr::ComponentPtr;
 
     /// Consulta la posición.
     const Vec3f& position() const;
@@ -41,28 +43,9 @@ public:
 
     /// Matriz de transformación local.
     const Matrix4f& transformMatrix();
-
-    static TransformComponent& emplaceComponent(const entt::handle);
-    static TransformComponent* getComponent(const entt::handle);
-    static bool removeComponent(const entt::handle);
-
-private:
-    Vec3f m_position {0, 0, 0};
-    Vec3f m_rotation {0, 0, 0};
-    Vec3f m_scale    {1, 1, 1};
-    
-    Matrix4f m_transform_mtx;
-
-    entt::entity m_parent_id;
-
-    bool m_modified;
-
-    void updateTransform();
-
-    friend class EntityHandle;
 };
 
-
+using TransformComponent = SceneGraphNode;
 
 } // namespace Folk
 

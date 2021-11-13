@@ -2,6 +2,8 @@
 #define FOLK_SCENE__NODE_HPP
 
 #include "folk/core/error.hpp"
+#include "folk/scene/transform_component.hpp"
+#include "folk/scene/scene_graph_node.hpp"
 
 #include <entt/entt.hpp>
 
@@ -11,8 +13,6 @@
 #include <optional>
 
 namespace Folk {
-
-struct SceneGraphNode;
 
 /// \~spanish Nodo del grafo de escena. \~english A scene graph node.
 class EntityHandle {
@@ -55,72 +55,39 @@ public:
     /// Retorna la entidad madre en el grafo de escena.
     std::optional<EntityHandle> getParent() const;
 
-    /// \~spanish Añade un componente a este nodo. \~english Add a component to this node.
+    /// Asocia un componente de tipo C a esta entidad.
     /**
-     * \~spanish
-     * A cada nodo se le puede asociar una sola instancia de cada componente. 
-     * Intentar añadir un componente a un nodo que ya lo posee generará una
-     * excepción.
+     * Cada entidad puede tener una única instancia de cada componente. Intentar
+     * asociar un componente a una entidad que ya lo posee generará una excepción.
      * 
-     * \param C la clase del componente.
-     * \param args argumentos que pasar al constructor del componente.
-     * 
-     * \~english
-     * Adding a component to a node that already has said component will result
-     * in a an exception.
-     * 
-     * \param <C> the type of component.
-     * \param args arguments for the constructor of the component.
+     * \param <C> Tipo del componente.
+     * \param args Argumentos para el constructor.
     */
     template<typename C, typename... Args>
+    decltype(auto) addComponent(Args&&...);
 
-    C& addComponent(Args&&...);
-
-    /// \~spanish Obtiene un componente. \~english Get a component.
+    /// Retorna una referencia al componente asociado a esta entidad.
     /**
-     * \~spanish
-     * Intentar obtener un componente que este nodo no posee generará una excepción.
-     * 
-     * Un puntero o referencia a un componente no es estable, es decir, no hay
-     * garantía de que siga siendo válido entre un cuadro y el siguiente. 
-     * 
-     * \param C tipo del componente.
-     * 
-     * \~english
-     * Attempting to retrieve a component that this node does not have will 
-     * result in an exception.
-     * 
-     * \param <C> component type.
-     */
+     * \param <C>
+     * \return Una instancia de std::optional que contiene un _handle_ al tipo de
+     *         componente especificado si existe, o una vacía si no.
+    */
     template<typename C>
-    C& getComponent();
-
-    /// \~spanish \brief Obtiene un componente, retorna un puntero nulo si no está presente.
-    /// \~english \brief Get a component, return a nullptr if not present.
-    /**
-     * \~spanish
-     * \param C tipo del componente.
-     * 
-     * \~english
-     * \param <C> component type
-     */
-    template<typename C>
-    C* tryGetComponent();
+    decltype(auto) getComponent();
 
     /// Quita un componente.
     /**
-     * \param C tipo del componente.
+     * Intentar quitar un componente del que la entidad no es dueña constituye
+     * comportamiento indefinido.
+     * 
+     * \param <C> tipo del componente.
      */
     template<typename C>
     void removeComponent();
 
-    /// Quita un componente, si existe.
-    /**
-     * \param C tipo del componente.
-     * \return si el componente fue quitado o no.
-     */
+    /// Quita un componente, si está presente.
     template<typename C>
-    bool tryRemoveComponent();
+    void removeComponentIfPresent();
 
 private:
     SceneGraphNode& node() const;
@@ -128,52 +95,57 @@ private:
     entt::handle m_handle;
 };
 
+
 // DEFINITIONS
 
 template<typename C, typename... Args>
-C& EntityHandle::addComponent(Args&& ... args)
+decltype(auto) EntityHandle::addComponent(Args&& ... args)
 {
-    if (C::getComponent(m_handle))
-        throw EngineRuntimeError("Node " + name() 
+    static_assert(!std::is_same_v<C, SceneGraphNode>,
+                  "Transform component can't be added.");
+
+    if (m_handle.try_get<C>())
+        throw EngineRuntimeError("Entity " + name() 
                                 + " already has a component of type "
                                 + C::type_name);
     
-    return C::emplaceComponent(m_handle, std::forward<Args>(args)...);
+    m_handle.emplace<C>(std::forward<Args>(args)...);
+
+    using P = typename C::ptr_type;
+    return P(m_handle);
 }
 
 template<typename C> 
-C& EntityHandle::getComponent() 
+decltype(auto) EntityHandle::getComponent() 
 {
-    C* c = C::getComponent(m_handle);
+    using P = typename C::ptr_type;
+
+    C* c = m_handle.try_get<C>();
 
     if (c)
-        return *c;
+        return std::optional<P>(P(m_handle));
     else
-        throw EngineRuntimeError("Node " + name()
-                                + "doesn't have a component of type "
-                                + C::type_name);
-}
-
-template<typename C>
-C* EntityHandle::tryGetComponent()
-{
-    return C::getComponent(m_handle);
+        return std::optional<P>();
 }
 
 template<class C>
-void EntityHandle::removeComponent() 
+void EntityHandle::removeComponent()
 {
-    if (!C::removeComponent(m_handle)) {
+    static_assert(std::is_same_v<C, SceneGraphNode>,
+                  "Transform component can't be removed.");
+
+    if (!m_handle.try_get<C>())
         throw EngineRuntimeError("Node " + name()
                                 + " does not have a component of type "
                                 + C::type_name + ": can't remove.");
-    }
+    
+    m_handle.remove<C>();
 }
 
 template<class C>
-bool EntityHandle::tryRemoveComponent()
+void EntityHandle::removeComponentIfPresent()
 {
-    return C::removeComponent(m_handle);
+    m_handle.remove_if_exists<C>();
 }
 
 }//namespace folk

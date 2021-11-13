@@ -1,6 +1,5 @@
 #include "folk/scene/scene.hpp"
-
-#include "scene_graph_node.hpp"
+#include "folk/scene/scene_graph_node.hpp"
 
 namespace Folk {
 

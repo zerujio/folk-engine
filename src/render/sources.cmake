@@ -3,7 +3,6 @@ set(SOURCES
     immediate_geometry.cpp
     material.cpp
     mesh.cpp
-    visual_component.cpp
     visual.cpp
     shader.cpp
     default_shader.cpp
