@@ -44,7 +44,7 @@ const Matrix4f& SceneGraphNode::transformMatrix() {
 
 void SceneGraphNode::invalidateMtxCache() {
     m_transform.is_mtx_valid = false;
-    
+
     for (auto ptr = m_child_ptr; ptr; ptr = ptr->m_next_ptr)
         ptr->invalidateMtxCache();
 }
@@ -71,8 +71,14 @@ void SceneGraphNode::updateTransformMatrix() {
     bx::mtxTranslate(b, m_transform.position.x, 
                         m_transform.position.y, 
                         m_transform.position.z);
-
-    bx::mtxMul(m_transform.matrix, a, b);
+    
+    if (m_parent_ptr) {
+        // c = scale * rotation * position
+        bx::mtxMul(c, a, b);
+        bx::mtxMul(m_transform.matrix, c, m_parent_ptr->transformMatrix());
+    
+    } else
+        bx::mtxMul(m_transform.matrix, a, b);
 
     m_transform.is_mtx_valid = true;
 }

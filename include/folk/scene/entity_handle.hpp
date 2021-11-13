@@ -16,6 +16,7 @@ namespace Folk {
 
 /// \~spanish Nodo del grafo de escena. \~english A scene graph node.
 class EntityHandle {
+
 public:
     /// (uso interno) Crea una referencia a una entidad.
     EntityHandle(entt::handle h) : m_handle(h) {}

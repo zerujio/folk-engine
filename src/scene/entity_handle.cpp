@@ -14,6 +14,7 @@ bool EntityHandle::valid() const {
 void EntityHandle::destroy() {
     for (auto c : getChildren())
         c.destroy();
+    node().changeParent(nullptr);
     m_handle.destroy();
 }
 
