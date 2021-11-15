@@ -4,18 +4,18 @@
 #include "folk/core/resource.hpp"
 #include "folk/render/immediate_geometry.hpp"
 
+#include <bgfx/bgfx.h>
+
 namespace Folk
 {
 
-namespace ImplDetails {
-struct MeshData;
-}
-
 /// \~spanish Recurso que representa una malla 3D. \~english Resource to keep track of a 3D mesh.
-class Mesh : public Resource {
+class Mesh final : public Resource {
 public:
-    /// Crea una malla vacía. !!! ELIMINAR ESTE CONSTRUCTOR. Eliminar emptyIB, emptyVB
-    static std::shared_ptr<Mesh> create();
+    /// Constructor de uso interno.
+    Mesh(const bgfx::VertexBufferHandle, const bgfx::IndexBufferHandle);
+
+    ~Mesh();
 
     /// Crea una malla a partir de geometría inmediata.
     /**
@@ -23,8 +23,11 @@ public:
     */
    static std::shared_ptr<Mesh> create(ImmediateGeometry const&);
 
-protected:
-    Mesh() = default;
+private:
+    const bgfx::VertexBufferHandle vb;
+    const bgfx::IndexBufferHandle ib;
+
+    friend class Renderer;
 };
     
 } // namespace folk

@@ -2,12 +2,21 @@
 
 #include "../core/engine_singleton.hpp"
 
-#include "mesh_data.hpp"
 #include "common.hpp"
 #include "renderer.hpp"
 
 namespace Folk
 {
+
+Mesh::Mesh(const bgfx::VertexBufferHandle vb_, 
+           const bgfx::IndexBufferHandle ib_)
+    : vb(vb_), ib(ib_)
+{}
+
+Mesh::~Mesh() {
+    bgfx::destroy(vb);
+    bgfx::destroy(ib);
+}
 
 static bgfx::VertexLayout posColorVertLayout() {
     static bgfx::VertexLayout layout;
@@ -16,41 +25,22 @@ static bgfx::VertexLayout posColorVertLayout() {
     if (!initialized) {
         layout.begin()
            .add(bgfx::Attrib::Position, 3, bgfx::AttribType::Float)
-           .add(bgfx::Attrib::Color0, 4, bgfx::AttribType::Uint8)
+           .add(bgfx::Attrib::Color0, 4, bgfx::AttribType::Uint8, true)
            .end();
+
+        initialized = true;
     }
 
     return layout;
 }
 
-static bgfx::VertexBufferHandle emptyVB() {
-    auto mem = bgfx::copy(nullptr, 0);
-    auto handle = bgfx::createVertexBuffer(mem, posColorVertLayout());
-
-    if (!bgfx::isValid(handle))
-        throw CriticalEngineError("empty VertexBuffer creation failed!");
-
-    bgfx::setName(handle, "Emtpy VB");
-
-    return handle;
-}
-
-static bgfx::IndexBufferHandle emptyIB() {
-    auto mem = bgfx::copy(nullptr, 0);
-    auto handle = bgfx::createIndexBuffer(mem);
-
-    if (!bgfx::isValid(handle))
-        throw CriticalEngineError("empty IndexBuffer creation failed!");
-
-    bgfx::setName(handle, "Empty IB");
-
-    return handle;
-}
-
 static const bgfx::VertexBufferHandle createVB(ImmediateGeometry const& geo) {
     auto memptr = bgfx::copy(geo.vertices.data(), 
-                                   geo.vertices.size() * sizeof(ImmediateGeometry::Vertex));
+                             geo.vertices.size() * sizeof(ImmediateGeometry::Vertex));
     auto handle = bgfx::createVertexBuffer(memptr, posColorVertLayout());
+
+    if (!bgfx::isValid(handle))
+        throw EngineRuntimeError("Vertex buffer creation failed!");
 
     return handle;
 }
@@ -60,22 +50,20 @@ static const bgfx::IndexBufferHandle createIB(ImmediateGeometry const& geo) {
                           geo.indices.size() * sizeof(ImmediateGeometry::Index));
     auto handle = bgfx::createIndexBuffer(mem);
 
+    if (!bgfx::isValid(handle))
+        throw EngineRuntimeError("Index buffer creation failed");
+
     return handle;
 }
 
-static std::shared_ptr<Mesh> createMesh(bgfx::VertexBufferHandle vb,
-                                    bgfx::IndexBufferHandle ib)
+static std::shared_ptr<Mesh> createMesh(const bgfx::VertexBufferHandle vb,
+                                        const bgfx::IndexBufferHandle ib)
 {
-    std::shared_ptr<MeshData> ptr = std::make_shared<MeshData>(vb, ib);
-    return std::shared_ptr<Mesh>(ptr, ptr.get());
+    return std::make_shared<Mesh>(vb, ib);
 }
 
 std::shared_ptr<Mesh> Mesh::create(ImmediateGeometry const& geom) {
     return createMesh(createVB(geom), createIB(geom));
-}
-
-std::shared_ptr<Mesh> Mesh::create() {
-    return createMesh(emptyVB(), emptyIB());
 }
 
 } // namespace folk

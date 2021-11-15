@@ -7,7 +7,6 @@
 #include "../core/module.hpp"
 
 #include "shader_data.hpp"
-#include "mesh_data.hpp"
 
 #include <bgfx/bgfx.h>
 

@@ -114,10 +114,13 @@ Renderer::Renderer()
                          .add(bgfx::Attrib::Position, 3, bgfx::AttribType::Float)
                          .add(bgfx::Attrib::Color0, 4, bgfx::AttribType::Uint8, true)
                          .end();
+
     dbg_geom.vb = bgfx::createVertexBuffer(bgfx::makeRef(cubeVertices, 
-                                                         sizeof(cubeVertices)),
+                                                        sizeof(cubeVertices)),
                                            dbg_geom.layout);
-    dbg_geom.ib = bgfx::createIndexBuffer(bgfx::makeRef(cubeTriList, sizeof(cubeTriList)));
+
+    dbg_geom.ib = bgfx::createIndexBuffer(bgfx::makeRef(cubeTriList, 
+                                                        sizeof(cubeTriList)));
 
     
     bgfx::ShaderHandle vsh = loadShaderFile("vs_basic.bin");
@@ -156,8 +159,11 @@ void Renderer::update(Delta delta)
         {
             bgfx::setViewRect(view_id, 0, 0, wsize.width, wsize.height);
             bgfx::setViewTransform(view_id, dbg_geom.view, dbg_geom.proj);
-            bgfx::setVertexBuffer(view_id, dbg_geom.vb);
-            bgfx::setIndexBuffer(dbg_geom.ib);
+
+            auto mesh = visual.visual->getMesh();
+            bgfx::setVertexBuffer(view_id, mesh->vb);
+            bgfx::setIndexBuffer(mesh->ib);
+
             bgfx::setTransform(transform.transformMatrix());
             bgfx::submit(view_id, dbg_geom.program);
         }

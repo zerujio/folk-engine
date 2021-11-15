@@ -10,32 +10,15 @@ namespace Folk
 /// \brief \~spanish Una estructura para especificar geometría. 
 /// \brief \~english A structure to specify geometry.
 struct ImmediateGeometry
-{   
+{
     struct Vertex {
         float x;
         float y;
         float z;
-        uint8_t r;
-        uint8_t g;
-        uint8_t b;
-        uint8_t a;
-
-        Vertex(float x_, float y_, float z_, uint8_t r_, uint8_t g_, uint8_t b_, uint8_t a_)
-            : x(x_), y(y_), z(z_), r(r_), g(g_), b(b_), a(a_)
-        {}
-
-        Vertex(float x_, float y_, float z_, uint32_t color_) {
-            color() = color_;
-        }
-
-        uint32_t& color() {
-            return *((uint32_t*) &r);
-        }
+        uint32_t abgr;
     };
-
-    static_assert(sizeof(Vertex) == 16);
-
     using VertexArray = std::vector<Vertex>;
+    static_assert(sizeof(Vertex) == 16);
 
     using Index = uint16_t;
     using IndexArray = std::vector<Index>;
@@ -64,8 +47,8 @@ struct ImmediateGeometry
     ImmediateGeometry(VertexArray && v, IndexArray && i) 
         : vertices(v), indices(i) {}
 
-    /// Genera un cuadrado multicolor
-    static ImmediateGeometry colorSquare();
+    /// Construye un cubo
+    static ImmediateGeometry createCube(const uint32_t color);
 };
 
 } // namespace folk

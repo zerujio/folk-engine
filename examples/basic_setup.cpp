@@ -70,23 +70,26 @@ void update(Folk::Scene& scn, double delta) {
     auto node = scn.root().getChild("Square");
     auto tr = *(node->getComponent<Folk::TransformComponent>());
 
+    float spd = 1.5f;
+    float dist = spd * delta;
+
     {
         auto pos = tr.position();
 
         if (Folk::getKey(Folk::Key::W) == Folk::InputState::Press) {
-            pos.y += delta;
+            pos.y += dist;
         }
 
         if (Folk::getKey(Folk::Key::S) == Folk::InputState::Press) {
-            pos.y -= delta;
+            pos.y -= dist;
         }
 
         if (Folk::getKey(Folk::Key::D) == Folk::InputState::Press) {
-            pos.x += delta;
+            pos.x += dist;
         }
 
         if (Folk::getKey(Folk::Key::A) == Folk::InputState::Press) {
-            pos.x -= delta;
+            pos.x -= dist;
         }
 
         if (tr.position() != pos)
@@ -98,10 +101,10 @@ void update(Folk::Scene& scn, double delta) {
         auto rot = tr.rotation();
 
         if (Folk::getKey(Folk::Key::Q) == Folk::InputState::Press) {
-            rot.y -= delta;
+            rot.y -= dist;
         }
         if (Folk::getKey(Folk::Key::E) == Folk::InputState::Press) {
-            rot.y += delta;
+            rot.y += dist;
         }
 
         if (rot != tr.rotation())
@@ -119,7 +122,7 @@ void Folk::sceneInit(Folk::Scene &scene) {
 
     // Crear una Visual...
     auto visual = Visual::create(
-        Mesh::create(ImmediateGeometry::colorSquare()), // con un cuadrado como mesh
+        Mesh::create(ImmediateGeometry::createCube(0xffffffff)), // con un cuadrado como mesh
         Material::create(shader)    // y el shader que leímos desde el archivo
     );
 
@@ -131,9 +134,13 @@ void Folk::sceneInit(Folk::Scene &scene) {
 
     auto small_cube_tr = *small_cube.getComponent<TransformComponent>();
     small_cube_tr.scale({0.5f, 0.5f, 0.5f});
-    small_cube_tr.position({1.0f, 1.0f, 0.25f});
+    small_cube_tr.position({1.0f, 1.0f, 1.0f});
 
-    small_cube.addComponent<VisualComponent>(visual);
+    auto small_visual = Visual::create(
+        Mesh::create(ImmediateGeometry::createCube(0xff0000ff)),
+        visual->getMaterial()
+    );
+    small_cube.addComponent<VisualComponent>(small_visual);
    
     // Configurar el callback que se invocará en cada frame
     scene.updateCallback = update;
