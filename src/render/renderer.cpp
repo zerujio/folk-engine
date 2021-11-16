@@ -149,7 +149,7 @@ void Renderer::update(Delta delta)
     ENGINE.perf_monitor.start(perf_monitor_id);
 
     auto& wsize = WINDOW.getWindowSize();
-
+    
     bgfx::touch(view_id);
 
     auto view = SCENE.scene.m_registry.view<SceneGraphNode, VisualComponent>();

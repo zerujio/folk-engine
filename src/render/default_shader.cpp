@@ -33,8 +33,27 @@ static const bgfx::ProgramHandle buildProgram(bgfx::ShaderHandle vert,
     return handle;
 }
 const bgfx::ProgramHandle getDefaultProgramHandle() {
-    return buildProgram(buildShader(vs_default, "default vertex shader"), 
-                        buildShader(fs_default, "default fragment shader"));
+    bgfx::ShaderHandle vertex {};
+    bgfx::ShaderHandle fragment {};
+
+    switch (bgfx::getRendererType())
+    {
+    case bgfx::RendererType::OpenGL:
+        vertex = buildShader(glsl::vs_basic, "default glsl vertex shader");
+        fragment = buildShader(glsl::fs_basic, "default glsl fragment shader");
+        break;
+    
+    case bgfx::RendererType::Vulkan:
+        vertex = buildShader(spirv::vs_basic, "default vulkan vertex shader");
+        fragment = buildShader(spirv::fs_basic, "default vulkan fragment shader");
+        break;
+    
+    default:
+        throw EngineRuntimeError("Unsupported rendering backend!");
+        break;
+    }
+
+    return buildProgram(vertex, fragment);
 }
 
 } // namespace Folk

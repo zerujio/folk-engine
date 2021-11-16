@@ -118,7 +118,8 @@ void Folk::sceneInit(Folk::Scene &scene) {
     EntityHandle cube = scene.root().createChild("Square");
 
     // cargamos un shader
-    auto shader = Shader::createFromFiles("vs_basic.bin", "fs_basic.bin");
+    //auto shader = Shader::createFromFiles("vs_basic.bin", "fs_basic.bin");
+    auto shader = Shader::createDefault();
 
     // Crear una Visual...
     auto visual = Visual::create(

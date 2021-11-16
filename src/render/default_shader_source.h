@@ -1,5 +1,26 @@
 #include <cstdint>
 
+namespace spirv
+{
+
+#include "shaders/spirv/vs_basic.h"
+
+#include "shaders/spirv/fs_basic.h"
+
+} // namespace spirv
+
+namespace glsl
+{
+
+#include "shaders/glsl/vs_basic.h"
+
+#include "shaders/glsl/fs_basic.h"
+
+} // namespace spirv
+
+
+
+/*
 static const uint8_t fs_default[637] =
 {
 	0x46, 0x53, 0x48, 0x0b, 0xa4, 0x8b, 0xef, 0x49, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x6a, 0x02, // FSH....I......j.
@@ -182,3 +203,4 @@ static const uint8_t vs_default[2149] =
 	0x6f, 0x6c, 0x6f, 0x72, 0x30, 0x20, 0x3d, 0x20, 0x61, 0x5f, 0x63, 0x6f, 0x6c, 0x6f, 0x72, 0x30, // olor0 = a_color0
 	0x3b, 0x0a, 0x7d, 0x0a, 0x00,                                                                   // ;.}..
 };
+*/
