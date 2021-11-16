@@ -149,13 +149,45 @@ void Renderer::update(Delta delta)
     ENGINE.perf_monitor.start(perf_monitor_id);
 
     auto& wsize = WINDOW.getWindowSize();
+
+    // camera config
+    float* view;
+    float* proj;
+    
+    auto cam_entity = SCENE.scene.m_camera;
+
+    if (cam_entity == entt::null) {
+        view = dbg_geom.view;
+        proj = dbg_geom.proj;
+    
+    } else {
+        auto camera_transform = SCENE.scene.m_registry.get<SceneGraphNode>(cam_entity);
+
+        bx::Vec3 aux {0.0f, 0.0f, 0.0f};
+        auto eye = bx::mul(aux, camera_transform.transformMatrix());
+
+        aux = {0.0f, 0.0f, -1.0f};
+        auto at = bx::mul(aux, camera_transform.transformMatrix());
+
+        view = view_mat;
+        bx::mtxLookAt(view_mat, eye, at);
+
+        auto camera_comp = SCENE.scene.getCamera();
+        proj = proj_mat;
+        bx::mtxProj(proj_mat, 
+                    camera_comp.fovy(),
+                    float(wsize.width)/float(wsize.height),
+                    camera_comp.near(),
+                    camera_comp.far(),
+                    bgfx::getCaps()->homogeneousDepth);
+    }
     
     bgfx::touch(view_id);
 
-    auto view = SCENE.scene.m_registry.view<SceneGraphNode, VisualComponent>();
-    view.each([this, wsize](const auto entity,
-                     SceneGraphNode& transform,
-                     const VisualComponent& visual)
+    auto reg_view = SCENE.scene.m_registry.view<SceneGraphNode, VisualComponent>();
+    reg_view.each([this, wsize](const auto entity,
+                            SceneGraphNode& transform,
+                            const VisualComponent& visual)
         {
             bgfx::setViewRect(view_id, 0, 0, wsize.width, wsize.height);
             bgfx::setViewTransform(view_id, dbg_geom.view, dbg_geom.proj);

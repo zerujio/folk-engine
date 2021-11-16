@@ -12,6 +12,7 @@ struct VisualPtr;
 /// Determina cómo se dibuja un objeto.
 /**
  * \see Visual
+ * \see VisualPtr
 */
 struct VisualComponent final {
     using ptr_type = VisualPtr;

@@ -110,6 +110,18 @@ void update(Folk::Scene& scn, double delta) {
         if (rot != tr.rotation())
             tr.rotation(rot);
     }
+
+    {
+        auto camera = scn.getCamera();
+
+        if (Folk::getKey(Folk::Key::R) == Folk::InputState::Press) {
+            camera.fovy() += dist;
+        }
+
+        if (Folk::getKey(Folk::Key::F) == Folk::InputState::Press) {
+            camera.fovy() -= dist;
+        }
+    }
 }
 
 // Esta función se llama para inicializar la escena

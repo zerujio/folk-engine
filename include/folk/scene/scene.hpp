@@ -3,6 +3,8 @@
 
 #include "folk/scene/entity_handle.hpp"
 
+#include "folk/render/camera_component.hpp"
+
 #include <vector>
 
 namespace Folk
@@ -24,10 +26,22 @@ public:
 
     /// \~spanish Obtiene el nodo raíz del grafo de escena. \~english Get the root node of this scene.
     EntityHandle root() {return {{m_registry, m_root}};}
+
+    /// Configura la cámara a usar.
+    /**
+     * \param camera Referencia a CameraComponent.
+    */
+    void setCamera(CameraPtr camera);
+
+    /// Puntero a la cámara en uso.
+    CameraPtr getCamera();
     
 private:
     entt::registry m_registry {};
     entt::entity m_root {m_registry.create()};
+    entt::entity m_camera {entt::null};
+
+    void onDestroyCamera(entt::registry&, entt::entity);
 };
 
 }// namespace folk::scene

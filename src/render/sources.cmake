@@ -6,4 +6,5 @@ set(SOURCES
     visual.cpp
     shader.cpp
     default_shader.cpp
-    shader_loader.cpp)
+    shader_loader.cpp
+    camera_component.cpp)
