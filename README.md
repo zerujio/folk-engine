@@ -47,8 +47,8 @@ Este proyecto fue desarrollado en Linux (Ubuntu 21.04). El sistema de build es C
 
 ### Dependencias
 
-#### OpenGL
-El motor de renderizado utiliza algunas funcionalidades de OpenGL 4.3, por lo que es necesario tener drivers/hardware que lo soporte.
+#### Rendering
+Se utiliza la librería bgfx, la cual puede utilizar tanto OpenGL como Vulkan.
 
 #### Doxygen
 Es necesario tener instalado Doxygen para poder generar la documentación.
