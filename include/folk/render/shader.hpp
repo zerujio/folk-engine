@@ -3,11 +3,13 @@
 
 #include "folk/core/resource.hpp"
 
+#include <bgfx/bgfx.h>
+
 namespace Folk
 {
 
 /// \~spanish Un programa de shaders (vertex + fragment).
-class Shader : Resource
+class Shader final : public Resource
 {
 public:
     using Ref = std::shared_ptr<Shader>;
@@ -28,8 +30,13 @@ public:
     */
     static Ref createFromFiles(const char* vertex, const char* fragment);
 
-protected:
-    Shader() = default;
+    Shader(const bgfx::ProgramHandle);
+    ~Shader();
+
+private:
+    const bgfx::ProgramHandle handle;
+
+    friend class Renderer;
 };
 
 } // namespace Folk

@@ -6,8 +6,6 @@
 
 #include "../core/module.hpp"
 
-#include "shader_data.hpp"
-
 #include <bgfx/bgfx.h>
 
 #include <map>

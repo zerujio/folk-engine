@@ -1,10 +1,9 @@
 #include "folk/core/error.hpp"
 #include "folk/render/material.hpp"
 
-#include "../core/engine_singleton.hpp"
+#include "folk/render/shader.hpp"
 
-#include "shader_data.hpp"
-#include "material_data.hpp"
+#include "../core/engine_singleton.hpp"
 
 namespace Folk
 {
@@ -14,11 +13,8 @@ std::shared_ptr<Material> Material::create() {
 }
 
 std::shared_ptr<Material> Material::create(std::shared_ptr<Shader> shader) {
-    auto sptr = std::make_shared<MaterialData>(shader);
-    return std::shared_ptr<Material>(sptr, sptr.get());
+    return std::make_shared<Material>(shader);
 }
-
-Material::Material(std::shared_ptr<Shader> shader) : shader(shader) {}
 
 void Material::setShader(std::shared_ptr<Shader> shader_)
 {

@@ -164,8 +164,10 @@ void Renderer::update(Delta delta)
             bgfx::setVertexBuffer(view_id, mesh->vb);
             bgfx::setIndexBuffer(mesh->ib);
 
+            // transform
             bgfx::setTransform(transform.transformMatrix());
-            bgfx::submit(view_id, dbg_geom.program);
+
+            bgfx::submit(view_id, visual.visual->getMaterial()->getShader()->handle);
         }
     );
     

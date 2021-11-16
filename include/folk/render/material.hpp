@@ -44,8 +44,7 @@ public:
     */
     std::shared_ptr<Shader> getShader();
 
-protected:
-    Material(std::shared_ptr<Shader> shader);
+    Material(std::shared_ptr<Shader> shader_) : shader(shader_) {}
 
 private:
     std::shared_ptr<Shader> shader;
