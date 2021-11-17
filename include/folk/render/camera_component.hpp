@@ -1,7 +1,6 @@
 #ifndef FOLK_RENDER__CAMERA_COMPONENT_HPP
 #define FOLK_RENDER__CAMERA_COMPONENT_HPP
 
-#include "folk/scene/scene.hpp"
 #include "folk/scene/component_ptr.hpp"
 #include "folk/math/vector.hpp"
 

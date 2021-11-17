@@ -18,55 +18,6 @@
 #define GLFW_EXPOSE_NATIVE_X11
 #include <GLFW/glfw3native.h>
 
-struct PosColorVertex
-{
-	float x;
-	float y;
-	float z;
-	uint32_t abgr;
-};
-
-static PosColorVertex cubeVertices[] =
-{
-	{-1.0f,  1.0f,  1.0f, 0xff000000 },
-	{ 1.0f,  1.0f,  1.0f, 0xff0000ff },
-	{-1.0f, -1.0f,  1.0f, 0xff00ff00 },
-	{ 1.0f, -1.0f,  1.0f, 0xff00ffff },
-	{-1.0f,  1.0f, -1.0f, 0xffff0000 },
-	{ 1.0f,  1.0f, -1.0f, 0xffff00ff },
-	{-1.0f, -1.0f, -1.0f, 0xffffff00 },
-	{ 1.0f, -1.0f, -1.0f, 0xffffffff },
-};
-
-static const uint16_t cubeTriList[] =
-{
-	0, 1, 2,
-	1, 3, 2,
-	4, 6, 5,
-	5, 6, 7,
-	0, 2, 4,
-	4, 2, 6,
-	1, 5, 3,
-	5, 7, 3,
-	0, 4, 1,
-	4, 5, 1,
-	2, 3, 6,
-	6, 3, 7,
-};
-
-struct DebugGeometry {
-    bgfx::VertexBufferHandle vb;
-    bgfx::IndexBufferHandle ib;
-    bgfx::ProgramHandle program;
-    bgfx::VertexLayout layout;
-
-    float model[16];
-    float view[16];
-    float proj[16];
-};
-
-DebugGeometry dbg_geom;
-
 namespace Folk {
 
 Renderer::Renderer()
@@ -108,39 +59,9 @@ Renderer::Renderer()
 
     // add performance metrics
     perf_monitor_id = ENGINE.perf_monitor.addItem("Renderer (CPU)");
-
-    // DEBUG GEOMETRY
-    dbg_geom.layout.begin()
-                         .add(bgfx::Attrib::Position, 3, bgfx::AttribType::Float)
-                         .add(bgfx::Attrib::Color0, 4, bgfx::AttribType::Uint8, true)
-                         .end();
-
-    dbg_geom.vb = bgfx::createVertexBuffer(bgfx::makeRef(cubeVertices, 
-                                                        sizeof(cubeVertices)),
-                                           dbg_geom.layout);
-
-    dbg_geom.ib = bgfx::createIndexBuffer(bgfx::makeRef(cubeTriList, 
-                                                        sizeof(cubeTriList)));
-
-    
-    bgfx::ShaderHandle vsh = loadShaderFile("vs_basic.bin");
-    bgfx::ShaderHandle fsh = loadShaderFile("fs_basic.bin");
-    dbg_geom.program = buildProgram(vsh, fsh);
-
-    const bx::Vec3 at_ = {0.0f, 0.0f, 0.0f};
-    const bx::Vec3 eye_ = {0.0f, 0.0f, -5.0f};
-    bx::mtxLookAt(dbg_geom.view, eye_, at_);
-    bx::mtxProj(dbg_geom.proj, 60.0f, float(wsize.width) / float(wsize.height),
-                0.1f, 100.0f, bgfx::getCaps()->homogeneousDepth);
-    // DEBUG
 }
 
 Renderer::~Renderer() {
-    //  DEBUG
-    bgfx::destroy(dbg_geom.vb);
-    bgfx::destroy(dbg_geom.ib);
-    bgfx::destroy(dbg_geom.program);
-    //  DEBUG
     bgfx::shutdown();
 }
 
@@ -150,15 +71,21 @@ void Renderer::update(Delta delta)
 
     auto& wsize = WINDOW.getWindowSize();
 
-    // camera config
-    float* view;
-    float* proj;
+    Matrix4f view_mtx;
+    Matrix4f proj_mtx;
     
     auto cam_entity = SCENE.scene.m_camera;
 
     if (cam_entity == entt::null) {
-        view = dbg_geom.view;
-        proj = dbg_geom.proj;
+        const bx::Vec3 at_ = {0.0f, 0.0f, 0.0f};
+        const bx::Vec3 eye_ = {0.0f, 0.0f, -5.0f};
+        bx::mtxLookAt(view_mtx, eye_, at_);
+        bx::mtxProj(proj_mtx,
+                    60.0f,
+                    float(wsize.width) / float(wsize.height),
+                    0.1f,
+                    100.0f,
+                    bgfx::getCaps()->homogeneousDepth);
     
     } else {
         auto camera_transform = SCENE.scene.m_registry.get<SceneGraphNode>(cam_entity);
@@ -166,17 +93,15 @@ void Renderer::update(Delta delta)
         bx::Vec3 aux {0.0f, 0.0f, 0.0f};
         auto eye = bx::mul(aux, camera_transform.transformMatrix());
 
-        aux = {0.0f, 0.0f, -1.0f};
+        aux = {0.0f, 0.0f, 1.0f};
         auto at = bx::mul(aux, camera_transform.transformMatrix());
 
-        view = view_mat;
-        bx::mtxLookAt(view_mat, eye, at);
+        bx::mtxLookAt(view_mtx, eye, at);
 
         auto camera_comp = SCENE.scene.getCamera();
-        proj = proj_mat;
-        bx::mtxProj(proj_mat, 
+        bx::mtxProj(proj_mtx, 
                     camera_comp.fovy(),
-                    float(wsize.width)/float(wsize.height),
+                    float(wsize.width) / float(wsize.height),
                     camera_comp.near(),
                     camera_comp.far(),
                     bgfx::getCaps()->homogeneousDepth);
@@ -185,12 +110,12 @@ void Renderer::update(Delta delta)
     bgfx::touch(view_id);
 
     auto reg_view = SCENE.scene.m_registry.view<SceneGraphNode, VisualComponent>();
-    reg_view.each([this, wsize](const auto entity,
-                            SceneGraphNode& transform,
-                            const VisualComponent& visual)
+    reg_view.each([this, wsize, view_mtx, proj_mtx](const auto entity,
+                                                    SceneGraphNode& transform,
+                                                    const VisualComponent& visual)
         {
             bgfx::setViewRect(view_id, 0, 0, wsize.width, wsize.height);
-            bgfx::setViewTransform(view_id, dbg_geom.view, dbg_geom.proj);
+            bgfx::setViewTransform(view_id, view_mtx, proj_mtx);
 
             auto mesh = visual.visual->getMesh();
             bgfx::setVertexBuffer(view_id, mesh->vb);

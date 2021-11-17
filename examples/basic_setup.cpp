@@ -73,6 +73,7 @@ void update(Folk::Scene& scn, double delta) {
     float spd = 1.5f;
     float dist = spd * delta;
 
+    // Mover el cubo en la escena
     {
         auto pos = tr.position();
 
@@ -96,7 +97,7 @@ void update(Folk::Scene& scn, double delta) {
             tr.position(pos);
     }
 
-
+    // Rotar el cubo
     {
         auto rot = tr.rotation();
 
@@ -111,15 +112,16 @@ void update(Folk::Scene& scn, double delta) {
             tr.rotation(rot);
     }
 
+    // Ajustar el fov de la cámara
     {
         auto camera = scn.getCamera();
 
         if (Folk::getKey(Folk::Key::R) == Folk::InputState::Press) {
-            camera.fovy() += dist;
+            camera.fovy() += dist * 10.0f;
         }
 
         if (Folk::getKey(Folk::Key::F) == Folk::InputState::Press) {
-            camera.fovy() -= dist;
+            camera.fovy() -= dist * 10.0f;
         }
     }
 }
@@ -154,6 +156,13 @@ void Folk::sceneInit(Folk::Scene &scene) {
         visual->getMaterial()
     );
     small_cube.addComponent<VisualComponent>(small_visual);
+
+    // Añadir una cámara
+    auto cam = scene.root().createChild("Camera");
+    auto cam_component = cam.addComponent<CameraComponent>();
+    cam.getComponent<TransformComponent>()->position({0.0f, 0.0f, -5.0f});
+
+    scene.setCamera(cam_component);
    
     // Configurar el callback que se invocará en cada frame
     scene.updateCallback = update;

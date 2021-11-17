@@ -23,9 +23,6 @@ private:
 
     const bgfx::ViewId view_id {0};
 
-    float view_mat[16];
-    float proj_mat[16];
-
     Renderer();
     ~Renderer();
 

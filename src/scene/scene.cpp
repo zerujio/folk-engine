@@ -26,6 +26,9 @@ void Scene::setCamera(CameraPtr camera) {
 }
 
 CameraPtr Scene::getCamera() {
+    if (!m_registry.valid(m_camera))
+        throw EngineRuntimeError("No camera set");
+
     entt::handle h {m_registry, m_camera};
     CameraPtr ptr {h};
     return ptr;
