@@ -12,7 +12,7 @@ function(add_example TARGETNAME FILENAME)
     target_link_libraries(${TARGETNAME} folk_engine)
 endfunction()
 
-add_example(basic_example basic_setup.cpp)
+add_example(basic_example basic_example.cpp)
 add_example(input_example input_example.cpp)
 
 add_custom_target(folk_examples ALL)
