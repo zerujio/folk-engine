@@ -20,3 +20,7 @@ add_dependencies(folk_examples basic_example input_example default_shaders)
 
 add_executable(hello-bgfx hello-bgfx.cpp)
 target_link_libraries(hello-bgfx glfw bgfx_interface)
+
+add_executable(hello-audio hello-audio.cpp)
+target_link_libraries(hello-audio dr_libs OpenAL)
+set_property(TARGET hello-audio PROPERTY CXX_STANDARD 17)
