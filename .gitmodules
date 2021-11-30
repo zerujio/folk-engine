@@ -16,3 +16,6 @@
 [submodule "extern/openal-soft"]
 	path = extern/openal-soft
 	url = git@github.com:kcat/openal-soft.git
+[submodule "extern/dr_libs"]
+	path = extern/dr_libs
+	url = git@github.com:mackron/dr_libs.git
