@@ -11,7 +11,7 @@
 
 // modules
 #include "../render/renderer.hpp"
-#include "../audio/module.hpp"
+#include "../audio/audio_manager.hpp"
 #include "../window/window_manager.hpp"
 #include "../scene/module.hpp"
 #include "../input/input_manager.hpp"
@@ -55,7 +55,7 @@ public:
     Renderer render {};
 
     /// Audio module
-    AudioModule audio {};
+    AudioManager audio {};
 
     /// Scene module
     SceneModule scene {};

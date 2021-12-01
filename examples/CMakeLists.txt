@@ -14,6 +14,7 @@ endfunction()
 
 add_example(basic_example basic_example.cpp)
 add_example(input_example input_example.cpp)
+add_example(audio_example audio_example.cpp)
 
 add_custom_target(folk_examples ALL)
 add_dependencies(folk_examples basic_example input_example default_shaders)
