@@ -8,7 +8,8 @@
 namespace Folk {
 
 // EngineSingleton
-EngineSingleton::EngineSingleton()
+EngineSingleton::EngineSingleton(Log::Level log_level)
+    : log(log_level)
 {
     // initialize engine
     try {

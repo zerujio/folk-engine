@@ -70,10 +70,9 @@ int main(int argc, char** argv) {
     try {
         auto result = options.parse(argc, argv);
         auto loglevel = parseLevel(result["loglevel"].as<std::string>());
-
-        Folk::EngineSingleton engine {};
-        engine.log.setLevel(loglevel);
-
+        
+        std::cout << "LogLevel: " << loglevel << "\n";
+        Folk::EngineSingleton engine {loglevel};
         engine.mainLoop();
 
     } catch (std::exception &e) {

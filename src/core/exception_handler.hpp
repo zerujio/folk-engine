@@ -7,6 +7,7 @@
 #include "../utils/raii_thread.hpp"
 
 #include <exception>
+#include <functional>
 
 namespace Folk {
 
@@ -25,6 +26,22 @@ public:
      * try-catch.
     */
     void handle();
+
+    /// Throw exception of the given type.
+    /**
+     * Equivalent to:
+     * ```
+     * try {
+     *   throw Exception(args...);
+     * } catch (...) {
+     *   handler.handle();
+     * }
+     * ```
+    */
+    template<class Exception, class... Args>
+    void throwException(Args&&... args) {
+        queue.enqueue(std::make_exception_ptr(Exception(std::forward<Args>(args)...)));
+    }
 
 private:
     using QueueT = ProcessingQueue<std::exception_ptr>;

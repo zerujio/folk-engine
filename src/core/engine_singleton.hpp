@@ -40,9 +40,9 @@ public:
     // Engine modules
 
     /// Logging
-    Log log {};
+    Log log;
 
-    /// Exception handling module
+    /// Exception handling
     ExceptionHandler exception {};
 
     /// Window module
@@ -51,14 +51,14 @@ public:
     /// Input manager
     InputManager input_manager {};
 
-    /// Render module
-    Renderer render {};
-
-    /// Audio module
-    AudioManager audio {};
-
     /// Scene module
     SceneModule scene {};
+
+    /// Render module
+    Renderer render {log, exception};
+
+    /// Audio module
+    AudioManager audio {scene.registry()};
 
     // Functions
     /// Signal the engine to exit.
@@ -84,7 +84,7 @@ private:
         &window, &scene, &render
     };
     
-    EngineSingleton();
+    EngineSingleton(Log::Level log_level);
     ~EngineSingleton();
 
     void mainLoop();
