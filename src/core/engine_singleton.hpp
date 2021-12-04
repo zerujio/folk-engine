@@ -13,7 +13,7 @@
 #include "../render/renderer.hpp"
 #include "../audio/audio_manager.hpp"
 #include "../window/window_manager.hpp"
-#include "../scene/module.hpp"
+#include "../scene/scene_manager.hpp"
 #include "../input/input_manager.hpp"
 #include "../debug/log.hpp"
 #include "exception_handler.hpp"
@@ -51,14 +51,14 @@ public:
     /// Input manager
     InputManager input_manager {};
 
-    /// Scene module
-    SceneModule scene {};
-
     /// Render module
     Renderer render {log, exception};
 
     /// Audio module
-    AudioManager audio {scene.registry()};
+    AudioManager audio {};
+
+    /// Scene module
+    SceneManager scene {};
 
     // Functions
     /// Signal the engine to exit.

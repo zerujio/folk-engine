@@ -12,7 +12,7 @@ public:
 
     Singleton() {
         if (instance_ptr)
-            throw CriticalEngineError("attempted to instantiate a singleton class twice");
+            throw FOLK_CRITICAL_ERROR("attempted to instantiate a singleton class twice");
 
         instance_ptr = this;
     }
@@ -20,7 +20,7 @@ public:
     Singleton(Singleton const&) = delete;
     Singleton& operator=(Singleton const&) = delete;
 
-    ~Singleton() noexcept {
+    ~Singleton() {
         instance_ptr = nullptr;
     }
 

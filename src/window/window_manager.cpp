@@ -19,7 +19,7 @@ WindowManager::WindowManager()
     glfwSetErrorCallback(glfwErrorCallback);
 
     if (!glfwInit())
-        throw EngineRuntimeError("GLFW initialization failed.");
+        throw FOLK_RUNTIME_ERROR("GLFW initialization failed.");
 
     /* 
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, gl_version.major);
@@ -38,7 +38,7 @@ WindowManager::WindowManager()
     
     if (window == nullptr) {
         glfwTerminate();
-        throw EngineRuntimeError("GLFW: window creation failed.");
+        throw FOLK_RUNTIME_ERROR("GLFW: window creation failed.");
     }
 
     glfwSetWindowCloseCallback(window, closeWindowCallback);
@@ -202,7 +202,7 @@ void glfwErrorCallback(int code, const char* message) {
     exc_msg << "GLFW error " << code << " : " << message;
 
     try {
-        throw EngineRuntimeError(exc_msg.str());
+        throw FOLK_RUNTIME_ERROR(exc_msg.str());
     } catch (...) {
         ENGINE.exception.handle();
     }

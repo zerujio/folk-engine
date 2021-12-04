@@ -13,11 +13,12 @@ namespace Folk
 /// \~spanish \brief Una escena del juego.
 /// \~english \brief A game scene.
 class Scene final {
-    friend class SceneModule;
+    friend class SceneManager;
     friend class Renderer;
 
 public:
     Scene();
+    ~Scene();
 
     using UpdateCallback = void (*)(Scene&, double);
 

@@ -13,7 +13,7 @@ static const bgfx::ShaderHandle buildShader(const uint8_t (&data)[N],
     auto handle = bgfx::createShader(mem);
 
     if (!bgfx::isValid(handle)) {
-        throw CriticalEngineError("default shader creation failed");
+        throw FOLK_CRITICAL_ERROR("default shader creation failed");
     }
 
     bgfx::setName(handle, name);
@@ -27,7 +27,7 @@ static const bgfx::ProgramHandle buildProgram(bgfx::ShaderHandle vert,
     auto handle = bgfx::createProgram(vert, frag, true);
 
     if (!bgfx::isValid(handle)) {
-        throw CriticalEngineError("default shader linking failed");
+        throw FOLK_CRITICAL_ERROR("default shader linking failed");
     }
 
     return handle;
@@ -49,7 +49,7 @@ const bgfx::ProgramHandle getDefaultProgramHandle() {
         break;
     
     default:
-        throw EngineRuntimeError("Unsupported rendering backend!");
+        throw FOLK_RUNTIME_ERROR("Unsupported rendering backend!");
         break;
     }
 

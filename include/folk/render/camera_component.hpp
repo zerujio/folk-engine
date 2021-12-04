@@ -36,9 +36,6 @@ struct CameraPtr final : public ComponentPtr<CameraComponent> {
     float& far() const {
         return ref.far;
     }
-
-private:
-    friend class Scene;
 };
 
 } // namespace Folk

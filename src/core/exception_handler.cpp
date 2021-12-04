@@ -25,18 +25,19 @@ void ExceptionHandler::handlerRoutine()
             try {
                 std::rethrow_exception(ptr);
         
-            } catch (CriticalEngineError &e) {
-                ENGINE.log.begin(Log::Level::ERROR) << "Critical error: " 
-                                                    << e.what() << "\n";
+            } catch (CriticalError &e) {
+                ENGINE.log.begin(Log::Level::ERROR) << e << "\n";
                 ENGINE.exit();
+            
+            } catch (RuntimeError &e) {
+                ENGINE.log.begin(Log::Level::ERROR) << e << "\n";
 
             } catch (std::exception &e) {
-                ENGINE.log.begin(Log::Level::ERROR) << "Exception: " 
-                                                    << e.what() << "\n";
+                ENGINE.log.begin(Log::Level::ERROR) 
+                    << "Exception: " << e.what() << "\n";
         
             } catch (...) {
-                ENGINE.log.begin(Log::Level::ERROR)
-                           << "Caught unexpected exception!\n";
+                ENGINE.log.begin(Log::Level::ERROR) << "Caught unexpected exception!\n";
                 ENGINE.exit();
             }
         }

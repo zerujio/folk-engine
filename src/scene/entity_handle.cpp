@@ -3,7 +3,7 @@
 #include "folk/core/error.hpp"
 
 #include "folk/scene/scene_graph_node.hpp"
-#include "module.hpp"
+#include "scene_manager.hpp"
 
 namespace Folk {
 
@@ -30,7 +30,7 @@ void EntityHandle::addChild(const EntityHandle& e) const {
     auto& other = e.node();
 
     if (other.m_parent_ptr)
-        throw EngineRuntimeError("Can't add root entity as child");
+        throw FOLK_RUNTIME_ERROR("Can't add root entity as child");
 
     other.changeParent(&node());
 }

@@ -25,6 +25,7 @@ public:
     ComponentPtr(const entt::handle& h) : ref(h.get<C>()) {}
 
 protected:
+    friend class Scene;
     C& ref;
 };
 

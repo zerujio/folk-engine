@@ -38,7 +38,7 @@ Renderer::Renderer(Log& log, ExceptionHandler& exc) : bgfx_callback_handler(log,
     // bgfx_init.type = bgfx::RendererType::OpenGL;
 
     if (!bgfx::init(bgfx_init))
-        throw CriticalEngineError("bgfx initialization failed");
+        throw FOLK_CRITICAL_ERROR("bgfx initialization failed");
 
     // view_id = 0;
 	bgfx::setViewClear(view_id, BGFX_CLEAR_COLOR | BGFX_CLEAR_DEPTH);
@@ -153,7 +153,7 @@ void BGFXCallbackHandler::fatal(const char* file_path,
     if (code == bgfx::Fatal::Enum::DebugCheck)
         bx::debugBreak(); // quien sabe qué hace esto!
 
-    m_handler.throwException<CriticalEngineError>(description);
+    m_handler.throwException<CriticalError>(description, FOLK_HERE_ARGS);
 }
 
 void BGFXCallbackHandler::traceVargs(const char* file_path, 

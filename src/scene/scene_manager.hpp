@@ -8,16 +8,17 @@
 
 #include <entt/entt.hpp>
 
-#define SCENE SceneModule::instance()
+#define SCENE SceneManager::instance()
 
 namespace Folk
 {
 
-FOLK_ENGINE_UPDATEABLE_MODULE(SceneModule) {
+FOLK_ENGINE_UPDATEABLE_MODULE(SceneManager) {
 public:
     friend class EngineSingleton;
     
-    SceneModule();
+    SceneManager() = default;
+    ~SceneManager();
 
     void update(Delta) override;
 
@@ -27,6 +28,10 @@ public:
     
 private:
     int monitor_id;
+
+    entt::registry& registry() {
+        return scene.m_registry;
+    }
 };
     
 } // namespace folk

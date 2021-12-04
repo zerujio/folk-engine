@@ -5,6 +5,10 @@
 
 void onUpdate(Folk::Scene&, double);
 
+void Folk::engineInit() {
+    // pass
+}
+
 void Folk::sceneInit(Folk::Scene &scene) {
     using namespace Folk;
 
@@ -16,18 +20,19 @@ void Folk::sceneInit(Folk::Scene &scene) {
     audio_source.addComponent<VisualComponent>(visual);
 
     // Se carga un clip de audio
-    auto audio_clip = AudioClip::createFromFile("example_audio.flac");
-    audio_source.addComponent<AudioSourceComponent>().setClip(audio_clip);
+    auto audio_clip = AudioClip::createFromFile("example_audio.wav");
+    auto audio_comp = audio_source.addComponent<AudioSourceComponent>();
+    audio_comp.setAudioClip(audio_clip);
+    audio_comp.setLooping(true);
+    audio_comp.play();
 
-    // Creamos la cámara
+    // Creamos la cámara, el AudioListener toma la posición y
+    // orientacion de la cámara.
     auto camera = scene.root().createChild("Camera");
     auto camera_comp = camera.addComponent<CameraComponent>();
     scene.setCamera(camera_comp);
 
     camera.getComponent<TransformComponent>()->position({0.0f, 0.0f, -3.0f});
-
-    // Añadimos un audio listener a la camara
-    camera.addComponent<AudioListenerComponent>();
 
     scene.updateCallback = onUpdate;
 }

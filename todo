@@ -1,0 +1,6 @@
+Audio:
+- AudioClip
+    - clase
+    - createFromFile
+- AudioSourceComponent
+    - audio posicional: requiere rework del game loop

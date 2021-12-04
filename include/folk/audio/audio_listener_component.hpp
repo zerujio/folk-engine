@@ -1,0 +1,6 @@
+#ifndef FOLK_AUDIO__AUDIO_LISTENER_COMPONENT_HPP
+#define FOLK_AUDIO__AUDIO_LISTENER_COMPONENT_HPP
+
+/// Esto no está implementado, por ahora
+
+#endif // FOLK_AUDIO__AUDIO_LISTENER_COMPONENT_HPP

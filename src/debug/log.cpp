@@ -47,7 +47,7 @@ Log::Level Log::getLevel() {
 
 LogMessage Log::begin(Log::Level lvl) {
     if (lvl == Log::Level::NONE)
-        throw EngineRuntimeError("NONE is not a valid level for a message");
+        throw FOLK_RUNTIME_ERROR("NONE is not a valid level for a message");
 
     else if (lvl <= log_level) {
         out << "[" << lvl << "] ";

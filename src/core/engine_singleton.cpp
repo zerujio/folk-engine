@@ -13,34 +13,33 @@ EngineSingleton::EngineSingleton(Log::Level log_level)
 {
     // initialize engine
     try {
+        audio.connectRegistry(scene.registry());
         engineInit();
 
-    } catch (std::exception &e) {
-        std::string msg ("engineInit exception: ");
-        msg += e.what();
-        throw CriticalEngineError(msg);
-    
     } catch (...) {
-        throw CriticalEngineError("Unexpected exception during engine initialization");
+        exception.handle();
+        throw std::runtime_error("engineInit() error");
     }
 
     // initialize scene
     try {
         sceneInit(scene.scene);
 
-    } catch (std::exception &e) {
-        std::string msg ("sceneInit exception: ");
-        msg += e.what();
-        throw CriticalEngineError(msg);
-
     } catch (...) {
-        throw CriticalEngineError("Unexpected exception during scene initialization");
+        exception.handle();
+        throw std::runtime_error("sceneInit() error");
     }
 }
 
 EngineSingleton::~EngineSingleton()
-{
-    
+try {
+    // empty
+} catch (RuntimeError &e) {
+    std::cerr << "Engine shutdown error: " << e << "\n";
+} catch (std::exception &e) {
+    std::cerr << "Engine shutdown error: " << e.what() << "\n"; 
+} catch (...) {
+    std::cerr << "Unknown engine shutdown exception.\n"; 
 }
 
 void EngineSingleton::exit() noexcept

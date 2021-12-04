@@ -2,13 +2,25 @@
 #define FOLK_AUDIO__AUDIO_CLIP_HPP
 
 #include "folk/core/resource.hpp"
+#include "folk/audio/open_al.hpp"
 
-#include <AL/al.h>
+#include <filesystem>
 
 namespace Folk {
 
-class AudioClip : public Resource {
+struct AudioBuffer;
 
+class AudioClip : public Resource {
+    friend class AudioSourcePtr;
+    
+    al::BufferManager buffer_mngr;
+
+public:
+    AudioClip(AudioBuffer const&);
+    ~AudioClip();
+
+    /// Crea un clip a partir de un archivo (mp3, wav o flac).
+    static std::shared_ptr<AudioClip> createFromFile(std::filesystem::path);
 };
 
 } // namespace Folk

@@ -55,10 +55,10 @@ void keyCallback(Folk::Key key, Folk::InputState state) {
         break;
 
     case Folk::Key::Escape:
-        throw Folk::CriticalEngineError("Dummy critical error.");
+        throw Folk::CriticalError("Dummy critical error.");
 
     case Folk::Key::Space:
-        throw Folk::EngineRuntimeError("Dummy runtime error.");
+        throw Folk::RuntimeError("Dummy runtime error.");
     }
 }
 

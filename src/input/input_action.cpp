@@ -17,7 +17,7 @@ InputAction& InputAction::create(std::string const& name) {
     auto [iter, success] = actions.emplace(name, InputActionProxy());
     
     if (not success)
-        throw EngineRuntimeError("InputAction named " + name + " already exists\n");
+        throw FOLK_RUNTIME_ERROR("InputAction named " + name + " already exists\n");
 
     return iter->second.action;
 }
@@ -28,7 +28,7 @@ InputAction& InputAction::get(std::string const& name) {
     auto iter = actions.find(name);
 
     if (iter == actions.end())
-        throw EngineRuntimeError("No InputAction named " + name + "\n");
+        throw FOLK_RUNTIME_ERROR("No InputAction named " + name + "\n");
     
     return iter->second.action;
 }
@@ -39,7 +39,7 @@ void InputAction::destroy(std::string const& name) {
     auto iter = actions.find(name);
 
     if (iter == actions.end())
-        throw EngineRuntimeError("No InputAction named " + name + "\n");
+        throw FOLK_RUNTIME_ERROR("No InputAction named " + name + "\n");
 
     actions.erase(iter);
 }

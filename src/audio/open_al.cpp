@@ -1,10 +1,8 @@
-#include "open_al.hpp"
+#include "folk/audio/open_al.hpp"
 
-namespace al {
+namespace Folk::al {
 
-// BUFFER
-
-const char* errorString(const ALenum error) {
+const char* ALError::errorString(const ALenum error) {
     switch (error)
     {
     case AL_NO_ERROR:
@@ -30,10 +28,10 @@ const char* errorString(const ALenum error) {
     }
 }
 
-void checkErrors() {
+void checkErrors(const char* file, unsigned int line, const char* func) {
     auto err = alGetError();
 
     if (err != AL_NO_ERROR)
-        throw Folk::OpenALError(errorString(err));
+        throw ALError(err, file, line, func);
 }
 } // namespace al

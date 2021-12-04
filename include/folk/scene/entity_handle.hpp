@@ -107,7 +107,7 @@ decltype(auto) EntityHandle::addComponent(Args&& ... args)
                   "Transform component can't be added.");
 
     if (m_handle.try_get<C>())
-        throw EngineRuntimeError("Entity " + name() 
+        throw FOLK_RUNTIME_ERROR("Entity " + name() 
                                 + " already has a component of type "
                                 + C::type_name);
     
@@ -137,7 +137,7 @@ void EntityHandle::removeComponent()
                   "Transform component can't be removed.");
 
     if (!m_handle.try_get<C>())
-        throw EngineRuntimeError("Node " + name()
+        throw FOLK_RUNTIME_ERROR("Node " + name()
                                 + " does not have a component of type "
                                 + C::type_name + ": can't remove.");
     

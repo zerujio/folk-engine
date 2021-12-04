@@ -3,8 +3,9 @@
 
 #include "../core/module.hpp"
 
-#include <AL/al.h>
-#include <AL/alc.h>
+#include "open_alc.hpp"
+
+#include <entt/entt.hpp>
 
 #include <iostream> 
 
@@ -12,18 +13,15 @@ namespace Folk {
 
 FOLK_ENGINE_MODULE(AudioManager) {
 
-    ALCdevice* device {nullptr};
+    alc::DeviceManager m_device;
+    alc::ContextManager m_context {m_device};
 
 public:
-    const char* name() const {return "audio";}
+    const char* name() const {return "AudioManager";}
 
-    AudioManager() {
-        // empty
-    }
+    AudioManager();
 
-    ~AudioManager() {
-        // empty
-    }
+    void connectRegistry(entt::registry&);
 };
 
 }

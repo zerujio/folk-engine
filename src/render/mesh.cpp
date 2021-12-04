@@ -40,7 +40,7 @@ static const bgfx::VertexBufferHandle createVB(ImmediateGeometry const& geo) {
     auto handle = bgfx::createVertexBuffer(memptr, posColorVertLayout());
 
     if (!bgfx::isValid(handle))
-        throw EngineRuntimeError("Vertex buffer creation failed!");
+        throw FOLK_RUNTIME_ERROR("Vertex buffer creation failed!");
 
     return handle;
 }
@@ -51,7 +51,7 @@ static const bgfx::IndexBufferHandle createIB(ImmediateGeometry const& geo) {
     auto handle = bgfx::createIndexBuffer(mem);
 
     if (!bgfx::isValid(handle))
-        throw EngineRuntimeError("Index buffer creation failed");
+        throw FOLK_RUNTIME_ERROR("Index buffer creation failed");
 
     return handle;
 }
