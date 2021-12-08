@@ -1,8 +1,6 @@
 #ifndef FOLK_CORE__EXCEPTION_HANDLER_HPP
 #define FOLK_CORE__EXCEPTION_HANDLER_HPP
 
-#include "module.hpp"
-
 #include "../utils/processing_queue.hpp"
 #include "../utils/raii_thread.hpp"
 
@@ -11,11 +9,11 @@
 
 namespace Folk {
 
-FOLK_ENGINE_MODULE(ExceptionHandler) {
+class ExceptionHandler final {
 
 public:
 
-    const char* name() const override {return "exception_handler";}
+    static const char* name() {return "exception_handler";}
 
     ExceptionHandler();
     ~ExceptionHandler();
@@ -25,7 +23,7 @@ public:
      * This function is meant to be called inside the catch part of a 
      * try-catch.
     */
-    void handle();
+    void handleException();
 
     /// Throw exception of the given type.
     /**
@@ -48,6 +46,8 @@ private:
 
     QueueT queue {};
     RAIIThread handler_thread {&ExceptionHandler::handlerRoutine, this};
+
+    static QueueT s_queue;
 
     void handlerRoutine();
 };

@@ -122,7 +122,7 @@ AudioClip::~AudioClip() {
             throw FOLK_ERROR(al::ALError, "unexpected error during buffer deletion");
 
     } catch (...) {
-        ENGINE.exception.handle();
+        ENGINE.exception.handleException();
     }
 }
 

@@ -193,18 +193,23 @@ void setMode(Mode mode) {
 
 Mode getMode() {
     auto mode = glfwGetInputMode(WINDOW.windowPtr(), GLFW_CURSOR);
-
+    Mode ret;
     switch (mode) {
     default:
     case GLFW_CURSOR_NORMAL:
-        return Mode::Normal;
+        ret =  Mode::Normal;
+        break;
     
     case GLFW_CURSOR_HIDDEN:
-        return Mode::Hidden;
+        ret = Mode::Hidden;
+        break;
     
     case GLFW_CURSOR_DISABLED:
-        return Mode::Disabled;
+        ret = Mode::Disabled;
+        break;
     }
+
+    return ret;
 }
 
 bool isRawMotionSupported() {

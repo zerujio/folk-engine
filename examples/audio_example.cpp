@@ -3,6 +3,8 @@
 #include "folk/audio/audio.hpp"
 #include "folk/input/input.hpp"
 
+#include <cmath>
+
 void onUpdate(Folk::Scene&, double);
 
 void Folk::engineInit() {
@@ -63,4 +65,24 @@ void onUpdate(Folk::Scene& scene, double deltaT) {
 
     if (transform->position() != pos)
         transform->position(pos);
+
+    auto rot = transform->rotation();
+
+    if (Folk::getKey(Folk::Key::Q) == Folk::InputState::Press) {
+        rot.y += dist;
+    }
+
+    if (Folk::getKey(Folk::Key::E) == Folk::InputState::Press) {
+        rot.y -= dist;
+    }
+
+    if (rot != transform->rotation())
+        transform->rotation(rot);
+
+    // move cube up and down
+    static float angle = 0.0f;
+    angle += deltaT;
+    auto cam = scene.root().getChild("Audio source");
+    if (cam)
+        cam->getComponent<Folk::TransformComponent>()->position({std::sin(angle) * 3.0f, 0.0f, 0.0f});
 }

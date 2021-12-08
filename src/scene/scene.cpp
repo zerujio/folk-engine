@@ -18,7 +18,7 @@ try {
 } catch(...) {
     ENGINE.log.begin(LogLevel::WARNING)
         << "An error ocurred during scene destruction:\n";
-    ENGINE.exception.handle();
+    ENGINE.exception.handleException();
     return;
 }
 

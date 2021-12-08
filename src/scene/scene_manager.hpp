@@ -4,34 +4,46 @@
 #include "folk/scene/scene.hpp"
 #include "folk/scene/entity_handle.hpp"
 
-#include "../core/module.hpp"
-
 #include <entt/entt.hpp>
+
+#include <chrono>
 
 #define SCENE SceneManager::instance()
 
 namespace Folk
 {
 
-FOLK_ENGINE_UPDATEABLE_MODULE(SceneManager) {
+class SceneManager final {
+
 public:
     friend class EngineSingleton;
     
     SceneManager() = default;
     ~SceneManager();
 
-    void update(Delta) override;
+    const char* name() const {return "Scene update";}
 
-    const char* name() const override {return "Scene update";}
+    void updateScene(std::chrono::duration<double>);
 
-    Scene scene {};
-    
-private:
-    int monitor_id;
+    const entt::registry& registry() const {
+        return scene.m_registry;
+    }
 
     entt::registry& registry() {
         return scene.m_registry;
     }
+
+    entt::entity camera() const {
+        return scene.m_camera;
+    }
+
+    entt::entity root() const {
+        return scene.m_root;
+    }
+    
+private:
+    int monitor_id;
+    Scene scene {};
 };
     
 } // namespace folk

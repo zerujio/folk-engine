@@ -1,7 +1,9 @@
 #ifndef FOLK_AUDIO__AUDIO_MANAGER_HPP
 #define FOLK_AUDIO__AUDIO_MANAGER_HPP
 
-#include "../core/module.hpp"
+#include "folk/audio/audio_source_component.hpp"
+
+#include "../scene/scene_manager.hpp"
 
 #include "open_alc.hpp"
 
@@ -11,17 +13,22 @@
 
 namespace Folk {
 
-FOLK_ENGINE_MODULE(AudioManager) {
+class AudioManager final {
 
     alc::DeviceManager m_device;
     alc::ContextManager m_context {m_device};
 
+     void updateListener(SceneManager&, std::chrono::duration<double>) const noexcept;
+     void updateSource(SceneGraphNode &node_component, const AudioSourceComponent &source_component, std::chrono::duration<double> delta) const noexcept;
+
 public:
-    const char* name() const {return "AudioManager";}
+    static const char* name() {return "AudioManager";}
 
     AudioManager();
 
-    void connectRegistry(entt::registry&);
+    static void connectRegistry(entt::registry&);
+
+    void update(SceneManager&, std::chrono::duration<double>) const noexcept;
 };
 
 }

@@ -6,6 +6,8 @@
 
 #include "../core/engine_singleton.hpp"
 
+#include "folk/core/error.hpp"
+
 namespace Folk
 {
 
@@ -14,33 +16,35 @@ void PerformanceMonitor::start(int k) {
 }
 
 void PerformanceMonitor::stop(int k) {
-    items[k].delta = Clock::now() - items[k].start;
+    items[k].item.delta = Clock::now() - items[k].start;
 }
 
-void PerformanceMonitor::setVisibility(bool v) {
+void PerformanceMonitor::setVisibility(bool v) noexcept {
     visible = v;
-    bgfx::setDebug(visible ? BGFX_DEBUG_TEXT : BGFX_DEBUG_NONE);
 }
 
-void PerformanceMonitor::draw() {
-    if (visible) {
-        bgfx::dbgTextClear();
-        bgfx::dbgTextPrintf(0, 0, 0x0f, "Performance metrics:");
-
-        int line = 1;
-        for (auto const& item : items) {
-            bgfx::dbgTextPrintf(0, line++, 0x0f, "%s: %fms", item.name.c_str(), item.delta.count());
-        }
-    }
+bool PerformanceMonitor::getVisibility() const noexcept {
+    return visible;
 }
 
-/**
- * \param text Text description of the item.
- * \return the index needed to call \ref start() and \ref stop() on this item
- */
+const PerformanceMonitor::Item& PerformanceMonitor::getItem(int k) const {
+    if (k >= items.size())
+        throw FOLK_RUNTIME_ERROR("Item index out of range");
+    
+    return items[k].item;
+}
+
 int PerformanceMonitor::addItem(const char* text) {
     items.emplace_back(text);
     return items.size() - 1;
+}
+
+std::size_t PerformanceMonitor::size() const noexcept {
+    return items.size();
+}
+
+void PerformanceMonitor::clear() noexcept {
+    items.clear();
 }
 
 } // namespace Folk

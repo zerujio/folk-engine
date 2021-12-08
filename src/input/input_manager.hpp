@@ -2,8 +2,8 @@
 #define FOLK_INPUT__INPUT_MANAGER
 
 #include "folk/input/input.hpp"
-
-#include "../core/module.hpp"
+#include "../utils/singleton.hpp"
+#include "../core/exception_handler.hpp"
 
 #include <GLFW/glfw3.h>
 
@@ -17,12 +17,14 @@ struct InputActionProxy {
     InputAction action {};
 };
 
-FOLK_ENGINE_MODULE(InputManager) {
+#define INPUT InputManager::instance()
+
+FOLK_SINGLETON_CLASS_FINAL(InputManager) {
 
 public:
-    const char* name() const override {return "Input Manager";}
+    const char* name() const {return "Input Manager";}
 
-    InputManager();
+    InputManager(ExceptionHandler&);
     ~InputManager();
 
     friend Key_CallbackId addKeyCallback(Key_CallbackType&&);
@@ -74,7 +76,5 @@ private:
 };
 
 } // namespace folk
-
-#define INPUT InputManager::instance()
 
 #endif // FOLK_INPUT__INPUT_MANAGER

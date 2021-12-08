@@ -49,10 +49,10 @@ public:
     WindowManager window {};
 
     /// Input manager
-    InputManager input_manager {};
+    InputManager input_manager {exception};
 
     /// Render module
-    Renderer render {log, exception};
+    Renderer render {log, exception, window};
 
     /// Audio module
     AudioManager audio {};
@@ -70,24 +70,19 @@ public:
     /// error outpout stream
     std::ostream& errout {std::cerr}; 
 
-    UpdateListener::Delta min_frame_time {0};
+    DeltaClock::nanoseconds min_frame_time {0};
 
 private:
 
     bool exit_flag {false};
 
     DeltaClock frame_clock {};
-
-    static const uint umodule_count = 3;
-
-    const std::array<UpdateableModule*, umodule_count> updateable_modules {
-        &window, &scene, &render
-    };
     
     EngineSingleton(Log::Level log_level);
     ~EngineSingleton();
 
-    void mainLoop();
+    void mainLoop() noexcept;
+    void update(std::chrono::nanoseconds);
 
     friend int ::main(int, char**);
 };

@@ -21,7 +21,8 @@ void setPerformanceMetricsEnabled(bool value)
 
 void setMinFrameTime(double time)
 {
-    ENGINE.min_frame_time = UpdateListener::Delta(time);
+    std::chrono::duration<double> seconds {time};
+    ENGINE.min_frame_time = std::chrono::duration_cast<std::chrono::nanoseconds>(seconds);
 }
 
 } // namespace folk::engine

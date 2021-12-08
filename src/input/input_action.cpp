@@ -1,4 +1,6 @@
 #include "folk/input/input_action.hpp"
+#include "folk/core/error.hpp"
+
 #include "input_manager.hpp"
 
 namespace Folk

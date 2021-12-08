@@ -13,7 +13,7 @@ ExceptionHandler::~ExceptionHandler() {
     queue.stopProcessing();
 }
 
-void ExceptionHandler::handle()
+void ExceptionHandler::handleException()
 {
     queue.enqueue(std::current_exception());
 }

@@ -1,8 +1,7 @@
 #ifndef FOLK_WINDOW__MODULE_HPP
 #define FOLK_WINDOW__MODULE_HPP
 
-#include "../core/module.hpp"
-#include "../utils/update_listener.hpp"
+#include "../utils/singleton.hpp"
 
 #include <GLFW/glfw3.h>
 
@@ -10,20 +9,21 @@
 
 namespace Folk {
 
-FOLK_ENGINE_UPDATEABLE_MODULE(WindowManager) {
+FOLK_SINGLETON_CLASS_FINAL(WindowManager) {
+
 public:
-    struct WindowDimentions {
+    struct WindowDimensions {
         int width; 
         int height;
     };
 
-    const char* name() const override {return "Window Manager";}
+    const char* name() const {return "Window Manager";}
 
     // Set width and height of application window
     void setWindowSize(int, int);
 
     // Retrieve width and height of application window
-    WindowDimentions const& getWindowSize();
+    WindowDimensions const& getWindowSize();
 
     // Set window title
     void setWindowTitle(const char*);
@@ -31,17 +31,19 @@ public:
     // Get ptr to GLFW window object
     GLFWwindow* windowPtr();
 
+    void update() const noexcept;
+
 private:
     friend class EngineSingleton;
 
     GLFWwindow* window = nullptr;
-    WindowDimentions window_size {800, 600};
+    WindowDimensions window_size {800, 600};
     std::string window_title {"Folk Engine Application"};
 
     WindowManager();
     ~WindowManager();
 
-    void update(Delta) override;
+    void pollInput() noexcept;
 };
 
 #define WINDOW WindowManager::instance()

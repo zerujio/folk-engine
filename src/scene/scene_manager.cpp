@@ -11,12 +11,12 @@ try {
 } catch (...) {
     ENGINE.log.begin(Log::Level::ERROR) 
         << "Exception caught during scene destruction (possible resource leak?)";
-    ENGINE.exception.handle();
+    ENGINE.exception.handleException();
 }
 
-void SceneManager::update(Delta dt) {
+void SceneManager::updateScene(std::chrono::duration<double> delta) {
     if (scene.updateCallback)
-        scene.updateCallback(scene, dt.count());
+        scene.updateCallback(scene, delta.count());
 }
 
 } // namespace folk

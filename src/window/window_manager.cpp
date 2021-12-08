@@ -1,8 +1,8 @@
 #include "window_manager.hpp"
 
-#include "../core/engine_singleton.hpp"
-
 #include "folk/core/error.hpp"
+
+#include "../core/engine_singleton.hpp"
 
 #include <sstream>
 
@@ -71,19 +71,15 @@ GLFWwindow* WindowManager::windowPtr()
     return window;
 }
 
-WindowManager::WindowDimentions const& WindowManager::getWindowSize() 
+WindowManager::WindowDimensions const& WindowManager::getWindowSize()
 {
     glfwGetWindowSize(window, &window_size.width, &window_size.height);
 
     return window_size;
 }
 
-void WindowManager::update(Delta delta) {
-    try {
-        glfwPollEvents();
-    } catch (...) {
-        ENGINE.exception.handle();
-    }
+void WindowManager::update() const noexcept {
+    glfwPollEvents();
 }
 
 static void closeWindowCallback(GLFWwindow *w)
@@ -204,7 +200,7 @@ void glfwErrorCallback(int code, const char* message) {
     try {
         throw FOLK_RUNTIME_ERROR(exc_msg.str());
     } catch (...) {
-        ENGINE.exception.handle();
+        ENGINE.exception.handleException();
     }
 }
 

@@ -17,7 +17,7 @@ EngineSingleton::EngineSingleton(Log::Level log_level)
         engineInit();
 
     } catch (...) {
-        exception.handle();
+        exception.handleException();
         throw std::runtime_error("engineInit() error");
     }
 
@@ -26,7 +26,7 @@ EngineSingleton::EngineSingleton(Log::Level log_level)
         sceneInit(scene.scene);
 
     } catch (...) {
-        exception.handle();
+        exception.handleException();
         throw std::runtime_error("sceneInit() error");
     }
 }
@@ -47,48 +47,77 @@ void EngineSingleton::exit() noexcept
     exit_flag = true;
 }
 
-void EngineSingleton::mainLoop()
+void EngineSingleton::mainLoop() noexcept
 {
-    using Delta = UpdateListener::Delta;
-
-    int delta_mon_idx = ENGINE.perf_monitor.addItem("Frame delta");
-    int frame_time_idx = ENGINE.perf_monitor.addItem("Frame time");
-
-    int mon_idx[updateable_modules.size()];
-    {
-        int i = 0;
-        for (auto p : updateable_modules)
-            mon_idx[i++] = perf_monitor.addItem(p->name());
-    }
-
-    perf_monitor.start(delta_mon_idx);
     while (!exit_flag) {
         frame_clock.click();
-
-        Delta delta = frame_clock.delta();
+ 
+        auto delta = frame_clock.delta();
         if (delta < min_frame_time) {
+            auto ti = std::chrono::steady_clock::now();
             std::this_thread::sleep_for(min_frame_time - delta);
-            delta = min_frame_time;
+            delta += std::chrono::steady_clock::now() - ti;
         }
 
-        perf_monitor.start(frame_time_idx);
-
-        int i = 0;
-        for (auto p : updateable_modules) {
-            perf_monitor.start(mon_idx[i]);
-            try {
-                p->update(delta);
-            } catch (...) {
-                exception.handle();
-            }
-            perf_monitor.stop(mon_idx[i++]);
-        }
-
-        perf_monitor.stop(frame_time_idx);
-        perf_monitor.stop(delta_mon_idx);
-
-        perf_monitor.start(delta_mon_idx);
+        update(delta);
     }
+}
+
+void EngineSingleton::update(std::chrono::nanoseconds delta) {
+    // start frame
+    auto frame_time_id = perf_monitor.addItem("Frame time");
+
+    // update window / process input
+    {
+        auto monitor_id = perf_monitor.addItem("Input processing");
+        window.update();
+        perf_monitor.stop(monitor_id);
+    }
+
+    // update scene
+    {
+        auto id = perf_monitor.addItem("Scene update");
+        try {
+            scene.updateScene(delta);
+        } catch (...) {
+            log.begin(LogLevel::WARNING)
+                << "An error ocurred during scene update phase:\n";
+            exception.handleException();
+        }
+    }
+
+    // update audio
+    {
+        auto id = perf_monitor.addItem("Audio update");
+        try {
+            audio.update(scene, delta);
+        } catch (...) {
+            log.begin(LogLevel::WARNING) 
+                << "An error ocurred during audio processing phase:\n";
+            exception.handleException();
+        }
+        perf_monitor.stop(id);
+    }
+
+    // draw
+    {
+        auto id = perf_monitor.addItem("Renderer");
+        try {
+            render.drawFrame(scene, delta);
+        } catch (...) {
+            log.begin(LogLevel::WARNING)
+                << "An error ocurred during draw phase:\n";
+            exception.handleException();
+        }
+        perf_monitor.stop(id);
+    }
+
+    // end frame
+    perf_monitor.stop(frame_time_id);
+
+    // draw performance metrics
+    render.drawPerfMon(perf_monitor, delta);
+    perf_monitor.clear();
 }
 
 } // namespace folk

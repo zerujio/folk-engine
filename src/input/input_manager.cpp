@@ -13,7 +13,13 @@ namespace Folk
 void keyCallback(GLFWwindow*, int, int, int, int);
 void mouseButtonCallback(GLFWwindow*, int, int, int);
 
-InputManager::InputManager() {
+static ExceptionHandler* exception_handler {nullptr};
+static InputManager* input_manager {nullptr};
+
+InputManager::InputManager(ExceptionHandler& handler) {
+    exception_handler = &handler;
+    input_manager = this;
+
     glfwSetKeyCallback(ENGINE.window.windowPtr(), keyCallback);
     glfwSetMouseButtonCallback(ENGINE.window.windowPtr(), mouseButtonCallback);
 }
@@ -33,15 +39,15 @@ void keyCallback(GLFWwindow* window, int keycode, int scancode, int action,
         auto key = keyCast(keycode);
         auto state = stateCast(action);
 
-        for (auto& p : INPUT.key_callbacks_) {
+        for (auto& p : input_manager->key_callbacks_) {
             try {
                 p.second(key, state);
             } catch (...) {
-                ENGINE.exception.handle();
+                exception_handler->handleException();
             }
         }
 
-        INPUT.inputCallback(key, state);
+        input_manager->inputCallback(key, state); 
     }
 }
 
@@ -53,23 +59,23 @@ void mouseButtonCallback(GLFWwindow* window, int button, int action, int mods)
     auto btn = mouseButtonCast(button);
     auto state = stateCast(action);
 
-    for (auto& p : INPUT.mouse_btn_callbacks_) {
+    for (auto& p : input_manager->mouse_btn_callbacks_) {
         try {
             p.second(btn, state);
         } catch (...) {
-            ENGINE.exception.handle();
+            exception_handler->handleException();
         }
     }
 
-    INPUT.inputCallback(btn, state);
+    input_manager->inputCallback(btn, state);
 }
 
 void InputManager::inputCallback(InputCode code, InputState state) {
-    for (auto& p : INPUT.input_code_callbacks_) {
+    for (auto& p : input_manager->input_code_callbacks_) {
         try {
             p.second(code, state);
         } catch (...) {
-            ENGINE.exception.handle();
+            exception_handler->handleException();
         }
     }
 
@@ -80,7 +86,7 @@ void InputManager::inputCallback(InputCode code, InputState state) {
             try {
                 f(state);
             } catch (...) {
-                ENGINE.exception.handle();
+                exception_handler->handleException();
             }
         }
     }

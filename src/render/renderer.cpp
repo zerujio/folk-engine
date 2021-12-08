@@ -20,16 +20,18 @@
 
 namespace Folk {
 
-Renderer::Renderer(Log& log, ExceptionHandler& exc) : bgfx_callback_handler(log, exc)
+Renderer::Renderer(Log& log, ExceptionHandler& exc, WindowManager& win)
+    : bgfx_callback_handler(log, exc), window_mngr(win)
 {
     // bgfx
     bgfx::renderFrame();
 
     bgfx::Init bgfx_init;
     bgfx_init.platformData.ndt = glfwGetX11Display();
-    bgfx_init.platformData.nwh = (void*)(uintptr_t) glfwGetX11Window(WINDOW.windowPtr());
+    bgfx_init.platformData.nwh = 
+        (void*)(uintptr_t) glfwGetX11Window(window_mngr.windowPtr());
 
-    auto wsize = WINDOW.getWindowSize();
+    auto wsize = window_mngr.getWindowSize();
     bgfx_init.resolution.width = wsize.width;
     bgfx_init.resolution.height = wsize.height;
     bgfx_init.resolution.reset = BGFX_RESET_VSYNC;
@@ -59,23 +61,22 @@ Renderer::Renderer(Log& log, ExceptionHandler& exc) : bgfx_callback_handler(log,
                 bgfx::getCaps()->homogeneousDepth);
 
     // add performance metrics
-    perf_monitor_id = ENGINE.perf_monitor.addItem("Renderer (CPU)");
+    bgfx::setDebug(BGFX_DEBUG_TEXT);
 }
 
 Renderer::~Renderer() {
     bgfx::shutdown();
 }
 
-void Renderer::update(Delta delta)
+void Renderer::drawFrame(SceneManager& scene_mngr, 
+                         std::chrono::duration<double> delta)
 {
-    ENGINE.perf_monitor.start(perf_monitor_id);
-
-    auto& wsize = WINDOW.getWindowSize();
+    auto& wsize = window_mngr.getWindowSize();
 
     Matrix4f view_mtx;
     Matrix4f proj_mtx;
     
-    auto cam_entity = SCENE.scene.m_camera;
+    auto cam_entity = scene_mngr.camera();
 
     if (cam_entity == entt::null) {
         const bx::Vec3 at_ = {0.0f, 0.0f, 0.0f};
@@ -89,7 +90,7 @@ void Renderer::update(Delta delta)
                     bgfx::getCaps()->homogeneousDepth);
     
     } else {
-        auto camera_transform = SCENE.scene.m_registry.get<SceneGraphNode>(cam_entity);
+        auto camera_transform = scene_mngr.registry().get<SceneGraphNode>(cam_entity);
 
         bx::Vec3 aux {0.0f, 0.0f, 0.0f};
         auto eye = bx::mul(aux, camera_transform.transformMatrix());
@@ -99,18 +100,19 @@ void Renderer::update(Delta delta)
 
         bx::mtxLookAt(view_mtx, eye, at);
 
-        auto camera_comp = SCENE.scene.getCamera();
+        const auto& camera_comp = scene_mngr.registry().get<CameraComponent>(cam_entity);
         bx::mtxProj(proj_mtx, 
-                    camera_comp.fovy(),
+                    camera_comp.fovy,
                     float(wsize.width) / float(wsize.height),
-                    camera_comp.near(),
-                    camera_comp.far(),
+                    camera_comp.near,
+                    camera_comp.far,
                     bgfx::getCaps()->homogeneousDepth);
     }
     
     bgfx::touch(view_id);
 
-    auto reg_view = SCENE.scene.m_registry.view<SceneGraphNode, VisualComponent>();
+    auto reg_view = scene_mngr.registry().view<SceneGraphNode, 
+                                               const VisualComponent>();
     reg_view.each([this, wsize, view_mtx, proj_mtx](const auto entity,
                                                     SceneGraphNode& transform,
                                                     const VisualComponent& visual)
@@ -128,69 +130,19 @@ void Renderer::update(Delta delta)
             bgfx::submit(view_id, visual.visual->getMaterial()->getShader()->handle);
         }
     );
-    
-    ENGINE.perf_monitor.draw();
-
-    ENGINE.perf_monitor.stop(perf_monitor_id);
-
-    bgfx::dbgTextPrintf(80, 0, 0x0f, "DELTA=%f", delta.count());
 
     bgfx::frame();
 }
 
-BGFXCallbackHandler::BGFXCallbackHandler(Log& log, ExceptionHandler& exc) 
-    : m_log(log), m_handler(exc)
-{}
-
-void BGFXCallbackHandler::fatal(const char* file_path, 
-                                uint16_t line, 
-                                bgfx::Fatal::Enum code, 
-                                const char* description)
+void Renderer::drawPerfMon(const PerformanceMonitor& perf_monitor,
+                           DeltaClock::milliseconds_double delta) noexcept
 {
-    m_log.begin(LogLevel::ERROR) 
-        << file_path << ": " << line << " | " << std::hex << code;
-    
-    if (code == bgfx::Fatal::Enum::DebugCheck)
-        bx::debugBreak(); // quien sabe qué hace esto!
+    bgfx::dbgTextPrintf(1, 0, 0x0f, "Delta=%fms", delta.count());
 
-    m_handler.throwException<CriticalError>(description, FOLK_HERE_ARGS);
-}
-
-void BGFXCallbackHandler::traceVargs(const char* file_path, 
-                                    uint16_t line,
-                                    const char* format,
-                                    va_list arg_list)
-{
-    constexpr std::size_t buflen = 2048;
-    char temp[buflen];
-
-    std::vsnprintf(temp, buflen, format, arg_list);
-
-    m_log.begin(LogLevel::TRACE)
-        << file_path << ": " << line << " | " << temp;
-}
-
-void BGFXCallbackHandler::screenShot(const char* file_path, 
-                                    uint32_t width, 
-                                    uint32_t height,
-                                    uint32_t pitch, 
-                                    const void* data, 
-                                    uint32_t size, 
-                                    bool yflip)
-{
-    m_log.begin(LogLevel::WARNING) << "BGFX screenShot used but not implemented";
-}
-
-void BGFXCallbackHandler::captureBegin(uint32_t _width, uint32_t _height, uint32_t _pitch, 
-                    bgfx::TextureFormat::Enum _format, bool _yflip)
-{
-    m_log.begin(LogLevel::WARNING) << "BGFX captureBegin used but not implemented";
-}
-
-void BGFXCallbackHandler::captureEnd() {}
-
-void BGFXCallbackHandler::captureFrame(const void *_data, uint32_t _size) {
-    m_log.begin(LogLevel::WARNING) << "BGFX captureFrame used but not implemented";
+    for (int i = 0; i < perf_monitor.size(); ++i) {
+        auto& item = perf_monitor.getItem(i);
+        bgfx::dbgTextPrintf(1, i + 1, 0x0f, "%s : %fms", item.label, item.delta.count());
+    }
 }
 
 } // namespace folk

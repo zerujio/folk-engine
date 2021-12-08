@@ -37,6 +37,10 @@ public:
 
     const Matrix4f& transformMatrix();
 
+    const Vec3f& position() const noexcept;
+    const Vec3f& rotation() const noexcept;
+    const Vec3f& scale() const noexcept;
+
 private:
     entt::entity m_id;
 

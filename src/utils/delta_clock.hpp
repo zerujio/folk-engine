@@ -10,6 +10,8 @@ class DeltaClock {
 public:
     using clock = std::chrono::steady_clock;
     using nanoseconds = std::chrono::nanoseconds;
+    using milliseconds_double = std::chrono::duration<double, std::milli>;
+    using seconds_double = std::chrono::duration<double>;
 
     /// Default constructor.
     /** 
