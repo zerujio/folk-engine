@@ -35,12 +35,24 @@ public:
         return {F(x, k), F(y, k), F(z, k)}; 
     }
 
+    template<T (*F)(T, T)>
+    Vector3& mapInPlace(const Vector3& vec) {
+        x = F(x, vec.x);
+        y = F(y, vec.y);
+        z = F(z, vec.z);
+        return *this;
+    }
+
     Vector3 operator-() const {
         return map<minus>();
     }
 
     Vector3 operator*(T k) const {
         return map<mul>(k);
+    }
+
+    Vector3& operator+=(const Vector3& vec) {
+        return mapInPlace<add>(vec);
     }
 
     operator T*() {
@@ -57,7 +69,11 @@ private:
     }
 
     static T mul(T x, T y) {
-        return x, y;
+        return x * y;
+    }
+
+    static T add(T x, T y) {
+        return x + y;
     }
 };
 

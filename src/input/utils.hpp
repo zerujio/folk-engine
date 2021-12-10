@@ -1,7 +1,7 @@
 #ifndef FOLK_INPUT__UTILS_HPP
 #define FOLK_INPUT__UTILS_HPP
 
-#include "folk/input/input.hpp"
+#include "folk/input.hpp"
 
 namespace Folk
 {

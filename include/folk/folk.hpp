@@ -1,7 +1,7 @@
 #ifndef FOLK_HPP
 #define FOLK_HPP
 
-#include "folk/scene/scene.hpp"
+#include "scene.hpp"
 #include "folk/scene/entity_handle.hpp"
 #include "folk/core/engine.hpp"
 

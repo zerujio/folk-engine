@@ -1,5 +1,5 @@
 #include "folk/folk.hpp"
-#include "folk/input/input.hpp"
+#include "folk/input.hpp"
 
 #include <iostream>
 #include <set>

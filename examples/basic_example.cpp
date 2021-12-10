@@ -1,6 +1,6 @@
 #include "folk/folk.hpp"
 #include "folk/scene/transform_component.hpp"
-#include "folk/input/input.hpp"
+#include "folk/input.hpp"
 #include "folk/render/visual_component.hpp"
 #include "folk/core/error.hpp"
 #include "folk/core/log.hpp"
@@ -55,10 +55,12 @@ void keyCallback(Folk::Key key, Folk::InputState state) {
         break;
 
     case Folk::Key::Escape:
-        throw Folk::CriticalError("Dummy critical error.");
+        using Folk::CriticalError;
+        throw FOLK_CRITICAL_ERROR("Dummy critical error.");
 
     case Folk::Key::Space:
-        throw Folk::RuntimeError("Dummy runtime error.");
+        using Folk::RuntimeError;
+        throw FOLK_RUNTIME_ERROR("Dummy runtime error");
     }
 }
 

@@ -7,7 +7,7 @@
 #include <exception>
 #include <thread>
 
-#include "folk/scene/scene.hpp"
+#include "folk/scene.hpp"
 
 // modules
 #include "../render/renderer.hpp"

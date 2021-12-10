@@ -1,7 +1,7 @@
 #ifndef FOLK_INPUT__INPUT_ACTION_HPP
 #define FOLK_INPUT__INPUT_ACTION_HPP
 
-#include "input.hpp"
+#include "folk/input.hpp"
 #include "enums.hpp"
 
 #include <string>

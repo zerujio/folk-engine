@@ -1,7 +1,7 @@
 #ifndef FOLK_SCENE__MODULE_HPP
 #define FOLK_SCENE__MODULE_HPP
 
-#include "folk/scene/scene.hpp"
+#include "folk/scene.hpp"
 #include "folk/scene/entity_handle.hpp"
 
 #include <entt/entt.hpp>
@@ -18,12 +18,12 @@ class SceneManager final {
 public:
     friend class EngineSingleton;
     
-    SceneManager() = default;
+    SceneManager();
     ~SceneManager();
 
-    const char* name() const {return "Scene update";}
+    static const char* name() {return "Scene update";}
 
-    void updateScene(std::chrono::duration<double>);
+    void updateScene(std::chrono::duration<float>) noexcept;
 
     const entt::registry& registry() const {
         return scene.m_registry;
@@ -42,7 +42,7 @@ public:
     }
     
 private:
-    int monitor_id;
+    int monitor_id {-1};
     Scene scene {};
 };
     

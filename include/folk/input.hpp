@@ -1,10 +1,10 @@
 #ifndef FOLK_INPUT__INPUT_HPP
 #define FOLK_INPUT__INPUT_HPP
 
-#include "common.hpp"
-#include "enums.hpp"
-#include "input_code.hpp"
-#include "input_action.hpp"
+#include "folk/input/common.hpp"
+#include "folk/input/enums.hpp"
+#include "folk/input/input_code.hpp"
+#include "folk/input/input_action.hpp"
 
 #include "folk/math/vector.hpp"
 

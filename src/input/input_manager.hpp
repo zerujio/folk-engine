@@ -1,7 +1,7 @@
 #ifndef FOLK_INPUT__INPUT_MANAGER
 #define FOLK_INPUT__INPUT_MANAGER
 
-#include "folk/input/input.hpp"
+#include "folk/input.hpp"
 #include "../utils/singleton.hpp"
 #include "../core/exception_handler.hpp"
 

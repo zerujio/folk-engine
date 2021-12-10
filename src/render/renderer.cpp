@@ -137,11 +137,12 @@ void Renderer::drawFrame(SceneManager& scene_mngr,
 void Renderer::drawPerfMon(const PerformanceMonitor& perf_monitor,
                            DeltaClock::milliseconds_double delta) noexcept
 {
-    bgfx::dbgTextPrintf(1, 0, 0x0f, "Delta=%fms", delta.count());
+    std::chrono::duration<float> hertz {delta};
+    bgfx::dbgTextPrintf(1, 0, 0xf0, "FPS=%5.1f          Delta=%8.6fms", 1/hertz.count(),  delta.count());
 
     for (int i = 0; i < perf_monitor.size(); ++i) {
         auto& item = perf_monitor.getItem(i);
-        bgfx::dbgTextPrintf(1, i + 1, 0x0f, "%s : %fms", item.label, item.delta.count());
+        bgfx::dbgTextPrintf(1, i + 1, 0x0f, "%-20s : %10.6fms", item.label, item.delta.count());
     }
 }
 

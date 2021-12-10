@@ -1,4 +1,4 @@
-#include "folk/input/input.hpp"
+#include "folk/input.hpp"
 
 #include "../core/engine_singleton.hpp"
 

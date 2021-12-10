@@ -37,9 +37,9 @@ public:
 
     const Matrix4f& transformMatrix();
 
-    const Vec3f& position() const noexcept;
-    const Vec3f& rotation() const noexcept;
-    const Vec3f& scale() const noexcept;
+    [[nodiscard]] const Vec3f& position() const noexcept;
+    [[nodiscard]] const Vec3f& rotation() const noexcept;
+    [[nodiscard]] const Vec3f& scale() const noexcept;
 
 private:
     entt::entity m_id;
@@ -56,7 +56,7 @@ private:
         Vec3f rotation {0, 0, 0};
         Vec3f scale    {1, 1, 1};
         
-        Matrix4f matrix;
+        Matrix4f matrix {};
 
         // is transform matrix valid (up to date)?
         bool is_mtx_valid {false};

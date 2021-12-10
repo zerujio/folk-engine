@@ -47,4 +47,4 @@ private:
 
 }// namespace folk::scene
 
-#endif//SCENE__SCENE_HPP
+#endif//FOLK_SCENE__SCENE_HPP

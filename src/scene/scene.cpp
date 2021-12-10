@@ -1,4 +1,4 @@
-#include "folk/scene/scene.hpp"
+#include "folk/scene.hpp"
 #include "folk/scene/scene_graph_node.hpp"
 
 #include "../core/engine_singleton.hpp"

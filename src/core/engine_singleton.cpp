@@ -84,6 +84,7 @@ void EngineSingleton::update(std::chrono::nanoseconds delta) {
                 << "An error ocurred during scene update phase:\n";
             exception.handleException();
         }
+        perf_monitor.stop(id);
     }
 
     // update audio
