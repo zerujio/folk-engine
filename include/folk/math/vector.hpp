@@ -93,7 +93,7 @@ constexpr Vec3 operator-(const Vec3 v) {
 
 template<float (*F)(float, float)>
 constexpr Vec3 map(const Vec3 v, const float k) {
-    return {F(v.x, k), F(v.y, k), F(v.y, k)};
+    return {F(v.x, k), F(v.y, k), F(v.z, k)};
 }
 
 constexpr Vec3 operator*(const Vec3 v, const float k) {
@@ -106,7 +106,7 @@ constexpr Vec3 operator/(const Vec3 v, const float k) {
 
 template<float (*F)(float, float)>
 constexpr Vec3 map(const Vec3 l, const Vec3 r){
-    return {F(l.x, r.y), F(l.y, r.y), F(l.z, r.z)};
+    return {F(l.x, r.x), F(l.y, r.y), F(l.z, r.z)};
 }
 
 constexpr Vec3 operator+(const Vec3 l, const Vec3 r) {

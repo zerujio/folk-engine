@@ -3,6 +3,7 @@
 #include "../core/engine_singleton.hpp"
 
 #include "folk/script/script_component.hpp"
+#include "folk/ai.hpp"
 
 namespace Folk
 {
@@ -26,6 +27,7 @@ try {
 }
 
 void SceneManager::updateScene(std::chrono::duration<float> delta) noexcept {
+    // call scene update callback
     if (scene.updateCallback)
         try {
             scene.updateCallback(scene, delta.count());
@@ -33,6 +35,7 @@ void SceneManager::updateScene(std::chrono::duration<float> delta) noexcept {
             ENGINE.exception.handleException();
         }
 
+    // update scripts
     registry().view<ScriptComponent>().each([delta](ScriptComponent& script_component){
         try {
             script_component.script->update(delta);
@@ -40,6 +43,16 @@ void SceneManager::updateScene(std::chrono::duration<float> delta) noexcept {
             ENGINE.exception.handleException();
         }
     });
+
+    // update behavior trees
+    registry().view<BehaviorTreeComponent>().each(
+            [this, delta](entt::entity entity, BehaviorTreeComponent& bt_component) {
+                try {
+                    bt_component.bt->update({registry(), entity}, delta);
+                } catch (...) {
+                    ENGINE.exception.handleException();
+                }
+            });
 }
 
 } // namespace folk

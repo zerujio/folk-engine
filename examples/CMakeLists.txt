@@ -20,6 +20,7 @@ add_example(basic_example basic_example.cpp)
 add_example(input_example input_example.cpp)
 add_example(audio_example audio_example.cpp)
 add_example(script_example script_example.cpp)
+add_example(behavior_tree_example behavior_tree_example.cpp)
 
 add_executable(hello-bgfx hello-bgfx.cpp)
 target_link_libraries(hello-bgfx glfw bgfx_interface)
