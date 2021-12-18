@@ -37,9 +37,9 @@ public:
 
     const Matrix4f& transformMatrix();
 
-    [[nodiscard]] const Vec3f& position() const noexcept;
-    [[nodiscard]] const Vec3f& rotation() const noexcept;
-    [[nodiscard]] const Vec3f& scale() const noexcept;
+    [[nodiscard]] const Vec3& position() const noexcept;
+    [[nodiscard]] const Vec3& rotation() const noexcept;
+    [[nodiscard]] const Vec3& scale() const noexcept;
 
 private:
     entt::entity m_id;
@@ -52,9 +52,9 @@ private:
     std::string m_name;
 
     struct Transform {
-        Vec3f position {0, 0, 0};
-        Vec3f rotation {0, 0, 0};
-        Vec3f scale    {1, 1, 1};
+        Vec3 position {0, 0, 0};
+        Vec3 rotation {0, 0, 0};
+        Vec3 scale    {1, 1, 1};
         
         Matrix4f matrix {};
 

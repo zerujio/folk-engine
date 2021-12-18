@@ -61,10 +61,13 @@ void keyCallback(Folk::Key key, Folk::InputState state) {
     case Folk::Key::Space:
         using Folk::RuntimeError;
         throw FOLK_RUNTIME_ERROR("Dummy runtime error");
+
+    default:
+        break;
     }
 }
 
-void update(Folk::Scene& scn, double delta) {
+void update(Folk::Scene& scn, float delta) {
     if (Folk::getMouseButton(Folk::MouseButton::Left) == Folk::InputState::Press)
         // Para poder ver este mensaje el programa debe iniciarse con la opción "-l trace"
         Folk::log(Folk::LogLevel::TRACE) << "dt=" << delta << '\n';

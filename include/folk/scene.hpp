@@ -20,7 +20,7 @@ public:
     Scene();
     ~Scene();
 
-    using UpdateCallback = void (*)(Scene&, double);
+    using UpdateCallback = void (*)(Scene&, float);
 
     /// \~spanish Una función que se invocará en cada nuevo cuadro. \~english A function to be called whenever a new frame is drawn.
     UpdateCallback updateCallback {nullptr};

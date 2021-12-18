@@ -83,15 +83,15 @@ void SceneGraphNode::updateTransformMatrix() {
     m_transform.is_mtx_valid = true;
 }
 
-const Vec3f &SceneGraphNode::position() const noexcept {
+const Vec3 &SceneGraphNode::position() const noexcept {
     return m_transform.position;
 }
 
-const Vec3f &SceneGraphNode::rotation() const noexcept {
+const Vec3 &SceneGraphNode::rotation() const noexcept {
     return m_transform.rotation;
 }
 
-const Vec3f &SceneGraphNode::scale() const noexcept {
+const Vec3 &SceneGraphNode::scale() const noexcept {
     return m_transform.scale;
 }
 

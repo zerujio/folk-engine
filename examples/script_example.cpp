@@ -15,7 +15,7 @@ struct CameraScript final : public Folk::Script {
 
     void update(std::chrono::duration<float> delta) override {
         auto transform = this_entity.getComponent<Folk::TransformComponent>().value();
-        Folk::Vec3f position = transform.position();
+        Folk::Vec3 position = transform.position();
         float move_dist = speed * delta.count();
 
         if (Folk::getKey(Folk::Key::A) == Folk::InputState::Press) {
@@ -40,12 +40,12 @@ struct CubeScript final : public Folk::Script {
 
     using Script::Script;
 
-    Folk::Vec3f rotation_vector {};
+    Folk::Vec3 rotation_vector {};
 
     void update(std::chrono::duration<float> delta) override {
         auto transform = this_entity.getComponent<Folk::TransformComponent>().value();
 
-        Folk::Vec3f rotation = transform.rotation();
+        Folk::Vec3 rotation = transform.rotation();
         rotation += rotation_vector * delta.count();
         transform.rotation(rotation);
     }

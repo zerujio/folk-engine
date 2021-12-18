@@ -24,25 +24,25 @@ public:
     using ComponentPtr::ComponentPtr;
 
     /// Consulta la posición.
-    const Vec3f& position() const;
+    [[nodiscard]] const Vec3& position() const;
 
     /// Modifica la posición;
-    void position(const Vec3f&);
+    void position(const Vec3&);
 
     /// Consulta la rotación
-    const Vec3f& rotation() const;
+    [[nodiscard]] const Vec3& rotation() const;
     
     /// Modifica la rotación.
-    void rotation(const Vec3f&);
+    void rotation(const Vec3&);
 
     /// Consulta la escala.
-    const Vec3f& scale() const;
+    [[nodiscard]] const Vec3& scale() const;
 
     /// Modifica la escala;
-    void scale(const Vec3f&);
+    void scale(const Vec3&);
 
     /// Matriz de transformación local.
-    const Matrix4f& transformMatrix();
+    [[nodiscard]] const Matrix4f& transformMatrix();
 };
 
 using TransformComponent = SceneGraphNode;

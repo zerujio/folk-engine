@@ -9,29 +9,29 @@ namespace Folk
 
 // Explicit instantiation of Node template functions
 
-const Vec3f& TransformPtr::position() const {
+const Vec3& TransformPtr::position() const {
     return ref.m_transform.position;
 }
 
-void TransformPtr::position(const Vec3f& vec3) {
+void TransformPtr::position(const Vec3& vec3) {
     ref.m_transform.position = vec3;
     ref.invalidateMtxCache();
 }
 
-const Vec3f& TransformPtr::rotation() const {
+const Vec3& TransformPtr::rotation() const {
     return ref.m_transform.rotation;
 }
 
-void TransformPtr::rotation(const Vec3f& vec3) {
+void TransformPtr::rotation(const Vec3& vec3) {
     ref.m_transform.rotation = vec3;
     ref.invalidateMtxCache();
 }
 
-const Vec3f& TransformPtr::scale() const {
+const Vec3& TransformPtr::scale() const {
     return ref.m_transform.scale;
 }
 
-void TransformPtr::scale(const Vec3f& scale) {
+void TransformPtr::scale(const Vec3& scale) {
     ref.m_transform.scale = scale;
     ref.invalidateMtxCache();
 }
