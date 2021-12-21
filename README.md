@@ -41,6 +41,14 @@ desde el último cuadro como argumentos.
 
 Para ejemplos de las distintas funcionalidades ver los ejemplos en la carpeta `examples`.
 
+## Demo
+
+La demo corresponde al target `folk_demo`. Hacer click izquierdo en la pantalla para mover el cubo naranja. Click derecho
+con para crear cubos blancos.
+
+El ejecutable depende de dos archivos de audio: `click.wav` y `ding.wav`. Están en la carpeta `examples/assets` y hay que
+copiarlos (o hacer un symlink) a la carpeta donde esté el ejecutable.
+
 ## Compilación y ejecución
 
 Este proyecto fue desarrollado en Linux (Ubuntu 21.04). El sistema de build es CMake.

@@ -33,6 +33,7 @@ public:
     using ComponentPtr::ComponentPtr;
 
     std::shared_ptr<Visual>& visual() { return ref.visual; }
+    void setVisual(std::shared_ptr<Visual>& v) { ref.visual = v; }
 };
 
 }// namespace folk

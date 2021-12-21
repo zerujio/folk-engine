@@ -21,6 +21,7 @@ add_example(input_example input_example.cpp)
 add_example(audio_example audio_example.cpp)
 add_example(script_example script_example.cpp)
 add_example(behavior_tree_example behavior_tree_example.cpp)
+add_example(folk_demo demo.cpp)
 
 #add_example(normals_example normals_example.cpp)
 #folk_add_shader(normals_vs "shaders/vs_normals.sc" VERTEX "${SHADER_DIR}/vs_normals.bin")

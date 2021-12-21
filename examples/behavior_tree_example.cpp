@@ -81,7 +81,7 @@ struct IsNear final {
     }
 };
 
-class Follow final{
+class Follow final {
     Folk::FallbackBT<IsNear, MoveTowards> fallback;
     Folk::Vec3 target_position;
 

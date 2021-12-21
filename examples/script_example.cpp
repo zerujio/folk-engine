@@ -36,7 +36,7 @@ struct CameraScript final : public Folk::Script {
     }
 };
 
-struct CubeScript final : public Folk::Script {
+struct OrangeScript final : public Folk::Script {
 
     using Script::Script;
 
@@ -56,7 +56,7 @@ Folk::EntityHandle createCube(Folk::EntityHandle parent, const char* name, std::
 
     handle.getComponent<Folk::TransformComponent>()->scale({0.5f, 0.5f, 0.5f});
     handle.addComponent<Folk::VisualComponent>(visual);
-    handle.addComponent<Folk::ScriptComponent>().addScript<CubeScript>();
+    handle.addComponent<Folk::ScriptComponent>().addScript<OrangeScript>();
 
     return handle;
 }
@@ -71,12 +71,12 @@ void Folk::sceneInit(Scene& scene) {
 
     auto box1 = createCube(scene.root(), "Box 1", visual);
     box1.getComponent<TransformComponent>()->position({-1.0f, 0.0f, 0.0f});
-    auto script = box1.getComponent<ScriptComponent>()->getScript<CubeScript>();
+    auto script = box1.getComponent<ScriptComponent>()->getScript<OrangeScript>();
     script->rotation_vector = {1.0f, 0.0f, 0.0f};
 
     auto box2 = createCube(scene.root(), "Box 2", visual);
     box2.getComponent<TransformComponent>()->position({1.0f, 0.0f, 0.0f});
-    script = box2.getComponent<ScriptComponent>()->getScript<CubeScript>();
+    script = box2.getComponent<ScriptComponent>()->getScript<OrangeScript>();
     script->rotation_vector = {0.0f, 1.0f, 0.0f};
 }
 
