@@ -29,7 +29,7 @@ void Folk::sceneInit(Scene &scene) {
 Para modificar la escena en cada frame, es necesario establecer un callback:
 
 ```cpp
-void onUpdate(Scene &scene, double delta);
+void onUpdate(Scene &scene, float delta);
 
 void Folk::sceneInit(Scene &scene) {
     scene.updateCallback = onUpdate;
@@ -39,7 +39,7 @@ void Folk::sceneInit(Scene &scene) {
 El callback será invocado con la escena y la cantidad de tiempo (en segundos) 
 desde el último cuadro como argumentos.
 
-Para un ejemplo más completo ver `examples/basic_setup.cpp`.
+Para ejemplos de las distintas funcionalidades ver los ejemplos en la carpeta `examples`.
 
 ## Compilación y ejecución
 

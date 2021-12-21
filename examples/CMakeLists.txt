@@ -7,7 +7,7 @@ add_custom_target(default_shaders)
 add_dependencies(default_shaders default_vert_shader default_frag_shader)
 
 add_custom_target(folk_examples ALL)
-add_dependencies(folk_examples basic_example input_example default_shaders)
+add_dependencies(folk_examples default_shaders)
 
 function(add_example TARGETNAME FILENAME)
     add_executable(${TARGETNAME} ${FILENAME})
@@ -21,6 +21,11 @@ add_example(input_example input_example.cpp)
 add_example(audio_example audio_example.cpp)
 add_example(script_example script_example.cpp)
 add_example(behavior_tree_example behavior_tree_example.cpp)
+
+#add_example(normals_example normals_example.cpp)
+#folk_add_shader(normals_vs "shaders/vs_normals.sc" VERTEX "${SHADER_DIR}/vs_normals.bin")
+#folk_add_shader(normals_fs "shaders/fs_normals.sc" VERTEX "${SHADER_DIR}/fs_normals.bin")
+#add_dependencies(normals_example normals_vs normals_fs)
 
 add_executable(hello-bgfx hello-bgfx.cpp)
 target_link_libraries(hello-bgfx glfw bgfx_interface)

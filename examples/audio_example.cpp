@@ -5,7 +5,7 @@
 
 #include <cmath>
 
-void onUpdate(Folk::Scene&, double);
+void onUpdate(Folk::Scene&, float);
 
 void Folk::engineInit() {
     // pass
@@ -39,7 +39,7 @@ void Folk::sceneInit(Folk::Scene &scene) {
     scene.updateCallback = onUpdate;
 }
 
-void onUpdate(Folk::Scene& scene, double deltaT) {
+void onUpdate(Folk::Scene& scene, float deltaT) {
 
     auto dist = deltaT * 2.5;
 

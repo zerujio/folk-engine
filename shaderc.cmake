@@ -5,7 +5,6 @@ function(folk_add_shader TARGET_NAME SRC_FILE TYPE BIN_FILE)
              OUTPUT "${BIN_FILE}"
              ${TYPE}
              LINUX
-             #PROFILE "spirv"
              INCLUDES ${FOLK_SHADER_INCLUDES}
              VERBOSE )
     add_custom_target(${TARGET_NAME} DEPENDS "${BIN_FILE}")
