@@ -16,7 +16,7 @@ EngineSingleton::EngineSingleton(LogLevel level)
         engineInit();
 
     } catch (...) {
-        exception.handleException();
+        m_exception_handler.catchException();
         throw std::runtime_error("engineInit() error");
     }
 
@@ -25,7 +25,7 @@ EngineSingleton::EngineSingleton(LogLevel level)
         sceneInit(scene.scene);
 
     } catch (...) {
-        exception.handleException();
+        m_exception_handler.catchException();
         throw std::runtime_error("sceneInit() error");
     }
 }
@@ -77,11 +77,11 @@ void EngineSingleton::update(std::chrono::nanoseconds delta) {
     {
         auto id = perf_monitor.addItem("Scene update");
         try {
-            scene.updateScene(delta);
+            scene.updateScene(m_exception_handler, delta);
         } catch (...) {
             Log::write(LogLevel::Warning)
                 << "An error ocurred during scene update phase:\n";
-            exception.handleException();
+            m_exception_handler.catchException();
         }
         perf_monitor.stop(id);
     }
@@ -90,11 +90,11 @@ void EngineSingleton::update(std::chrono::nanoseconds delta) {
     {
         auto id = perf_monitor.addItem("Audio update");
         try {
-            audio.update(scene, delta);
+            audio.update(m_exception_handler, scene, delta);
         } catch (...) {
             Log::write(LogLevel::Warning)
                 << "An error ocurred during audio processing phase:\n";
-            exception.handleException();
+            m_exception_handler.catchException();
         }
         perf_monitor.stop(id);
     }
@@ -107,7 +107,7 @@ void EngineSingleton::update(std::chrono::nanoseconds delta) {
         } catch (...) {
             Log::write(LogLevel::Warning)
                 << "An error ocurred during draw phase:\n";
-            exception.handleException();
+            m_exception_handler.catchException();
         }
         perf_monitor.stop(id);
     }

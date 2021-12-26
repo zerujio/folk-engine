@@ -12,13 +12,8 @@ Scene::Scene() {
               .connect<&Scene::onDestroyCamera>(*this);
 }
 
-Scene::~Scene() 
-try {
+Scene::~Scene() {
     m_registry.clear();
-} catch(...) {
-    Log::warning() << "An error ocurred during scene destruction:\n";
-    ENGINE.exception.handleException();
-    return;
 }
 
 void Scene::onDestroyCamera(entt::registry& reg, entt::entity e) {

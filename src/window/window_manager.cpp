@@ -193,15 +193,7 @@ void GLAPIENTRY messageCallback(GLenum source, GLenum type, GLuint id,
 }
 
 void glfwErrorCallback(int code, const char* message) {
-    std::stringstream exc_msg;
-
-    exc_msg << "GLFW error " << code << " : " << message;
-
-    try {
-        throw FOLK_RUNTIME_ERROR(exc_msg.str());
-    } catch (...) {
-        ENGINE.exception.handleException();
-    }
+    Log::error() << "GLFW error " << code << ": " << message;
 }
 
 } // namespace folk

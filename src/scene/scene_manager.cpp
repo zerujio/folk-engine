@@ -22,34 +22,33 @@ try {
     // empty
 } catch (...) {
     Log::error() << "Exception caught during scene destruction (possible resource leak?)";
-    ENGINE.exception.handleException();
 }
 
-void SceneManager::updateScene(std::chrono::duration<float> delta) noexcept {
+void SceneManager::updateScene(const ExceptionHandler &exception_handler, std::chrono::duration<float> delta) noexcept {
     // call scene update callback
     if (scene.updateCallback)
         try {
             scene.updateCallback(scene, delta.count());
         } catch (...) {
-            ENGINE.exception.handleException();
+            exception_handler.catchException();
         }
 
     // update scripts
-    registry().view<ScriptComponent>().each([delta](ScriptComponent& script_component){
+    registry().view<ScriptComponent>().each([exception_handler, delta](ScriptComponent& script_component){
         try {
             script_component.script->update(delta);
         } catch (...) {
-            ENGINE.exception.handleException();
+            exception_handler.catchException();
         }
     });
 
     // update behavior trees
     registry().view<BehaviorTreeComponent>().each(
-            [this, delta](entt::entity entity, BehaviorTreeComponent& bt_component) {
+            [this, exception_handler, delta](entt::entity entity, BehaviorTreeComponent& bt_component) {
                 try {
                     bt_component.bt->update({registry(), entity}, delta);
                 } catch (...) {
-                    ENGINE.exception.handleException();
+                    exception_handler.catchException();
                 }
             });
 }

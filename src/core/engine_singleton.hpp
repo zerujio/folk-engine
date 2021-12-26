@@ -40,17 +40,17 @@ FOLK_SINGLETON_CLASS_FINAL(EngineSingleton) {
 
     PerformanceMonitor perf_monitor;
 
+    /// Exception handling
+    ExceptionHandler m_exception_handler {ExceptionHandler::CallbackArg<&EngineSingleton::exit>, this};
+
 public:
     // Engine
-
-    /// Exception handling
-    ExceptionHandler exception {};
 
     /// Window module
     WindowManager window {};
 
     /// Render module
-    Renderer render {exception, window};
+    Renderer render {m_exception_handler, window};
 
     /// Audio module
     AudioManager audio {};
@@ -59,7 +59,7 @@ public:
     SceneManager scene {};
 
     /// Input manager
-    InputManager input_manager {exception};
+    InputManager input_manager {m_exception_handler};
 
     // Functions
     /// Signal the engine to exit.

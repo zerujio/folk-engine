@@ -4,6 +4,7 @@
 #include "folk/audio/audio_source_component.hpp"
 
 #include "../scene/scene_manager.hpp"
+#include "../core/exception_handler.hpp"
 
 #include "open_alc.hpp"
 
@@ -18,8 +19,9 @@ class AudioManager final {
     alc::DeviceManager m_device;
     alc::ContextManager m_context {m_device};
 
-     void updateListener(SceneManager&, std::chrono::duration<double>) const noexcept;
-     void updateSource(SceneGraphNode &node_component, const AudioSourceComponent &source_component, std::chrono::duration<double> delta) const noexcept;
+     static void updateListener(const ExceptionHandler&, SceneManager&, std::chrono::duration<double>) noexcept;
+     static void updateSource(const ExceptionHandler &exception_handler, SceneGraphNode &node_component,
+                       const AudioSourceComponent &source_component, std::chrono::duration<float> delta) noexcept;
 
 public:
     static const char* name() {return "AudioManager";}
@@ -28,7 +30,7 @@ public:
 
     static void connectRegistry(entt::registry&);
 
-    void update(SceneManager&, std::chrono::duration<double>) const noexcept;
+    void update(const ExceptionHandler&, SceneManager&, std::chrono::duration<double>) const noexcept;
 };
 
 }

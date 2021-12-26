@@ -43,7 +43,7 @@ void keyCallback(GLFWwindow* window, int keycode, int scancode, int action,
             try {
                 p.second(key, state);
             } catch (...) {
-                exception_handler->handleException();
+                exception_handler->catchException();
             }
         }
 
@@ -63,7 +63,7 @@ void mouseButtonCallback(GLFWwindow* window, int button, int action, int mods)
         try {
             p.second(btn, state);
         } catch (...) {
-            exception_handler->handleException();
+            exception_handler->catchException();
         }
     }
 
@@ -75,7 +75,7 @@ void InputManager::inputCallback(InputCode code, InputState state) {
         try {
             p.second(code, state);
         } catch (...) {
-            exception_handler->handleException();
+            exception_handler->catchException();
         }
     }
 
@@ -86,7 +86,7 @@ void InputManager::inputCallback(InputCode code, InputState state) {
             try {
                 f(state);
             } catch (...) {
-                exception_handler->handleException();
+                exception_handler->catchException();
             }
         }
     }

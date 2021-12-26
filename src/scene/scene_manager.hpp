@@ -3,6 +3,7 @@
 
 #include "folk/scene.hpp"
 #include "folk/scene/entity_handle.hpp"
+#include "../core/exception_handler.hpp"
 
 #include <entt/entt.hpp>
 
@@ -23,7 +24,7 @@ public:
 
     static const char* name() {return "Scene update";}
 
-    void updateScene(std::chrono::duration<float>) noexcept;
+    void updateScene(const ExceptionHandler &exception_handler, std::chrono::duration<float> delta) noexcept;
 
     const entt::registry& registry() const {
         return scene.m_registry;

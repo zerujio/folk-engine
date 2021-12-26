@@ -15,9 +15,9 @@ struct AudioBuffer final {
     unsigned int sample_rate = 0;
     uint64_t total_pcm_frame_count = 0;
 
-    int16_t* data;
+    int16_t* data {nullptr};
 
-    std::size_t size() const {
+    [[nodiscard]] std::size_t size() const {
         return sizeof(int16_t) * channels * total_pcm_frame_count;
     }
 };
@@ -96,7 +96,7 @@ std::shared_ptr<AudioClip> AudioClip::createFromFile(std::filesystem::path file)
 AudioClip::AudioClip(const AudioBuffer& audio_buffer) 
 : buffer_mngr(al::BufferManager::createId()) 
 {
-    ALuint format;
+    ALint format;
     if (audio_buffer.channels == 1)
         format = AL_FORMAT_MONO16;
     else if (audio_buffer.channels == 2)
@@ -105,25 +105,19 @@ AudioClip::AudioClip(const AudioBuffer& audio_buffer)
         throw FOLK_RUNTIME_ERROR("Too many channels in audio clip");
     
     buffer_mngr.copyData(format, audio_buffer.data, audio_buffer.size(), audio_buffer.sample_rate);
-    
 }
 
 AudioClip::~AudioClip() {
     auto err = buffer_mngr.destroy();
-    
-    try {
-        if (err == AL_INVALID_OPERATION)
-            throw FOLK_ERROR(al::ALError, "buffer is still in use and cannot be deleted (possible resource leak)");
-        
-        else if (err == AL_INVALID_NAME)
-            throw FOLK_ERROR(al::ALError, "buffer id is invalid, can't delete");
 
-        else if (err != AL_NO_ERROR)
-            throw FOLK_ERROR(al::ALError, "unexpected error during buffer deletion");
+    if (err == AL_INVALID_OPERATION)
+        Log::error() << "~AudioClip: buffer is still in use and cannot be deleted or no OpenAL context exists!";
 
-    } catch (...) {
-        ENGINE.exception.handleException();
-    }
+    else if (err == AL_INVALID_NAME)
+        Log::error() << "~AudioClip: buffer id is invalid, can't delete";
+
+    else if (err != AL_NO_ERROR)
+        Log::error() << "~AudioClip: unexpected error during buffer deletion";
 }
 
 } // namespace Folk

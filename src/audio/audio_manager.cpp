@@ -1,7 +1,5 @@
 #include "folk/audio/audio_source_component.hpp"
 
-#include "../core/engine_singleton.hpp"
-
 #include "audio_manager.hpp"
 
 #include <bgfx/bgfx.h>
@@ -28,16 +26,19 @@ void AudioManager::connectRegistry(entt::registry& reg) {
     reg.on_destroy<AudioSourceComponent>().connect<onAudioSourceDestroy>();
 }
 
-void AudioManager::update(SceneManager& scene_mngr, std::chrono::duration<double> delta) const noexcept {
-    updateListener(scene_mngr, delta);
+void AudioManager::update(const ExceptionHandler &exception_handler,
+                          SceneManager& scene_manager, std::chrono::duration<double> delta) const noexcept {
+    updateListener(exception_handler, scene_manager, delta);
 
-    auto update_source = [this, delta](SceneGraphNode& node, const AudioSourceComponent& src) {
-        return updateSource(node, src, delta);
+    auto update_source = [exception_handler, delta](SceneGraphNode& node, const AudioSourceComponent& src) {
+        return updateSource(exception_handler, node, src, delta);
     };
-    scene_mngr.registry().view<SceneGraphNode, const AudioSourceComponent>().each(update_source);
+    scene_manager.registry().view<SceneGraphNode, const AudioSourceComponent>().each(update_source);
 }
 
-void AudioManager::updateListener(SceneManager &scene_manager, std::chrono::duration<double> delta) const noexcept
+void AudioManager::updateListener(const ExceptionHandler& exception_handler,
+                                  SceneManager &scene_manager,
+                                  std::chrono::duration<double> delta) noexcept
 try {
     bx::Vec3 position {0.0f, 0.0f, 0.0f};
     bx::Vec3 up {0.0f, 1.0f, 0.0f};
@@ -64,14 +65,15 @@ try {
     AL_CALL(alListenerfv, AL_ORIENTATION, orientation);
 
 } catch (...) {
-    ENGINE.exception.handleException();
+    exception_handler.catchException();
     return;
 }
 
-void AudioManager::updateSource(SceneGraphNode& node_component,
+void AudioManager::updateSource(const ExceptionHandler &exception_handler,
+                                SceneGraphNode& node_component,
                                 const AudioSourceComponent& source_component,
-                                std::chrono::duration<double> delta)
-                                 const noexcept
+                                std::chrono::duration<float> delta)
+                                noexcept
 try {
     // get old position
     bx::Vec3 old_position {0.0f, 0.0f, 0.0f};
@@ -88,7 +90,7 @@ try {
     AL_CALL(alSource3f, source_component.source_handle, AL_VELOCITY, velocity.x, velocity.y, velocity.z);
 
 } catch (...) {
-    ENGINE.exception.handleException();
+    exception_handler.catchException();
     return;
 }
 
