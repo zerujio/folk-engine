@@ -33,12 +33,14 @@ namespace Folk
 /// Singleton class to access application level functions and variables.
 FOLK_SINGLETON_CLASS_FINAL(EngineSingleton) {
 
+    friend class Engine;
+
     LogInitializer log_init {};
     LogThread log_thread {};
 
-public:
     PerformanceMonitor perf_monitor;
 
+public:
     // Engine
 
     /// Exception handling
@@ -77,7 +79,7 @@ private:
 
     DeltaClock frame_clock {};
     
-    EngineSingleton(LogLevel level);
+    explicit EngineSingleton(LogLevel level);
     ~EngineSingleton();
 
     void mainLoop() noexcept;

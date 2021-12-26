@@ -23,11 +23,6 @@ add_example(script_example script_example.cpp)
 add_example(behavior_tree_example behavior_tree_example.cpp)
 add_example(folk_demo demo.cpp)
 
-#add_example(normals_example normals_example.cpp)
-#folk_add_shader(normals_vs "shaders/vs_normals.sc" VERTEX "${SHADER_DIR}/vs_normals.bin")
-#folk_add_shader(normals_fs "shaders/fs_normals.sc" VERTEX "${SHADER_DIR}/fs_normals.bin")
-#add_dependencies(normals_example normals_vs normals_fs)
-
 add_executable(hello-bgfx hello-bgfx.cpp)
 target_link_libraries(hello-bgfx glfw bgfx_interface)
 
