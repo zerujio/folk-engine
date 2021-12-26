@@ -1,6 +1,6 @@
 #include "window_manager.hpp"
 
-#include "folk/core/error.hpp"
+#include "folk/error.hpp"
 
 #include "../core/engine_singleton.hpp"
 
@@ -156,36 +156,36 @@ void GLAPIENTRY messageCallback(GLenum source, GLenum type, GLuint id,
     }
 
     const char* severity_str;
-    Log::Level log_level;
+    LogLevel log_level;
     switch (severity)
     {
     case GL_DEBUG_SEVERITY_HIGH:
         severity_str = "HIGH";
-        log_level = Log::Level::ERROR;
+        log_level = LogLevel::Error;
         break;
     
     case GL_DEBUG_SEVERITY_MEDIUM:
         severity_str = "MEDIUM";
-        log_level = Log::Level::WARNING;
+        log_level = LogLevel::Warning;
         break;
     
     case GL_DEBUG_SEVERITY_LOW:
         severity_str = "LOW";
-        log_level = Log::Level::WARNING;
+        log_level = LogLevel::Warning;
         break;
 
     case GL_DEBUG_SEVERITY_NOTIFICATION:
         severity_str = "NOTIFICATION";
-        log_level = Log::Level::MESSAGE;
+        log_level = LogLevel::Message;
         break;
     
     default:
         severity_str = "?";
-        log_level = Log::Level::MESSAGE;
+        log_level = LogLevel::Message;
         break;
     }
-    
-    ENGINE.log.begin(log_level) << "*** OpenGL DEBUG MESSAGE ***"
+
+    Log::write(log_level) << "*** OpenGL DEBUG MESSAGE ***"
                                 << "\nsource    : " << source_str
                                 << "\ntype      : " << type_str
                                 << "\nseverity  : " << severity_str

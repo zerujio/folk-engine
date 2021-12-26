@@ -1,7 +1,7 @@
 #ifndef FOLK_RENDER__BGFX_CALLBACK_HANDLER_HPP
 #define FOLK_RENDER__BGFX_CALLBACK_HANDLER_HPP
 
-#include "../debug/log.hpp"
+#include "folk/log.hpp"
 #include "../core/exception_handler.hpp"
 
 #include <bgfx/bgfx.h>
@@ -11,7 +11,7 @@ namespace Folk
 
 struct BGFXCallbackHandler final : public bgfx::CallbackI {
 
-    BGFXCallbackHandler(Log&, ExceptionHandler&);
+    explicit BGFXCallbackHandler(ExceptionHandler&);
 
     void fatal(const char* file_path, uint16_t line, 
                bgfx::Fatal::Enum code, const char* description) override;
@@ -52,7 +52,6 @@ struct BGFXCallbackHandler final : public bgfx::CallbackI {
     void captureFrame(const void *_data, uint32_t _size) override;
 
 private:
-    Log& m_log;
     ExceptionHandler& m_handler;
 };
 

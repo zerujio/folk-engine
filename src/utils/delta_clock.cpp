@@ -1,5 +1,5 @@
 #include "delta_clock.hpp"
-#include "folk/core/error.hpp"
+#include "folk/error.hpp"
 
 namespace Folk {
 

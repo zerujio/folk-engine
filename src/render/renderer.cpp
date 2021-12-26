@@ -20,8 +20,8 @@
 
 namespace Folk {
 
-Renderer::Renderer(Log& log, ExceptionHandler& exc, WindowManager& win)
-    : bgfx_callback_handler(log, exc), window_mngr(win)
+Renderer::Renderer(ExceptionHandler& exc, WindowManager& win)
+    : bgfx_callback_handler(exc), window_mngr(win)
 {
     // bgfx
     bgfx::renderFrame();

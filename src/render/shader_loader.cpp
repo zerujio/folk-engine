@@ -1,4 +1,4 @@
-#include "folk/core/error.hpp"
+#include "folk/error.hpp"
 
 #include "shader_loader.hpp"
 

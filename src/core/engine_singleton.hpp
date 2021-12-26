@@ -15,32 +15,31 @@
 #include "../window/window_manager.hpp"
 #include "../scene/scene_manager.hpp"
 #include "../input/input_manager.hpp"
-#include "../debug/log.hpp"
 #include "exception_handler.hpp"
 
 // utils
 #include "../utils/singleton.hpp"
 #include "../utils/processing_queue.hpp"
-#include "../utils/raii_thread.hpp"
 #include "../utils/delta_clock.hpp"
 
 #include "../debug/performance_monitor.hpp"
 
+#include "log_thread.hpp"
 #include "main.hpp"
 
 namespace Folk
 {
 
-/// Singleton class to access aplication level functions and variables.
+/// Singleton class to access application level functions and variables.
 FOLK_SINGLETON_CLASS_FINAL(EngineSingleton) {
+
+    LogInitializer log_init {};
+    LogThread log_thread {};
 
 public:
     PerformanceMonitor perf_monitor;
 
-    // Engine modules
-
-    /// Logging
-    Log log;
+    // Engine
 
     /// Exception handling
     ExceptionHandler exception {};
@@ -48,17 +47,17 @@ public:
     /// Window module
     WindowManager window {};
 
-    /// Input manager
-    InputManager input_manager {exception};
-
     /// Render module
-    Renderer render {log, exception, window};
+    Renderer render {exception, window};
 
     /// Audio module
     AudioManager audio {};
 
     /// Scene module
     SceneManager scene {};
+
+    /// Input manager
+    InputManager input_manager {exception};
 
     // Functions
     /// Signal the engine to exit.
@@ -78,7 +77,7 @@ private:
 
     DeltaClock frame_clock {};
     
-    EngineSingleton(Log::Level log_level);
+    EngineSingleton(LogLevel level);
     ~EngineSingleton();
 
     void mainLoop() noexcept;

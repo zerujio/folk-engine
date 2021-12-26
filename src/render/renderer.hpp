@@ -20,7 +20,7 @@ namespace Folk {
 class Renderer final {
 
 public:
-    const char* name() const {return "Renderer";}
+    static const char* name() {return "Renderer";}
 
 private:
     friend class EngineSingleton;
@@ -30,7 +30,7 @@ private:
     BGFXCallbackHandler bgfx_callback_handler;
     WindowManager& window_mngr;
 
-    Renderer(Log&, ExceptionHandler&, WindowManager&);
+    Renderer(ExceptionHandler&, WindowManager&);
     ~Renderer();
 
     void drawFrame(SceneManager& scene,

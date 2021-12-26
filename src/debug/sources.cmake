@@ -1,3 +1,3 @@
 set(SOURCES 
-    performance_monitor.cpp 
-    log.cpp)
+    performance_monitor.cpp
+        ../core/log.cpp)

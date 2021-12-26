@@ -7,7 +7,7 @@
 #include "folk/input.hpp"
 #include "folk/ai.hpp"
 #include "folk/audio.hpp"
-#include "folk/core/log.hpp"
+#include "folk/log.hpp"
 #include "folk/script.hpp"
 
 #include <cmath>
@@ -160,7 +160,7 @@ void onRightClick(EntityHandle parent, std::shared_ptr<AudioClip> clip, InputSta
     script.angle = float(std::rand())/RAND_MAX;
 }
 
-// Este script hace que el cubo naranje rote
+// Este script hace que el cubo naranjo rote
 struct OrangeScript final : public Folk::Script {
 
     using Script::Script;
@@ -177,7 +177,7 @@ struct OrangeScript final : public Folk::Script {
 };
 
 void Folk::sceneInit(Scene &scene) {
-    log(LogLevel::WARNING) << "Esta demo utiliza los archivos 'click.wav' y 'ding.wav'! (Están disponibles en la carpeta examples/assets)\n";
+    Log::warning() << "Esta demo utiliza los archivos 'click.wav' y 'ding.wav'! (Están disponibles en la carpeta examples/assets)\n";
 
     // se configura la cámara con una vista top-down.
     auto camera = scene.root().createChild("Camera");
@@ -214,7 +214,7 @@ void Folk::sceneInit(Scene &scene) {
     // se crea otra acción
     auto& createAction = Folk::InputAction::create("onCreate");
     createAction.addBinding(MouseButton::Right);
-    // y se le asocia otro callback. Este hace que aparezcan cubos blancos cuando se hace click derecho.
+    // ... y se le asocia otro callback. Este hace que aparezcan cubos blancos cuando se hace click derecho.
     auto ding_clip = AudioClip::createFromFile("ding.wav");
     auto root = scene.root();
     createAction.addCallback([root, ding_clip](auto state){ onRightClick(root, ding_clip, state); });

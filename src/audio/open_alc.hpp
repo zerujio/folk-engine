@@ -1,7 +1,7 @@
 #ifndef FOLK_AUDIO__OPEN_ALC_HPP
 #define FOLK_AUDIO__OPEN_ALC_HPP
 
-#include "folk/core/error.hpp"
+#include "folk/error.hpp"
 
 #include <AL/alc.h>
 

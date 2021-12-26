@@ -1,6 +1,6 @@
 #include "folk/scene/entity_handle.hpp"
 #include "folk/scene/transform_component.hpp"
-#include "folk/core/error.hpp"
+#include "folk/error.hpp"
 
 #include "folk/scene/scene_graph_node.hpp"
 #include "scene_manager.hpp"

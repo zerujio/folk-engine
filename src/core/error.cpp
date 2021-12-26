@@ -1,4 +1,4 @@
-#include "folk/core/error.hpp"
+#include "folk/error.hpp"
 
 namespace Folk
 {

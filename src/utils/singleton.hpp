@@ -1,7 +1,7 @@
 #ifndef FOLK_UTILS__SINGLETON_HPP
 #define FOLK_UTILS__SINGLETON_HPP
 
-#include "folk/core/error.hpp"
+#include "folk/error.hpp"
 
 namespace Folk {
 

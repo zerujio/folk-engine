@@ -24,5 +24,5 @@ if(DOXYGEN_FOUND)
     set(DOXYGEN_USE_MDFILE_AS_MAINPAGE README.md)
     set(DOXYGEN_OUTPUT_LANGUAGE SPANISH)
 
-    doxygen_add_docs(folk_docs include README.md)
+    doxygen_add_docs(folk_docs include src README.md)
 endif()

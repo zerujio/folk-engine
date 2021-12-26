@@ -2,7 +2,7 @@
 #define FOLK_UTILS__RESOURCE_HPP
 
 #include "folk/utils/thread_safe_counter.hpp"
-#include "folk/core/error.hpp"
+#include "folk/error.hpp"
 
 #include <mutex>
 #include <memory>

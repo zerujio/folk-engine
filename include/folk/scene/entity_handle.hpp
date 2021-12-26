@@ -1,7 +1,7 @@
 #ifndef FOLK_SCENE__NODE_HPP
 #define FOLK_SCENE__NODE_HPP
 
-#include "folk/core/error.hpp"
+#include "folk/error.hpp"
 #include "folk/scene/transform_component.hpp"
 #include "folk/scene/scene_graph_node.hpp"
 

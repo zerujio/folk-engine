@@ -1,5 +1,5 @@
 #include "folk/render/shader.hpp"
-#include "folk/core/error.hpp"
+#include "folk/error.hpp"
 #include "common.hpp"
 #include "renderer.hpp"
 #include "default_shader.hpp"

@@ -1,19 +1,18 @@
-#include <chrono>
-#include <thread>
-
 #include "folk/folk.hpp"
 
 #include "engine_singleton.hpp"
 
+#include <chrono>
+#include <thread>
+
 namespace Folk {
 
 // EngineSingleton
-EngineSingleton::EngineSingleton(Log::Level log_level)
-    : log(log_level)
+EngineSingleton::EngineSingleton(LogLevel level)
 {
     // initialize engine
     try {
-        audio.connectRegistry(scene.registry());
+        Folk::AudioManager::connectRegistry(scene.registry());
         engineInit();
 
     } catch (...) {
@@ -80,7 +79,7 @@ void EngineSingleton::update(std::chrono::nanoseconds delta) {
         try {
             scene.updateScene(delta);
         } catch (...) {
-            log.begin(LogLevel::WARNING)
+            Log::write(LogLevel::Warning)
                 << "An error ocurred during scene update phase:\n";
             exception.handleException();
         }
@@ -93,7 +92,7 @@ void EngineSingleton::update(std::chrono::nanoseconds delta) {
         try {
             audio.update(scene, delta);
         } catch (...) {
-            log.begin(LogLevel::WARNING) 
+            Log::write(LogLevel::Warning)
                 << "An error ocurred during audio processing phase:\n";
             exception.handleException();
         }
@@ -106,7 +105,7 @@ void EngineSingleton::update(std::chrono::nanoseconds delta) {
         try {
             render.drawFrame(scene, delta);
         } catch (...) {
-            log.begin(LogLevel::WARNING)
+            Log::write(LogLevel::Warning)
                 << "An error ocurred during draw phase:\n";
             exception.handleException();
         }
@@ -117,8 +116,11 @@ void EngineSingleton::update(std::chrono::nanoseconds delta) {
     perf_monitor.stop(frame_time_id);
 
     // draw performance metrics
-    render.drawPerfMon(perf_monitor, delta);
+    Folk::Renderer::drawPerfMon(perf_monitor, delta);
     perf_monitor.clear();
+
+    // flush log
+    log_thread.wakeUp();
 }
 
 } // namespace folk

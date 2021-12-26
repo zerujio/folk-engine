@@ -16,8 +16,7 @@ Scene::~Scene()
 try {
     m_registry.clear();
 } catch(...) {
-    ENGINE.log.begin(LogLevel::WARNING)
-        << "An error ocurred during scene destruction:\n";
+    Log::warning() << "An error ocurred during scene destruction:\n";
     ENGINE.exception.handleException();
     return;
 }

@@ -1,5 +1,5 @@
 #include "folk/input/input_action.hpp"
-#include "folk/core/error.hpp"
+#include "folk/error.hpp"
 
 #include "input_manager.hpp"
 

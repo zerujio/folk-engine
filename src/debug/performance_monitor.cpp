@@ -6,7 +6,7 @@
 
 #include "../core/engine_singleton.hpp"
 
-#include "folk/core/error.hpp"
+#include "folk/error.hpp"
 
 namespace Folk
 {

@@ -1,7 +1,7 @@
 #include "default_shader.hpp"
 #include "default_shader_source.h"
 
-#include "folk/core/error.hpp"
+#include "folk/error.hpp"
 
 namespace Folk
 {

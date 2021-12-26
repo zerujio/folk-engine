@@ -6,7 +6,7 @@
 #define INCLUDE_FOLK_AI__BEHAVIOR_TREE_HPP
 
 #include "folk/scene.hpp"
-#include "folk/core/error.hpp"
+#include "folk/error.hpp"
 
 #include <chrono>
 #include <functional>

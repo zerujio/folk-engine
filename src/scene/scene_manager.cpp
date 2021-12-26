@@ -21,8 +21,7 @@ SceneManager::~SceneManager()
 try {
     // empty
 } catch (...) {
-    ENGINE.log.begin(Log::Level::ERROR) 
-        << "Exception caught during scene destruction (possible resource leak?)";
+    Log::error() << "Exception caught during scene destruction (possible resource leak?)";
     ENGINE.exception.handleException();
 }
 

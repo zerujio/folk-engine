@@ -2,10 +2,8 @@
 #include "folk/scene/transform_component.hpp"
 #include "folk/input.hpp"
 #include "folk/render/visual_component.hpp"
-#include "folk/core/error.hpp"
-#include "folk/core/log.hpp"
-
-#include <iostream>
+#include "folk/error.hpp"
+#include "folk/log.hpp"
 
 // Esta función se llama antes de inicializar la escena
 void Folk::engineInit() {
@@ -70,7 +68,7 @@ void keyCallback(Folk::Key key, Folk::InputState state) {
 void update(Folk::Scene& scn, float delta) {
     if (Folk::getMouseButton(Folk::MouseButton::Left) == Folk::InputState::Press)
         // Para poder ver este mensaje el programa debe iniciarse con la opción "-l trace"
-        Folk::log(Folk::LogLevel::TRACE) << "dt=" << delta << '\n';
+        Folk::Log::trace() << "dt=" << delta << '\n';
 
     auto node = scn.root().getChild("Square");
     auto tr = *(node->getComponent<Folk::TransformComponent>());

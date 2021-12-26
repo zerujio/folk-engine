@@ -1,7 +1,7 @@
 #include "exception_handler.hpp"
 #include "engine_singleton.hpp"
 
-#include "folk/core/error.hpp"
+#include "folk/error.hpp"
 
 #include <exception>
 
@@ -26,18 +26,18 @@ void ExceptionHandler::handlerRoutine()
                 std::rethrow_exception(ptr);
         
             } catch (CriticalError &e) {
-                ENGINE.log.begin(Log::Level::ERROR) << e << "\n";
+                Log::error() << e << "\n";
                 ENGINE.exit();
             
             } catch (RuntimeError &e) {
-                ENGINE.log.begin(Log::Level::ERROR) << e << "\n";
+                Log::error() << e << "\n";
 
             } catch (std::exception &e) {
-                ENGINE.log.begin(Log::Level::ERROR) 
+                Log::error()
                     << "Exception: " << e.what() << "\n";
         
             } catch (...) {
-                ENGINE.log.begin(Log::Level::ERROR) << "Caught unexpected exception!\n";
+                Log::error() << "Caught unexpected exception!\n";
                 ENGINE.exit();
             }
         }

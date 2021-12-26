@@ -1,2 +1,1 @@
-set(SOURCES
-    delta_clock.cpp)
+set(SOURCES delta_clock.cpp)

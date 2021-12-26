@@ -3,4 +3,5 @@ set(SOURCES
     engine.cpp
     engine_singleton.cpp
     error.cpp
-    exception_handler.cpp)
+    exception_handler.cpp
+    log_thread.cpp)

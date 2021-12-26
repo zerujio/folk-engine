@@ -1,8 +1,8 @@
-// include
-#include "folk/folk.hpp"
-#include "folk/core/error.hpp"
-#include "engine_singleton.hpp"
+#include "folk/log.hpp"
+#include "folk/error.hpp"
+
 #include "main.hpp"
+#include "engine_singleton.hpp"
 
 #include <cxxopts.hpp>
 
@@ -31,28 +31,24 @@ void setSignalHandler() {
     }
 }
 
-Folk::Log::Level parseLevel(std::string const& str) {
+Folk::LogLevel parseLevel(std::string const& str) {
 
     std::string upper {str};
 
-    for (auto& c : upper) {
+    for (auto& c : upper)
         c = toupper(c);
-    }
 
-    if (upper == "NONE")
-        return Folk::Log::Level::NONE;
-
-    else if (upper == "ERROR")
-        return Folk::Log::Level::ERROR;
+    if (upper == "ERROR")
+        return Folk::LogLevel::Error;
 
     else if (upper == "WARNING")
-        return Folk::Log::Level::WARNING;
+        return Folk::LogLevel::Warning;
 
     else if (upper == "MESSAGE")
-        return Folk::Log::Level::MESSAGE;
+        return Folk::LogLevel::Message;
 
     else if (upper == "TRACE")
-        return Folk::Log::Level::TRACE;
+        return Folk::LogLevel::Trace;
 
     else
         throw FOLK_ERROR(Folk::RuntimeError, "can't parse log level: " + str);
@@ -72,6 +68,7 @@ int main(int argc, char** argv) {
         auto loglevel = parseLevel(result["loglevel"].as<std::string>());
         
         std::cout << "LogLevel: " << loglevel << "\n";
+
         Folk::EngineSingleton engine {loglevel};
         engine.mainLoop();
 

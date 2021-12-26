@@ -5,6 +5,7 @@
 #include <sstream>
 #include <stdexcept>
 #include <ostream>
+#include <utility>
 
 namespace Folk
 {
@@ -30,27 +31,27 @@ struct RuntimeError : public std::exception
         // empty
     }
 
-    RuntimeError(const std::string& what_, const char* file_, 
+    RuntimeError(std::string what_, const char* file_,
                  const unsigned int line_, const char* function_)
-    : what_string(what_), m_file(file_), m_line(line_), m_function(function_)
+    : what_string(std::move(what_)), m_file(file_), m_line(line_), m_function(function_)
     {
         // empty
     }
 
-    const char* what() const noexcept override 
+    [[nodiscard]] const char* what() const noexcept override
     {
         return what_string.c_str();
     }
 
-    const char* file() const noexcept {
+    [[nodiscard]] const char* file() const noexcept {
         return m_file;
     }
 
-    unsigned int line() const noexcept {
+    [[nodiscard]] unsigned int line() const noexcept {
         return m_line;
     }
 
-    const char* function() const noexcept {
+    [[nodiscard]] const char* function() const noexcept {
         return m_function;
     }
 
