@@ -19,7 +19,7 @@ class SceneManager final {
 public:
     friend class EngineSingleton;
     
-    SceneManager();
+    SceneManager() noexcept;
     ~SceneManager();
 
     static const char* name() {return "Scene update";}

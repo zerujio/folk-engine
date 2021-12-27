@@ -13,7 +13,7 @@ static void onScriptConstruct(entt::registry& r, entt::entity e) {
     script_component.handle = entt::handle(r, e);
 }
 
-SceneManager::SceneManager() {
+SceneManager::SceneManager() noexcept {
     registry().on_construct<ScriptComponent>().connect<onScriptConstruct>();
 }
 
