@@ -16,17 +16,27 @@ void mouseButtonCallback(GLFWwindow*, int, int, int);
 static ExceptionHandler* exception_handler {nullptr};
 static InputManager* input_manager {nullptr};
 
-InputManager::InputManager(ExceptionHandler& handler) {
+InputManager::InputManager(ExceptionHandler& handler, const WindowManager& window_manager)
+: m_window_ptr(window_manager.windowPtr())
+{
     exception_handler = &handler;
     input_manager = this;
 
-    glfwSetKeyCallback(ENGINE.window.windowPtr(), keyCallback);
-    glfwSetMouseButtonCallback(ENGINE.window.windowPtr(), mouseButtonCallback);
+    glfwSetKeyCallback(m_window_ptr, keyCallback);
+    glfwSetMouseButtonCallback(m_window_ptr, mouseButtonCallback);
 }
 
 InputManager::~InputManager() {
-    glfwSetKeyCallback(ENGINE.window.windowPtr(), nullptr);
-    glfwSetMouseButtonCallback(ENGINE.window.windowPtr(), nullptr);
+    glfwSetKeyCallback(m_window_ptr, nullptr);
+    glfwSetMouseButtonCallback(m_window_ptr, nullptr);
+}
+
+InputState InputManager::pollKey(Key key) const {
+    return static_cast<InputState>(glfwGetKey(m_window_ptr,intCast(key)));
+}
+
+InputState InputManager::pollMouseButton(MouseButton mb) const {
+    return static_cast<InputState>(glfwGetMouseButton(m_window_ptr, intCast(mb)));
 }
 
 void keyCallback(GLFWwindow* window, int keycode, int scancode, int action, 

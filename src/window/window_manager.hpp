@@ -29,7 +29,7 @@ public:
     void setWindowTitle(const char*);
 
     // Get ptr to GLFW window object
-    GLFWwindow* windowPtr();
+    [[nodiscard]] GLFWwindow* windowPtr() const;
 
     void update() const noexcept;
 

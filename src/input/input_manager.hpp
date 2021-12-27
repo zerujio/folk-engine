@@ -4,6 +4,7 @@
 #include "folk/input.hpp"
 #include "../utils/singleton.hpp"
 #include "../core/exception_handler.hpp"
+#include "../window/window_manager.hpp"
 
 #include <GLFW/glfw3.h>
 
@@ -21,34 +22,6 @@ struct InputActionProxy {
 
 FOLK_SINGLETON_CLASS_FINAL(InputManager) {
 
-public:
-    const char* name() const {return "Input Manager";}
-
-    InputManager(ExceptionHandler&);
-    ~InputManager();
-
-    friend Key_CallbackId addKeyCallback(Key_CallbackType&&);
-    friend MouseButton_CallbackId addMouseButtonCallback(MouseButton_CallbackType&&);
-    friend InputCode_CallbackId addInputCodeCallback(InputCode_CallbackType&&);
-
-    friend void removeKeyCallback(Key_CallbackId const);
-    friend void removeMouseButtonCallback(MouseButton_CallbackId const);
-    friend void removeInputCodeCallback(InputCode_CallbackId const);
-
-    friend InputAction& InputAction::create(std::string const&);
-    friend InputAction& InputAction::get(std::string const&);
-    friend void InputAction::destroy(std::string const&);
-
-    friend void InputAction::bind(InputCode const);
-    friend void InputAction::unbind(InputCode const);
-
-    friend Cursor::CallbackId Cursor::addCallback(Cursor::CallbackType&&);
-    friend void Cursor::removeCallback(Cursor::CallbackId const);
-
-    friend Scroll::CallbackId Scroll::addCallback(Scroll::CallbackType&&);
-    friend void Scroll::removeCallback(Scroll::CallbackId const);
-
-private:
     IdIntType next_id {0};
 
     template <class T>
@@ -56,7 +29,7 @@ private:
         return static_cast<T>(next_id++);
     }
 
-    // user defined callbacks 
+    // user defined callbacks
     std::map<Key_CallbackId, Key_CallbackType> key_callbacks_;
     std::map<MouseButton_CallbackId, MouseButton_CallbackType> mouse_btn_callbacks_;
     std::map<InputCode_CallbackId, InputCode_CallbackType> input_code_callbacks_;
@@ -73,6 +46,38 @@ private:
     // glfw callbacks
     friend void keyCallback(GLFWwindow*, int, int, int, int);
     friend void mouseButtonCallback(GLFWwindow*, int, int, int);
+
+    GLFWwindow * m_window_ptr;
+
+public:
+    static const char* name() { return "Input Manager"; }
+
+    explicit InputManager(ExceptionHandler&, const WindowManager&);
+    ~InputManager();
+
+    InputState pollKey(Key) const;
+    InputState pollMouseButton(MouseButton) const;
+
+    friend Key_CallbackId addKeyCallback(Key_CallbackType&&);
+    friend MouseButton_CallbackId addMouseButtonCallback(MouseButton_CallbackType&&);
+    friend InputCode_CallbackId addInputCodeCallback(InputCode_CallbackType&&);
+
+    friend void removeKeyCallback(Key_CallbackId);
+    friend void removeMouseButtonCallback(MouseButton_CallbackId);
+    friend void removeInputCodeCallback(InputCode_CallbackId);
+
+    friend InputAction& InputAction::create(std::string const&);
+    friend InputAction& InputAction::get(std::string const&);
+    friend void InputAction::destroy(std::string const&);
+
+    friend void InputAction::bind(InputCode);
+    friend void InputAction::unbind(InputCode);
+
+    friend Cursor::CallbackId Cursor::addCallback(Cursor::CallbackType&&);
+    friend void Cursor::removeCallback(Cursor::CallbackId);
+
+    friend Scroll::CallbackId Scroll::addCallback(Scroll::CallbackType&&);
+    friend void Scroll::removeCallback(Scroll::CallbackId);
 };
 
 } // namespace folk

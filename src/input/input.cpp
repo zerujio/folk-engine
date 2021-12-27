@@ -11,8 +11,7 @@ namespace Folk
 // Polling functions 
 
 InputState getKey(Key key) {
-    return static_cast<InputState>(glfwGetKey(ENGINE.window.windowPtr(), 
-                                   intCast(key)));
+    return INPUT.pollKey(key);
 }
 
 const char* getKeyName(Key key) {
@@ -118,19 +117,15 @@ const char* getKeyName(Key key) {
 }
 
 InputState getMouseButton(MouseButton mb) {
-    return static_cast<InputState>(
-        glfwGetMouseButton(ENGINE.window.windowPtr(), intCast(mb))
-    );
+    return INPUT.pollMouseButton(mb);
 }
 
 // InputCode
 InputState InputCode::state() const {
     if (isMouseButton())
-        return stateCast(glfwGetMouseButton(ENGINE.window.windowPtr(),
-                                            intCast(operator MouseButton())));
+        return getMouseButton(MouseButton(*this));
     else
-        return stateCast(glfwGetKey(ENGINE.window.windowPtr(),
-                                    intCast(operator Key())));
+        return getKey(Key(*this));
 }
 
 

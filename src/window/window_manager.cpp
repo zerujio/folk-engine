@@ -66,7 +66,7 @@ void WindowManager::setWindowTitle(const char* title)
     glfwSetWindowTitle(window, window_title.c_str());
 }
 
-GLFWwindow* WindowManager::windowPtr() 
+GLFWwindow* WindowManager::windowPtr() const
 {
     return window;
 }
