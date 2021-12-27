@@ -30,26 +30,36 @@
 namespace Folk
 {
 
-/// Singleton class to access application level functions and variables.
+/// Singleton class to manage application level functions and variables.
 FOLK_SINGLETON_CLASS_FINAL(EngineSingleton) {
 
     friend class Engine;
 
+    /// Exit flag: set to true to signal the Engine to exit (return from mainLoop).
+    bool exit_flag {false};
+
+    DeltaClock frame_clock {};
+    DeltaClock::nanoseconds min_frame_time {0};
+
+    /// Log thread
     LogInitializer log_init {};
     LogThread log_thread {};
 
+    /// Performance monitor
     PerformanceMonitor perf_monitor;
 
     /// Exception handling
     ExceptionHandler m_exception_handler {ExceptionHandler::CallbackArg<&EngineSingleton::exit>, this};
 
-    /// Window module
+    /// Window manager
     WindowManager window {};
-
-public:
 
     /// Render module
     Renderer render {m_exception_handler, window};
+
+    void update(std::chrono::nanoseconds);
+
+public:
 
     /// Audio module
     AudioManager audio {};
@@ -68,23 +78,12 @@ public:
     std::ostream& out {std::cout};
 
     /// error outpout stream
-    std::ostream& errout {std::cerr}; 
+    std::ostream& errout {std::cerr};
 
-    DeltaClock::nanoseconds min_frame_time {0};
-
-private:
-
-    bool exit_flag {false};
-
-    DeltaClock frame_clock {};
-    
     explicit EngineSingleton(LogLevel level);
     ~EngineSingleton();
 
     void mainLoop() noexcept;
-    void update(std::chrono::nanoseconds);
-
-    friend int ::main(int, char**);
 };
 
 #define ENGINE EngineSingleton::instance()
