@@ -63,12 +63,12 @@ FOLK_SINGLETON_CLASS_FINAL(EngineSingleton) {
     /// Scene module
     SceneManager scene {};
 
+    /// Input manager
+    InputManager input_manager {m_exception_handler, window};
+
     void update(std::chrono::nanoseconds);
 
 public:
-
-    /// Input manager
-    InputManager input_manager {m_exception_handler, window};
 
     // Functions
     /// Signal the engine to exit.
