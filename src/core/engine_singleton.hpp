@@ -1,5 +1,5 @@
-#ifndef FOLK_ENGINE__ENGINE_SINGLETON_HPP
-#define FOLK_ENGINE__ENGINE_SINGLETON_HPP
+#ifndef SRC_FOLK_ENGINE__ENGINE_SINGLETON_HPP
+#define SRC_FOLK_ENGINE__ENGINE_SINGLETON_HPP
 
 #include <array>
 #include <ostream>
@@ -64,7 +64,7 @@ FOLK_SINGLETON_CLASS_FINAL(EngineSingleton) {
     SceneManager scene {};
 
     /// Input manager
-    InputManager input_manager {m_exception_handler, window};
+    [[maybe_unused]] InputManager input_manager {m_exception_handler, window};
 
     void update(std::chrono::nanoseconds);
 
@@ -73,12 +73,6 @@ public:
     // Functions
     /// Signal the engine to exit.
     void exit() noexcept;
-
-    /// output stream
-    std::ostream& out {std::cout};
-
-    /// error outpout stream
-    std::ostream& errout {std::cerr};
 
     explicit EngineSingleton(LogLevel level);
     ~EngineSingleton();
@@ -90,4 +84,4 @@ public:
 
 } // namespace folk
 
-#endif//FOLK_ENGINE__ENGINE_SINGLETON_HPP
+#endif//SRC_FOLK_ENGINE__ENGINE_SINGLETON_HPP
