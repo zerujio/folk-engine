@@ -17,8 +17,11 @@ static void onAudioSourceDestroy(entt::registry& r, entt::entity e) {
     AL_CALL(alDeleteSources, 1, &audio_source.source_handle);
 }
 
-AudioManager::AudioManager() {
+AudioManager::AudioManager(const ExceptionHandler &exception_handler)
+try {
     m_context.makeCurrent();
+} catch (...) {
+    exception_handler.catchException();
 }
 
 void AudioManager::connectRegistry(entt::registry& reg) {

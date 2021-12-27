@@ -26,7 +26,7 @@ class AudioManager final {
 public:
     static const char* name() {return "AudioManager";}
 
-    AudioManager();
+    AudioManager(const ExceptionHandler&);
 
     static void connectRegistry(entt::registry&);
 

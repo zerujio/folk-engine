@@ -57,12 +57,12 @@ FOLK_SINGLETON_CLASS_FINAL(EngineSingleton) {
     /// Render module
     Renderer render {m_exception_handler, window};
 
+    /// Audio module
+    AudioManager audio {m_exception_handler};
+
     void update(std::chrono::nanoseconds);
 
 public:
-
-    /// Audio module
-    AudioManager audio {};
 
     /// Scene module
     SceneManager scene {};
