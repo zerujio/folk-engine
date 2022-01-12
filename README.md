@@ -20,19 +20,19 @@ void Folk::engineInit() {
     Folk::Engine::setWindowTitle("Hello world!");
 }
 
-void Folk::sceneInit(Scene &scene) {
+void Folk::sceneInit(Scene &m_scene) {
     // crear objetos, añadir components, etc.
-    doSomething(scene);
+    doSomething(m_scene);
 }
 ```
 
 Para modificar la escena en cada frame, es necesario establecer un callback:
 
 ```cpp
-void onUpdate(Scene &scene, float delta);
+void onUpdate(Scene &m_scene, float delta);
 
-void Folk::sceneInit(Scene &scene) {
-    scene.updateCallback = onUpdate;
+void Folk::sceneInit(Scene &m_scene) {
+    m_scene.updateCallback = onUpdate;
 }
 ```
 

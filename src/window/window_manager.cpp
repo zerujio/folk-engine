@@ -1,6 +1,7 @@
 #include "window_manager.hpp"
 
 #include "folk/error.hpp"
+#include "folk/core/engine.hpp"
 
 #include "../core/engine_singleton.hpp"
 
@@ -30,8 +31,8 @@ WindowManager::WindowManager()
     glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
 
     window = glfwCreateWindow(
-        window_size.width, 
-        window_size.height, 
+        default_window_size.width,
+        default_window_size.height,
         window_title.c_str(),
         nullptr,
         nullptr);
@@ -71,20 +72,24 @@ GLFWwindow* WindowManager::windowPtr() const
     return window;
 }
 
-WindowManager::WindowDimensions const& WindowManager::getWindowSize()
-{
-    glfwGetWindowSize(window, &window_size.width, &window_size.height);
+void WindowManager::setWindowSize(const WindowDimensions dimensions) {
+    glfwSetWindowSize(window, dimensions.width, dimensions.height);
+}
 
-    return window_size;
+WindowManager::WindowDimensions WindowManager::getWindowSize() const
+{
+    int width, height;
+    glfwGetWindowSize(window, &width, &height);
+    return {width, height};
 }
 
 void WindowManager::update() const noexcept {
     glfwPollEvents();
 }
 
-static void closeWindowCallback(GLFWwindow *w)
+static void closeWindowCallback(GLFWwindow *)
 {
-    ENGINE.exit();
+    Engine::exit();
 }
 
 void GLAPIENTRY messageCallback(GLenum source, GLenum type, GLuint id, 

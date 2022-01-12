@@ -26,9 +26,9 @@ try {
 
 void SceneManager::updateScene(const ExceptionHandler &exception_handler, std::chrono::duration<float> delta) noexcept {
     // call scene update callback
-    if (scene.updateCallback)
+    if (m_scene.updateCallback)
         try {
-            scene.updateCallback(scene, delta.count());
+            m_scene.updateCallback(m_scene, delta.count());
         } catch (...) {
             exception_handler.catchException();
         }

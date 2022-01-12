@@ -1,103 +1,104 @@
 #ifndef FOLK_INPUT__INPUT_ACTION_HPP
 #define FOLK_INPUT__INPUT_ACTION_HPP
 
-#include "folk/input.hpp"
-#include "enums.hpp"
+#include "folk/input/common.hpp"
+#include "folk/input/input_code.hpp"
 
-#include <string>
-#include <functional>
-#include <map>
-#include <set>
+#include "folk/utils/simple_set.hpp"
+
+#include "entt/entt.hpp"
 
 namespace Folk
 {
 
 /// \brief \~spanish Capa de abstracción que permite la asignación de hasta 4 teclas a la misma acción.
 /// \brief \~english An abstraction layer for input that allows for key remapping.
-class InputAction {
+class InputAction final {
+
+    /// The InputManager can trigger the callbacks.
+    friend class InputManager;
+
+    entt::sigh<void(InputState)> m_sigh {};
+    entt::sink<void(InputState)> m_sink {m_sigh};
+    SimpleSet<InputCode> m_bindings {};
 
 public:
-    /// Crea una nueva InputAction.
+    using Connection = entt::connection;
+    using ScopedConnection = entt::scoped_connection;
+
+    /// Connects a callback function.
     /**
-     * \return una referencia a la acción creada.
-    */
-    static InputAction& create(std::string const& name);
-
-    /// Busca una acción con el nombre dado.
-    static InputAction& get(std::string const& name);
-
-    /// Destruye una acción con el nombre dado.
-    static void destroy(std::string const& name);
-
-    enum class CallbackId : IdIntType {};
-    using CallbackType = std::function<void (InputState)>;
-
-    /// Añade un callback a la acción.
-    /**
-     * \param f Una función que será invocada cuando cualquiera de las teclas,
-     *          botones o combinaciones asociadas a esta acción sea presionada.
-     * 
-     * \return Un identificador que puede ser usado para desconectar el callback.
+     *
+     * @tparam Function The function to connect. It should be equivalent to void(*)(InputCode).
+     * @tparam Payload The types of the payload arguments.
+     * @param payload A set of arguments that will be passed to the listener on each invocation. Pass an in instance as
+     * first argument for member functions.
+     * @return A Connection object. May be used to disconnect the function manually or through a ScopedConnection object.
      */
-    CallbackId addCallback(CallbackType &&f);
-
-    /// Quita un callback a la acción.
-    /**
-     * Usar un Id inválido o correspondiente a una función que ya fue desconectada
-     * no tiene efecto.
-     * 
-     * \param id Un identificador retornado por addCallback().
-    */
-    void removeCallback(CallbackId const id);
-
-    /// Consulta el estado de esta accción.
-    /**
-     * \return KeyState::Press si al menos una de las asociaciones está activa,
-     *         KeyState::Release si no.
-    */
-    InputState state() const;
-
-    /// Asocia una nueva tecla o botón a esta InputAction.
-    /**
-     * Si el input ya estaba asociado, esta acción no tiene efecto.
-     * 
-     * \param x Un InputCode.
-     * \return El índice del InputCode en la lista de asociaciones.
-    */
-    void addBinding(InputCode const x);
-
-    /// Quita una tecla/botón asociada.
-    /**
-     * Si el input no había sido asociado antes, esta acción no tiene efecto.
-    */
-    void removeBinding(InputCode const code);
-
-    /// Quita todas las asociaciones.
-    void clearBindings();
-    
-    /// Cantidad de _bindings_ (combinaciones de inputs) asociadas a esta acción.
-    uint bindingCount() {return bindings_.size();}
-
-    std::set<InputCode> const& bindings() const {
-        return bindings_;
+    template<auto Function, class... Payload>
+    Connection connect(Payload... payload) {
+        return m_sink.connect<Function>(std::forward<Payload>(payload)...);
     }
 
-private:
-    InputAction() = default;
-    InputAction(InputAction const&) = delete;
-    InputAction(InputAction &&);
-    InputAction& operator=(InputAction const&) = delete;
+    /// Disconnect a function.
+    /**
+     * If the Function was not previously connected this call will have no effect.
+     *
+     * @tparam Function the function to disconnect.
+     */
+    template<auto Function>
+    void disconnect() {
+        m_sink.disconnect<Function>();
+    }
 
-    std::map<IdIntType, CallbackType> callbacks_;
-    std::set<InputCode> bindings_;
+    /// Disconnect an instance's member function.
+    /**
+     * If the member function was not previously connected then this call will have no effect.
+     * @tparam MemberFunction the function to disconnect.
+     * @tparam Object The class to which the function belongs.
+     * @param instance The instance to which the function is bound.
+     */
+    template<auto MemberFunction, class Object>
+    void disconnect(const Object& instance) {
+        m_sink.disconnect<MemberFunction>(instance);
+    }
 
-    static IdIntType next_id_;
+    /// Disconnect all callbacks bound to a specific instance.
+    /**
+     * If there are no connections to the given instance then this call will have no effect.
+     * @tparam Object The type of the object to disconnect.
+     * @param instance An instance to disconnect all callbacks to bound to any of its members.
+     */
+    template<class Object>
+    void disconnect(const Object& instance) {
+        m_sink.disconnect(instance);
+    }
 
-    friend class InputManager;
-    friend class InputActionProxy;
+    /// Disconnect all callbacks bound to this Action.
+    void disconnectAll() {
+        m_sink.disconnect();
+    }
 
-    void bind(InputCode const);
-    void unbind(InputCode const);
+    /// Binds a new input to this action.
+    /**
+     * If the input was already bound this call will have no effect.
+     * @param code a Key or MouseButton.
+     */
+    void bind(InputCode code);
+
+    /**
+     * @brief Unbind an input code.
+     * If the input code had not been previously bound, this call will have no effect.
+     * @param code a Key or MouseButton.
+     */
+    void unbind(InputCode code);
+
+    /// Removes all bindings.
+    void unbindAll();
+
+    /// Read-only access to bound input codes.
+    [[nodiscard]]
+    const auto& bindings() const;
 };
 
 } // namespace Folk

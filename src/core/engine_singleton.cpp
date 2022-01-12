@@ -22,7 +22,7 @@ EngineSingleton::EngineSingleton(LogLevel level)
 
     // initialize scene
     try {
-        sceneInit(scene.scene);
+        sceneInit(scene.m_scene);
 
     } catch (...) {
         m_exception_handler.catchException();
@@ -116,11 +116,16 @@ void EngineSingleton::update(std::chrono::nanoseconds delta) {
     perf_monitor.stop(frame_time_id);
 
     // draw performance metrics
-    Folk::Renderer::drawPerfMon(perf_monitor, delta);
+    Renderer::drawPerfMon(perf_monitor, delta);
     perf_monitor.clear();
 
     // flush log
     log_thread.wakeUp();
+}
+
+void EngineSingleton::changeScene(Scene &&new_scene) {
+
+    scene.setScene(std::move(new_scene));
 }
 
 } // namespace folk

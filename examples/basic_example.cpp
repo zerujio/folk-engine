@@ -66,7 +66,7 @@ void keyCallback(Folk::Key key, Folk::InputState state) {
 }
 
 void update(Folk::Scene& scn, float delta) {
-    if (Folk::getMouseButton(Folk::MouseButton::Left) == Folk::InputState::Press)
+    if (Folk::getInput(Folk::MouseButton::Left) == Folk::InputState::Press)
         // Para poder ver este mensaje el programa debe iniciarse con la opción "-l trace"
         Folk::Log::trace() << "dt=" << delta << '\n';
 
@@ -80,19 +80,19 @@ void update(Folk::Scene& scn, float delta) {
     {
         auto pos = tr.position();
 
-        if (Folk::getKey(Folk::Key::W) == Folk::InputState::Press) {
+        if (Folk::getInput(Folk::Key::W) == Folk::InputState::Press) {
             pos.y += dist;
         }
 
-        if (Folk::getKey(Folk::Key::S) == Folk::InputState::Press) {
+        if (Folk::getInput(Folk::Key::S) == Folk::InputState::Press) {
             pos.y -= dist;
         }
 
-        if (Folk::getKey(Folk::Key::D) == Folk::InputState::Press) {
+        if (Folk::getInput(Folk::Key::D) == Folk::InputState::Press) {
             pos.x += dist;
         }
 
-        if (Folk::getKey(Folk::Key::A) == Folk::InputState::Press) {
+        if (Folk::getInput(Folk::Key::A) == Folk::InputState::Press) {
             pos.x -= dist;
         }
 
@@ -104,10 +104,10 @@ void update(Folk::Scene& scn, float delta) {
     {
         auto rot = tr.rotation();
 
-        if (Folk::getKey(Folk::Key::Q) == Folk::InputState::Press) {
+        if (Folk::getInput(Folk::Key::Q) == Folk::InputState::Press) {
             rot.y -= dist;
         }
-        if (Folk::getKey(Folk::Key::E) == Folk::InputState::Press) {
+        if (Folk::getInput(Folk::Key::E) == Folk::InputState::Press) {
             rot.y += dist;
         }
 
@@ -119,11 +119,11 @@ void update(Folk::Scene& scn, float delta) {
     {
         auto camera = scn.getCamera();
 
-        if (Folk::getKey(Folk::Key::R) == Folk::InputState::Press) {
+        if (Folk::getInput(Folk::Key::R) == Folk::InputState::Press) {
             camera.fovy() += dist * 10.0f;
         }
 
-        if (Folk::getKey(Folk::Key::F) == Folk::InputState::Press) {
+        if (Folk::getInput(Folk::Key::F) == Folk::InputState::Press) {
             camera.fovy() -= dist * 10.0f;
         }
     }
@@ -175,8 +175,8 @@ void Folk::sceneInit(Folk::Scene &scene) {
 
     // Configurar las teclas que activan las metricas de rendimiento
     // (Alt derecho e izquierdo)
-    enable_metrics.addBinding(Folk::Key::RightAlt);
-    enable_metrics.addBinding(Folk::Key::LeftAlt);
+    enable_metrics.bind(Folk::Key::RightAlt);
+    enable_metrics.bind(Folk::Key::LeftAlt);
     enable_metrics.addCallback(metricsCallback);
 
     addKeyCallback(keyCallback);

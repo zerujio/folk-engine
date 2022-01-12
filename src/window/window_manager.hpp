@@ -13,17 +13,17 @@ FOLK_SINGLETON_CLASS_FINAL(WindowManager) {
 
 public:
     struct WindowDimensions {
-        int width; 
+        int width;
         int height;
     };
 
-    const char* name() const {return "Window Manager";}
+    static constexpr const char* name() {return "Window Manager";}
 
     // Set width and height of application window
-    void setWindowSize(int, int);
+    void setWindowSize(WindowDimensions);
 
     // Retrieve width and height of application window
-    WindowDimensions const& getWindowSize();
+    [[nodiscard]] WindowDimensions getWindowSize() const;
 
     // Set window title
     void setWindowTitle(const char*);
@@ -36,8 +36,9 @@ public:
 private:
     friend class EngineSingleton;
 
+    static constexpr WindowDimensions default_window_size {800, 600};
+
     GLFWwindow* window = nullptr;
-    WindowDimensions window_size {800, 600};
     std::string window_title {"Folk Engine Application"};
 
     WindowManager();

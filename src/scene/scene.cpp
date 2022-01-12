@@ -8,15 +8,14 @@ namespace Folk {
 Scene::Scene() {
     m_registry.emplace<SceneGraphNode>(m_root, m_root, "Root");
 
-    m_registry.on_destroy<CameraComponent>()
-              .connect<&Scene::onDestroyCamera>(*this);
+    m_registry.on_destroy<CameraComponent>().connect<&Scene::onDestroyCamera>(*this);
 }
 
 Scene::~Scene() {
     m_registry.clear();
 }
 
-void Scene::onDestroyCamera(entt::registry& reg, entt::entity e) {
+void Scene::onDestroyCamera(const entt::registry&, entt::entity e) {
     if (m_camera == e)
         m_camera = entt::null;
 }

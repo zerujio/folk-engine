@@ -30,6 +30,8 @@
 namespace Folk
 {
 
+#define ENGINE EngineSingleton::instance()
+
 /// Singleton class to manage application level functions and variables.
 FOLK_SINGLETON_CLASS_FINAL(EngineSingleton) {
 
@@ -38,6 +40,7 @@ FOLK_SINGLETON_CLASS_FINAL(EngineSingleton) {
     /// Exit flag: set to true to signal the Engine to exit (return from mainLoop).
     bool exit_flag {false};
 
+    /// Frame rate management
     DeltaClock frame_clock {};
     DeltaClock::nanoseconds min_frame_time {0};
 
@@ -46,7 +49,7 @@ FOLK_SINGLETON_CLASS_FINAL(EngineSingleton) {
     LogThread log_thread {};
 
     /// Performance monitor
-    PerformanceMonitor perf_monitor;
+    PerformanceMonitor perf_monitor {};
 
     /// Exception handling
     ExceptionHandler m_exception_handler {ExceptionHandler::CallbackArg<&EngineSingleton::exit>, this};
@@ -64,23 +67,22 @@ FOLK_SINGLETON_CLASS_FINAL(EngineSingleton) {
     SceneManager scene {};
 
     /// Input manager
-    [[maybe_unused]] InputManager input_manager {m_exception_handler, window};
+    InputManager input_manager {m_exception_handler, window};
 
     void update(std::chrono::nanoseconds);
 
 public:
-
-    // Functions
-    /// Signal the engine to exit.
-    void exit() noexcept;
-
     explicit EngineSingleton(LogLevel level);
     ~EngineSingleton();
 
-    void mainLoop() noexcept;
-};
+    /// Change current scene. Argument will be left in a moved from state.
+    void changeScene(Scene&&);
 
-#define ENGINE EngineSingleton::instance()
+    void mainLoop() noexcept;
+
+    /// Signal the engine to exit.
+    void exit() noexcept;
+};
 
 } // namespace folk
 

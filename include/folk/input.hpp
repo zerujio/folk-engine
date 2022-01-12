@@ -2,9 +2,10 @@
 #define FOLK_INPUT__INPUT_HPP
 
 #include "folk/input/common.hpp"
-#include "folk/input/enums.hpp"
 #include "folk/input/input_code.hpp"
 #include "folk/input/input_action.hpp"
+#include "folk/input/key.hpp"
+#include "folk/input/mouse_button.hpp"
 
 #include "folk/math/vector.hpp"
 
@@ -13,39 +14,36 @@
 namespace Folk
 {
 
-/*============================== Key =========================================*/
+/*========== getInput ==========*/
 
-/// \brief \~spanish Consultar el estado de una tecla.
-/// \brief \~english Get the state of a key.
-/** 
- * \~spanish
- * El estado del teclado se actualiza el inicio de cada cuadro.
- * 
- * \~english
- * The state is updated at the start of each frame. 
- * */
-InputState getKey(const Key);
-
-/// El nombre de la tecla, ajustado a la distribución de teclado.
-const char* getKeyName(const Key);
-
-enum class Key_CallbackId : IdIntType {};
-using Key_CallbackType = std::function<void (Key, InputState)>;
-
-/// Añade un callback que será invocado cuando cualquier tecla cambia de estado.
 /**
- * \return Un identificador que puede ser utilizado para desconectar el callback.
-*/
-Key_CallbackId addKeyCallback(Key_CallbackType&&);
+ * @brief Poll the state of a key in the current frame.
+ * @return Either InputState::Press or InputState::Release.
+ */
+InputState getInput(Key);
 
-/// Quita un callback previamente registrado.
-void removeKeyCallback(Key_CallbackId const);
+/**
+ * @brief Poll the state of a MouseButton in the current frame.
+ * @return Either InputState::Press or InputState::Release.
+ */
+InputState getInput(MouseButton);
 
+/**
+ * @brief Poll the state of an InputCode in the current frame.
+ * @return Either InputState::Press or InputState::Release.
+ */
+InputState getInput(InputCode);
+
+/**
+ * @brief Poll the state of an InputAction in the current frame.
+ *
+ * The action is considered to have been "pressed" if any of the bound keys or mouse buttons is pressed.
+ *
+ * @return Either InputState::Press or InputState::Release.
+ */
+InputState getInput(const InputAction&);
 
 /*============================ MouseButton ===================================*/
-
-/// Consulta el estado de un botón del ratón.
-InputState getMouseButton (const MouseButton);
 
 enum class  MouseButton_CallbackId : IdIntType {};
 using MouseButton_CallbackType = std::function<void (MouseButton, InputState)>;

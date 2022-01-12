@@ -10,7 +10,7 @@ namespace Folk
 
 // Polling functions 
 
-InputState getKey(Key key) {
+InputState getInput(const Key key) {
     return INPUT.pollKey(key);
 }
 
@@ -18,10 +18,9 @@ const char* getKeyName(Key key) {
     if (key == Key::Space)
         return "Space";
     
-    else if (intCast(key) < 256) {
+    else if (intCast(key) < 256)
         return glfwGetKeyName(intCast(key), 0);
     
-    }
     else {
         const char *invalid = "<código inválido>";
         const char * key_names[93] = {
@@ -116,16 +115,8 @@ const char* getKeyName(Key key) {
     }
 }
 
-InputState getMouseButton(MouseButton mb) {
+InputState getInput(const MouseButton mb) {
     return INPUT.pollMouseButton(mb);
-}
-
-// InputCode
-InputState InputCode::state() const {
-    if (isMouseButton())
-        return getMouseButton(MouseButton(*this));
-    else
-        return getKey(Key(*this));
 }
 
 
@@ -136,7 +127,7 @@ Key_CallbackId addKeyCallback(Key_CallbackType &&f) {
     return id;
 }
 
-void removeKeyCallback(Key_CallbackId const id)  {
+    [[maybe_unused]] void removeKeyCallback(Key_CallbackId const id)  {
     INPUT.key_callbacks_.erase(id);
 }
 
@@ -149,7 +140,6 @@ MouseButton_CallbackId addMouseButtonCallback(MouseButton_CallbackType &&f) {
 void removeMouseButtonCallback(MouseButton_CallbackId const id) {
     INPUT.mouse_btn_callbacks_.erase(id);
 }
-
 
 InputCode_CallbackId addInputCodeCallback(InputCode_CallbackType &&f) {
     auto id = INPUT.genId<InputCode_CallbackId>();

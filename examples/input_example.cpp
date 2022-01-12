@@ -38,11 +38,11 @@ void rebindCallback(InputState state) {
     else {
         remapping = false;
         if (action_ptr->bindings().count(last_key) == 0) {
-            action_ptr->addBinding(last_key);
+            action_ptr->bind(last_key);
             std::cout << getKeyName(last_key) << " bound\n";
         }
         else {
-            action_ptr->removeBinding(last_key);
+            action_ptr->unbind(last_key);
             std::cout << getKeyName(last_key) << " unbound\n";
         }
     }
@@ -65,13 +65,13 @@ void Folk::sceneInit(Scene& scene) {
 
     InputAction& action = InputAction::create("example_action");
     action.addCallback(actionCallback);
-    action.addBinding(Key::Space);
+    action.bind(Key::Space);
     action_ptr = &action;
 
     InputAction& rebind_action = InputAction::create("rebind_action");
     rebind_action.addCallback(rebindCallback);
-    rebind_action.addBinding(Key::LeftShift);
-    rebind_action.addBinding(Key::RightShift);
+    rebind_action.bind(Key::LeftShift);
+    rebind_action.bind(Key::RightShift);
 
     std::cout << "Mantén presionado Shift para cambiar el keybind de la acción. "
                  "Por ejemplo: presionar [Shift + A] remappaerá la acción"

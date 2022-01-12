@@ -71,7 +71,7 @@ Renderer::~Renderer() {
 void Renderer::drawFrame(SceneManager& scene_mngr, 
                          std::chrono::duration<double> delta)
 {
-    auto& wsize = window_mngr.getWindowSize();
+    auto wsize = window_mngr.getWindowSize();
 
     Matrix4f view_mtx;
     Matrix4f proj_mtx;

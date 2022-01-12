@@ -27,24 +27,32 @@ public:
     void updateScene(const ExceptionHandler &exception_handler, std::chrono::duration<float> delta) noexcept;
 
     const entt::registry& registry() const {
-        return scene.m_registry;
+        return m_scene.m_registry;
     }
 
     entt::registry& registry() {
-        return scene.m_registry;
+        return m_scene.m_registry;
     }
 
     entt::entity camera() const {
-        return scene.m_camera;
+        return m_scene.m_camera;
     }
 
     entt::entity root() const {
-        return scene.m_root;
+        return m_scene.m_root;
+    }
+
+    const Scene &getScene() const {
+        return m_scene;
+    }
+
+    /// Sets the current scene. Passed scene will be left in moved from state.
+    void setScene(Scene&& scene) {
+        m_scene = std::move(scene);
     }
     
 private:
-    int monitor_id {-1};
-    Scene scene {};
+    Scene m_scene {};
 };
     
 } // namespace folk

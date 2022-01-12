@@ -208,12 +208,12 @@ void Folk::sceneInit(Scene &scene) {
     // se crea una "acción" de input y se le añade un callback.
     // Esto hace que el objetivo cambie de posición cuando se hace click izquierdo.
     auto& clickAction = Folk::InputAction::create("onClick");
-    clickAction.addBinding(MouseButton::Left);
+    clickAction.bind(MouseButton::Left);
     clickAction.addCallback([target_entity](auto state){ onClick(target_entity, state); });
 
     // se crea otra acción
     auto& createAction = Folk::InputAction::create("onCreate");
-    createAction.addBinding(MouseButton::Right);
+    createAction.bind(MouseButton::Right);
     // ... y se le asocia otro callback. Este hace que aparezcan cubos blancos cuando se hace click derecho.
     auto ding_clip = AudioClip::createFromFile("ding.wav");
     auto root = scene.root();

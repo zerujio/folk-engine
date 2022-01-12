@@ -7,31 +7,33 @@ namespace Folk {
 
 template<typename T>
 class Singleton {
-public:
-    static T& instance() {return *((T*)instance_ptr);}
+    static T* instance_ptr;
 
+public:
     Singleton() {
         if (instance_ptr)
             throw FOLK_CRITICAL_ERROR("attempted to instantiate a singleton class twice");
 
-        instance_ptr = this;
+        static_assert(std::is_base_of_v<Singleton<T>, T>, "T must inherit from Singleton<T>");
+        instance_ptr = static_cast<T*>(this);
     }
 
     Singleton(Singleton const&) = delete;
     Singleton& operator=(Singleton const&) = delete;
 
-    ~Singleton() {
-        instance_ptr = nullptr;
+    ~Singleton() { instance_ptr = nullptr; }
+
+    /// Access singleton instance.
+    static T& instance() {
+        [[likely]]
+        if (instance_ptr)
+            return *instance_ptr;
+        throw FOLK_CRITICAL_ERROR("Singleton class has not been initialized!");
     }
-
-    operator T*() {return *this;}
-
-private:
-    static Singleton<T> *instance_ptr;
 };
 
-template<typename T>
-Singleton<T>* Singleton<T>::instance_ptr {nullptr};
+template<class T>
+T* Singleton<T>::instance_ptr {nullptr};
 
 } // namespace folk
 

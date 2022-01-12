@@ -47,19 +47,19 @@ void onUpdate(Folk::Scene& scene, float deltaT) {
                                  ->getComponent<Folk::TransformComponent>();
     auto pos = transform->position();
 
-    if (Folk::getKey(Folk::Key::W) == Folk::InputState::Press) {
+    if (Folk::getInput(Folk::Key::W) == Folk::InputState::Press) {
         pos.z += dist;
     }
 
-    if (Folk::getKey(Folk::Key::S) == Folk::InputState::Press) {
+    if (Folk::getInput(Folk::Key::S) == Folk::InputState::Press) {
         pos.z -= dist;
     }
 
-    if (Folk::getKey(Folk::Key::D) == Folk::InputState::Press) {
+    if (Folk::getInput(Folk::Key::D) == Folk::InputState::Press) {
         pos.x += dist;
     }
 
-    if (Folk::getKey(Folk::Key::A) == Folk::InputState::Press) {
+    if (Folk::getInput(Folk::Key::A) == Folk::InputState::Press) {
         pos.x -= dist;
     }
 
@@ -68,11 +68,11 @@ void onUpdate(Folk::Scene& scene, float deltaT) {
 
     auto rot = transform->rotation();
 
-    if (Folk::getKey(Folk::Key::Q) == Folk::InputState::Press) {
+    if (Folk::getInput(Folk::Key::Q) == Folk::InputState::Press) {
         rot.y += dist;
     }
 
-    if (Folk::getKey(Folk::Key::E) == Folk::InputState::Press) {
+    if (Folk::getInput(Folk::Key::E) == Folk::InputState::Press) {
         rot.y -= dist;
     }
 

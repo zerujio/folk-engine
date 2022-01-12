@@ -1,5 +1,6 @@
 #include "folk/log.hpp"
 #include "folk/error.hpp"
+#include "folk/core/engine.hpp"
 
 #include "main.hpp"
 #include "engine_singleton.hpp"
@@ -9,13 +10,12 @@
 #include <iostream>
 #include <thread>
 #include <list>
-#include <chrono>
 
 #include <csignal>
 #include <cctype>
 
-void signalHandler(int sig) {
-    Folk::ENGINE.exit();
+void signalHandler(int) {
+    Folk::Engine::exit();
 }
 
 void setSignalHandler() {
@@ -60,8 +60,9 @@ int main(int argc, char** argv) {
     cxxopts::Options options("FolkEngine Game", "Run FolkEngine game.");
 
     options.add_options()
-        ("l,loglevel", "Set logging level to one of NONE|ERROR|WARNING|MESSAGE|TRACE.",
-         cxxopts::value<std::string>()->default_value("WARNING"));
+            ("l,loglevel",
+            "Set logging level to one of ERROR|WARNING|MESSAGE|TRACE.",
+            cxxopts::value<std::string>()->default_value("WARNING"));
 
     try {
         auto result = options.parse(argc, argv);

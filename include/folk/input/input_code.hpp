@@ -14,20 +14,20 @@ public:
     constexpr InputCode() : value(0) {}
 
     /// Crea un código de teclado.
-    constexpr InputCode(Key key)
+    constexpr explicit InputCode(Key key)
         : value(static_cast<InputCodeIntType>(key)) {}
 
     /// Crea un código de botón del ratón.
-    constexpr InputCode(MouseButton button)
+    constexpr explicit InputCode(MouseButton button)
         : value(static_cast<InputCodeIntType>(button)) {}
 
     /// Consulta si la enumeración subyacente es del tipo Key.
-    constexpr bool isKey() const {
+    [[nodiscard]] constexpr bool isKey() const {
         return value > static_cast<InputCodeIntType>(MouseButton::Extra5);
     }
 
     /// Consulta si la enumeración subyacente es del tipo MouseButton.
-    constexpr bool isMouseButton() const {
+    [[nodiscard]] constexpr bool isMouseButton() const {
         return value <= static_cast<InputCodeIntType>(MouseButton::Extra5);
     }
 
@@ -36,7 +36,7 @@ public:
      * Utilizar este operador si la enumeración almacenada no es de tipo Key es 
      * comportamiento indefinido.
     */
-    constexpr operator Key() const {
+    constexpr explicit operator Key() const {
         return static_cast<Key>(value);
     }
     
@@ -45,7 +45,7 @@ public:
      * Utilizar este operador si la enumeración almacenada no es de tipo 
      * MouseInput es comportamiento indefinido.
      */
-    constexpr operator MouseButton() const {
+    constexpr explicit operator MouseButton() const {
         return static_cast<MouseButton>(value);
     }
 
@@ -75,9 +75,6 @@ public:
     friend constexpr bool operator<(InputCode l, InputCode r) {
         return l.value < r.value;
     }
-
-    /// El InputState de la tecla o botón.
-    InputState state() const;
 
 private:
     InputCodeIntType value;

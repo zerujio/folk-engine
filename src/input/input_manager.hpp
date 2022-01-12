@@ -19,7 +19,6 @@ struct InputActionProxy {
 };
 
 #define INPUT InputManager::instance()
-
 FOLK_SINGLETON_CLASS_FINAL(InputManager) {
 
     IdIntType next_id {0};
@@ -55,8 +54,8 @@ public:
     explicit InputManager(ExceptionHandler&, const WindowManager&);
     ~InputManager();
 
-    InputState pollKey(Key) const;
-    InputState pollMouseButton(MouseButton) const;
+    [[nodiscard]] InputState pollKey(Key) const;
+    [[nodiscard]] InputState pollMouseButton(MouseButton) const;
 
     friend Key_CallbackId addKeyCallback(Key_CallbackType&&);
     friend MouseButton_CallbackId addMouseButtonCallback(MouseButton_CallbackType&&);

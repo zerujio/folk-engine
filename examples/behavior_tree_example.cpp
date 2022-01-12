@@ -18,16 +18,16 @@ struct ControlScript final : public Folk::Script {
     void update(std::chrono::duration<float> delta) override {
         Folk::Vec3 direction {};
 
-        if (Folk::getKey(Folk::Key::A) == Folk::InputState::Press)
+        if (Folk::getInput(Folk::Key::A) == Folk::InputState::Press)
             direction.x -= 1.0f;
 
-        if (Folk::getKey(Folk::Key::D) == Folk::InputState::Press)
+        if (Folk::getInput(Folk::Key::D) == Folk::InputState::Press)
             direction.x += 1.0f;
 
-        if (Folk::getKey(Folk::Key::W) == Folk::InputState::Press)
+        if (Folk::getInput(Folk::Key::W) == Folk::InputState::Press)
             direction.z += 1.0f;
 
-        if (Folk::getKey(Folk::Key::S) == Folk::InputState::Press)
+        if (Folk::getInput(Folk::Key::S) == Folk::InputState::Press)
             direction.z -= 1.0f;
 
         if (direction.x != 0.0f or direction.z != 0.0f) {
