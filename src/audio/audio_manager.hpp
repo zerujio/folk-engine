@@ -4,7 +4,7 @@
 #include "folk/audio/audio_source_component.hpp"
 
 #include "../scene/scene_manager.hpp"
-#include "../core/exception_handler.hpp"
+#include "folk/core/exception_handler.hpp"
 
 #include "open_alc.hpp"
 

@@ -6,8 +6,10 @@
 
 namespace Folk {
 
-void InputEventDispatcher::update() const {
-    m_dispatcher.update();
+void InputEventDispatcher::update(const ExceptionHandler& handler) {
+    update<Key>(handler);
+    update<MouseButton>(handler);
+    update<InputCode>(handler);
 }
 
 // ConnectionManager

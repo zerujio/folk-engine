@@ -5,126 +5,105 @@
 #ifndef FOLK_INPUT__INPUT_EVENT_DISPATCHER_HPP
 #define FOLK_INPUT__INPUT_EVENT_DISPATCHER_HPP
 
+#include "folk/input/common.hpp"
 #include "folk/input/key.hpp"
 #include "folk/input/mouse_button.hpp"
 #include "folk/input/input_code.hpp"
 
+#include "folk/core/exception_handler.hpp"
+
 #include "entt/entt.hpp"
+
+#include <queue>
 
 namespace Folk {
 
-    template<class CodeType>
-    class InputEvent {
-        CodeType code;
+    template<class InputType>
+    struct InputEvent final {
+        InputType code;
         InputState state;
+
+        InputEvent(InputType code_, InputState state_) : code(code_), state(state_) {}
     };
 
     class InputEventDispatcher {
-
-        entt::dispatcher m_dispatcher {};
-
     public:
 
-        class ConnectionManager;
-        friend class InputEventDispatcher::ConnectionManager;
-
-        using Connection = entt::connection;
-        using ScopedConnection = entt::scoped_connection;
+        friend class InputEventManager;
 
         /// Enqueues an event.
         /**
-         *
-         * @tparam CodeType type of the event (key, mouse button, input code).
+         * @tparam InputType type of the event (key, mouse button, input code).
          * @param input_code key or button that was pressed.
          * @param state state of the input.
          */
-        template<class CodeType>
-        void enqueue(CodeType input_code, InputState state) {
-            m_dispatcher.template enqueue<InputEvent<CodeType>>(input_code, state);
-        }
-
-        /// Immediately triggers an event.
-        template<class CodeType>
-        void trigger(CodeType input_code, InputState state) {
-            m_dispatcher.template trigger<InputEvent<CodeType>>(input_code, state);
-        }
-
-        /// Triggers all queued events.
-        void update() const;
-
-        /// Triggers all queued events of the given type.
-        template<class CodeType>
-        void update() const {
-            m_dispatcher.update<InputEvent<CodeType>>();
-        }
-    };
-
-    class InputEventDispatcher::ConnectionManager {
-
         template<class InputType>
-        using Sink = decltype(entt::dispatcher().sink<InputEvent<InputType>>());
+        void enqueue(InputType input_code, InputState state) const {
+            getQueue<InputType>().emplace(input_code, state);
+        }
 
-        Sink<Key> m_key_sink;
-        Sink<MouseButton> m_mb_sink;
-        Sink<InputCode> m_code_sink;
+        /// Delivers (i.e. invokes the callbacks of) all queued events.
+        void update(const ExceptionHandler& handler);
 
+        /// Delivers all queued events of the given type.
         template<class InputType>
-        Sink<InputType>& getSink();
+        void update(const ExceptionHandler& handler){
 
-        template<>
-        Sink<Key>& getSink<Key>() { return m_key_sink; }
+            auto& sigh = getSigH<InputType>();
+            auto& queue = getQueue<InputType>();
 
-        template<>
-        Sink<MouseButton>& getSink<MouseButton>() { return m_mb_sink; }
+            auto collector = [handler](const std::exception_ptr& ptr) noexcept {
+                handler.handleException(ptr);
+            };
 
-        template<>
-        Sink<InputCode>& getSink<InputCode>() { return m_code_sink; }
-
-    public:
-        explicit ConnectionManager(InputEventDispatcher& dispatcher) :
-            m_key_sink(dispatcher.m_dispatcher.sink<InputEvent<Key>>()),
-            m_mb_sink(dispatcher.m_dispatcher.sink<InputEvent<MouseButton>>()),
-            m_code_sink(dispatcher.m_dispatcher.sink<InputEvent<InputCode>>())
-        {}
-
-        using Connection = entt::connection;
-        using ScopecConnection = entt::scoped_connection;
-
-        /**
-         * @brief Establish a callback to be invoked whenever a key is pressed.
-         *
-         * The signature for a callback must be equivalent to `void (InputType, InputState)`. The first argument is the
-         * enum value for the key or mouse button. The second is the state of the input.
-         *
-         * @tparam InputType The type of input to set this callback for. May be Key, MouseButton or InputCode
-         * (for both keyboard and mouse button input).
-         * @tparam Function The function or method
-         * @tparam Payload Type of the payload arguments
-         * @param payload A set of values to be passed to the callback on each invocation.
-         * @return A Connection object that may be used to disconnect the callback directly or through a ScopedReference.
-         */
-        template<class InputType, auto Function, class... Payload>
-        Connection connect(Payload&&... payload) {
-            return getSink<InputType>().template connect<Function>(std::forward<Payload>(payload)...);
+            while(!queue.empty()) {
+                const auto& event = queue.front();
+                sigh.collect(collector, event.code, event.state);
+                queue.pop();
+            }
         }
 
-        /// Disconnect a free function.
-        template<class InputType, auto Function>
-        void disconnect() {
-            getSink<InputType>().template disconnect<Function>();
-        }
+    private:
 
-        /// Disconnect an instance's member function.
-        template<class InputType, auto Function, class Object>
-        void disconnect(const Object& instance) {
-            getSink<InputType>().template disconnect<Function>(instance);
-        }
+        // Event queues
+        template<class InputType>
+        using EventQueue = std::queue<InputEvent<InputType>>;
 
-        /// Disconnect all functions bound to a specific instance.
-        template<class InputType, class Object>
-        void disconnect(const Object& instance) {
-            getSink<InputType>().disconnect(instance);
-        }
+        EventQueue<Key> m_key_queue {};
+        EventQueue<MouseButton> m_mb_queue {};
+        EventQueue<InputCode> m_code_queue {};
+
+        template<class InputType> constexpr EventQueue<InputType>& getQueue();
+        template<class InputType> constexpr const EventQueue<InputType>& getQueue() const;
+
+        template<> [[nodiscard]] constexpr EventQueue<Key>& getQueue() { return m_key_queue; }
+        template<> [[nodiscard]] constexpr const EventQueue<Key>& getQueue() const { return m_key_queue; }
+
+        template<> [[nodiscard]] constexpr EventQueue<MouseButton>& getQueue() { return m_mb_queue; }
+        template<> [[nodiscard]] constexpr const EventQueue<MouseButton>& getQueue() const { return m_mb_queue; }
+
+        template<> [[nodiscard]] constexpr EventQueue<InputCode>& getQueue() { return m_code_queue; }
+        template<> [[nodiscard]] constexpr const EventQueue<InputCode>& getQueue() const { return m_code_queue; }
+
+        // Signal handlers
+        template<class InputType>
+        using SignalHandler = entt::sigh<std::exception_ptr(InputType, InputState)>;
+
+        SignalHandler<Key> m_key_sigh {};
+        SignalHandler<MouseButton> m_mb_sigh {};
+        SignalHandler<InputCode> m_code_sigh {};
+
+        template<class InputType> constexpr SignalHandler<InputType>& getSigH();
+        template<class InputType> constexpr const SignalHandler<InputType>& getSigH() const;
+
+        template<> [[nodiscard]] constexpr SignalHandler<Key>& getSigH() { return m_key_sigh; }
+        template<> [[nodiscard]] constexpr const SignalHandler<Key>& getSigH() const { return m_key_sigh; }
+
+        template<> [[nodiscard]] constexpr SignalHandler<MouseButton>& getSigH() { return m_mb_sigh; }
+        template<> [[nodiscard]] constexpr const SignalHandler<MouseButton>& getSigH() const { return m_mb_sigh; }
+
+        template<> [[nodiscard]] constexpr SignalHandler<InputCode>& getSigH() { return m_code_sigh; }
+        template<> [[nodiscard]] constexpr const SignalHandler<InputCode>& getSigH() const { return m_code_sigh; }
     };
 
 }

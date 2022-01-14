@@ -19,13 +19,24 @@ namespace Folk {
 class InputActionManager final {
 
     friend class InputActionHandle;
-    using InputMap = InputActionRegistry::InputMap;
+
+    using BindingMap = InputActionRegistry::BindingMap;
+    using ActionMap = InputActionRegistry::ActionMap;
     using InputAction = InputActionRegistry::InputAction;
 
-    InputActionRegistry& m_registry;
+    InputActionRegistry* m_registry;
+
+    template<class T>
+    InputActionHandle create(T name) const;
+
+    template<class T>
+    InputActionHandle get(T name) const;
+
+    template<class T>
+    void destroy(T name) const;
 
 public:
-    explicit InputActionManager(InputActionRegistry& registry) : m_registry(registry) {}
+    explicit InputActionManager(InputActionRegistry& registry) : m_registry(&registry) {}
 
     /**
      * @brief Create a new input action.
@@ -35,7 +46,6 @@ public:
      */
     InputActionHandle create(const char* name) const;
     InputActionHandle create(const std::string& name) const;
-    InputActionHandle create(std::string&& name) const;
 
     /**
      * @brief Find an existing input action.
@@ -45,7 +55,6 @@ public:
      */
     InputActionHandle get(const char* name) const;
     InputActionHandle get(const std::string& name) const;
-    InputActionHandle get(std::string&& name) const;
 
     /**
      * @brief Removes an input action from the registry.
@@ -54,7 +63,6 @@ public:
      */
     void destroy(const char* name) const;
     void destroy(const std::string& name) const;
-    void destroy(std::string&& name) const;
 };
 
 } // namespace Folk

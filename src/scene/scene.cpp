@@ -39,4 +39,15 @@ CameraPtr Scene::getCamera() {
     return ptr;
 }
 
+
+// ============== InputDispatcher ==============
+
+Scene::InputDispatcher::InputDispatcher() {
+    InputEventManager(event_dispatcher).connect<&InputActionRegistry::notify, InputCode>(action_registry);
+}
+
+void Scene::InputDispatcher::update(const ExceptionHandler &handler) noexcept {
+    event_dispatcher.update(handler);
+}
+
 } // namespace folk

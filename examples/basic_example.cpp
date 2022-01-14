@@ -171,13 +171,13 @@ void Folk::sceneInit(Folk::Scene &scene) {
     scene.updateCallback = update;
 
     // Una acción para determinar si se deben mostrar las métricas de rendmiento.
-    auto &enable_metrics = Folk::InputAction::create("enable_metrics");
+    InputActionHandle enable_metrics = scene.input_action.create("enable_metrics");
 
     // Configurar las teclas que activan las metricas de rendimiento
     // (Alt derecho e izquierdo)
     enable_metrics.bind(Folk::Key::RightAlt);
     enable_metrics.bind(Folk::Key::LeftAlt);
-    enable_metrics.addCallback(metricsCallback);
+    enable_metrics.connect<metricsCallback>();
 
-    addKeyCallback(keyCallback);
+    scene.input_event.connect<Folk::Key, keyCallback>();
 }

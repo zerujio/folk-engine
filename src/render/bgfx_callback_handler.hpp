@@ -2,7 +2,7 @@
 #define FOLK_RENDER__BGFX_CALLBACK_HANDLER_HPP
 
 #include "folk/log.hpp"
-#include "../core/exception_handler.hpp"
+#include "folk/core/exception_handler.hpp"
 
 #include <bgfx/bgfx.h>
 

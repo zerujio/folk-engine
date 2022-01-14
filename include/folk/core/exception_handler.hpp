@@ -1,9 +1,6 @@
 #ifndef FOLK_CORE__EXCEPTION_HANDLER_HPP
 #define FOLK_CORE__EXCEPTION_HANDLER_HPP
 
-#include "../utils/processing_queue.hpp"
-#include "../utils/raii_thread.hpp"
-
 #include "entt/entt.hpp"
 
 #include <exception>

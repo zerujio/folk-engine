@@ -1,4 +1,5 @@
 set(SOURCES
+        input_event_manager.cpp
         input_action_handle.cpp
         input_action_registry.cpp
         input_event_dispatcher.cpp

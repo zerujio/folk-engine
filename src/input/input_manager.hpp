@@ -3,7 +3,7 @@
 
 #include "folk/input.hpp"
 #include "../utils/singleton.hpp"
-#include "../core/exception_handler.hpp"
+#include "folk/core/exception_handler.hpp"
 #include "../window/window_manager.hpp"
 
 #include <GLFW/glfw3.h>

@@ -15,7 +15,7 @@
 #include "../window/window_manager.hpp"
 #include "../scene/scene_manager.hpp"
 #include "../input/input_manager.hpp"
-#include "exception_handler.hpp"
+#include "folk/core/exception_handler.hpp"
 
 // utils
 #include "../utils/singleton.hpp"

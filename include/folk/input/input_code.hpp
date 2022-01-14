@@ -14,12 +14,10 @@ public:
     constexpr InputCode() : value(0) {}
 
     /// Crea un código de teclado.
-    constexpr explicit InputCode(Key key)
-        : value(static_cast<InputCodeIntType>(key)) {}
+    constexpr InputCode(Key key) : value(static_cast<InputCodeIntType>(key)) {}
 
     /// Crea un código de botón del ratón.
-    constexpr explicit InputCode(MouseButton button)
-        : value(static_cast<InputCodeIntType>(button)) {}
+    constexpr InputCode(MouseButton button) : value(static_cast<InputCodeIntType>(button)) {}
 
     /// Consulta si la enumeración subyacente es del tipo Key.
     [[nodiscard]] constexpr bool isKey() const {

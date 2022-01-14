@@ -3,7 +3,7 @@
 
 #include "folk/scene.hpp"
 #include "folk/scene/entity_handle.hpp"
-#include "../core/exception_handler.hpp"
+#include "folk/core/exception_handler.hpp"
 
 #include <entt/entt.hpp>
 
