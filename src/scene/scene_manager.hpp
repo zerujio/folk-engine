@@ -4,6 +4,7 @@
 #include "folk/scene.hpp"
 #include "folk/scene/entity_handle.hpp"
 #include "folk/core/exception_handler.hpp"
+#include "../input/input_manager.hpp"
 
 #include <entt/entt.hpp>
 
@@ -24,14 +25,14 @@ public:
 
     static const char* name() {return "Scene update";}
 
-    void updateScene(const ExceptionHandler &exception_handler, std::chrono::duration<float> delta) noexcept;
+    void updateScene(InputManager& input_manager, const ExceptionHandler &exception_handler, std::chrono::duration<float> delta) noexcept;
 
     const entt::registry& registry() const {
-        return m_scene.m_registry;
+        return m_scene.m_entity_registry;
     }
 
     entt::registry& registry() {
-        return m_scene.m_registry;
+        return m_scene.m_entity_registry;
     }
 
     entt::entity camera() const {
@@ -46,11 +47,6 @@ public:
         return m_scene;
     }
 
-    /// Sets the current scene. Passed scene will be left in moved from state.
-    void setScene(Scene&& scene) {
-        m_scene = std::move(scene);
-    }
-    
 private:
     Scene m_scene {};
 };

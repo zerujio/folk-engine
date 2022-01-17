@@ -7,7 +7,7 @@
 
 #include "connection.hpp"
 #include "input_action_registry.hpp"
-#include "input_action_handle.hpp"
+#include "input_action.hpp"
 
 #include <string>
 
@@ -18,19 +18,17 @@ namespace Folk {
  */
 class InputActionManager final {
 
-    friend class InputActionHandle;
+    friend class InputAction;
 
-    using BindingMap = InputActionRegistry::BindingMap;
     using ActionMap = InputActionRegistry::ActionMap;
-    using InputAction = InputActionRegistry::InputAction;
 
     InputActionRegistry* m_registry;
 
     template<class T>
-    InputActionHandle create(T name) const;
+    InputAction& create(T name) const;
 
     template<class T>
-    InputActionHandle get(T name) const;
+    InputAction& get(T name) const;
 
     template<class T>
     void destroy(T name) const;
@@ -44,8 +42,8 @@ public:
      * @return A handle to the newly created action.
      * @throws RuntimeError if another action with the same name already exists.
      */
-    InputActionHandle create(const char* name) const;
-    InputActionHandle create(const std::string& name) const;
+    InputAction & create(const char* name) const;
+    InputAction & create(const std::string& name) const;
 
     /**
      * @brief Find an existing input action.
@@ -53,8 +51,8 @@ public:
      * @return A handle to the input action.
      * @throws RuntimeError if no action is found for the given name.
      */
-    InputActionHandle get(const char* name) const;
-    InputActionHandle get(const std::string& name) const;
+    InputAction & get(const char* name) const;
+    InputAction & get(const std::string& name) const;
 
     /**
      * @brief Removes an input action from the registry.

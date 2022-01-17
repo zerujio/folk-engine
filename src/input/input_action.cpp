@@ -1,25 +1,42 @@
+//
+// Created by sergio on 11-01-22.
+//
+
 #include "folk/input/input_action.hpp"
-#include "folk/error.hpp"
 
-#include "input_manager.hpp"
+namespace Folk {
 
-namespace Folk
-{
+InputAction::~InputAction() {
+    for (auto code : m_binding_set.data())
+        m_binding_sink.unbind(code, *this);
+}
 
-    void InputAction::bind(const InputCode code) {
-        m_bindings.insert(code);
-    }
+void InputAction::bind(InputCode code) {
+    // check if action is already bound to this code.
+    if (m_binding_set.contains(code))
+        return;
 
-    void InputAction::unbind(const InputCode code) {
-        m_bindings.insert(code);
-    }
+    m_binding_set.insert(code);
+    m_binding_sink.bind(code, *this);
+}
 
-    void InputAction::unbindAll() {
-        m_bindings.clear();
-    }
+void InputAction::unbind(InputCode code) {
+    // check if action is bound to this code.
+    if (!m_binding_set.contains(code))
+        return;
 
-    const auto& InputAction::bindings() const {
-        return m_bindings.data();
-    }
+    // add code to set
+    m_binding_set.remove(code);
+    // find and erase references to this action in input map
+    m_binding_sink.unbind(code, *this);
+}
+
+bool InputAction::isBound(InputCode code) const {
+    return m_binding_set.contains(code);
+}
+
+const SimpleSet<InputCode> &InputAction::bindings() const {
+    return m_binding_set;
+}
 
 } // namespace Folk

@@ -1,105 +1,27 @@
-#include "folk/input.hpp"
-
-#include "../core/engine_singleton.hpp"
-
 #include "input_manager.hpp"
-#include "utils.hpp"
-
-#include <GLFW/glfw3.h>
 
 namespace Folk
 {
 
-void keyCallback(GLFWwindow*, int, int, int, int);
-void mouseButtonCallback(GLFWwindow*, int, int, int);
-
-static ExceptionHandler* exception_handler {nullptr};
-static InputManager* input_manager {nullptr};
-
-InputManager::InputManager(ExceptionHandler& handler, const WindowManager& window_manager)
-: m_window_ptr(window_manager.windowPtr())
-{
-    exception_handler = &handler;
-    input_manager = this;
-
-    glfwSetKeyCallback(m_window_ptr, keyCallback);
-    glfwSetMouseButtonCallback(m_window_ptr, mouseButtonCallback);
+void InputManager::enqueue(Key code, InputState state) {
+    m_key_queue.push(code, state);
 }
 
-InputManager::~InputManager() {
-    glfwSetKeyCallback(m_window_ptr, nullptr);
-    glfwSetMouseButtonCallback(m_window_ptr, nullptr);
+void InputManager::enqueue(MouseButton code, InputState state) {
+    m_mouse_queue.push(code, state);
 }
 
-InputState InputManager::pollKey(Key key) const {
-    return static_cast<InputState>(glfwGetKey(m_window_ptr,intCast(key)));
+void InputManager::update(const InputRegistry &registry, const ExceptionHandler &handler) noexcept {
+    m_key_queue.collect<&InputManager::publish<Key>>(registry, handler);
+    m_mouse_queue.collect<&InputManager::publish<MouseButton>>(registry, handler);
 }
 
-InputState InputManager::pollMouseButton(MouseButton mb) const {
-    return static_cast<InputState>(glfwGetMouseButton(m_window_ptr, intCast(mb)));
-}
-
-void keyCallback(GLFWwindow* window, int keycode, int scancode, int action, 
-                int mods) 
-{
-    if (action == GLFW_REPEAT)
-        return;
-
-    if (keycode != GLFW_KEY_UNKNOWN) {
-        auto key = keyCast(keycode);
-        auto state = stateCast(action);
-
-        for (auto& p : input_manager->key_callbacks_) {
-            try {
-                p.second(key, state);
-            } catch (...) {
-                exception_handler->catchException();
-            }
-        }
-
-        input_manager->inputCallback(key, state); 
-    }
-}
-
-void mouseButtonCallback(GLFWwindow* window, int button, int action, int mods) 
-{
-    if (action == GLFW_REPEAT)
-        return;
-
-    auto btn = mouseButtonCast(button);
-    auto state = stateCast(action);
-
-    for (auto& p : input_manager->mouse_btn_callbacks_) {
-        try {
-            p.second(btn, state);
-        } catch (...) {
-            exception_handler->catchException();
-        }
-    }
-
-    input_manager->inputCallback(btn, state);
-}
-
-void InputManager::inputCallback(InputCode code, InputState state) {
-    for (auto& p : input_manager->input_code_callbacks_) {
-        try {
-            p.second(code, state);
-        } catch (...) {
-            exception_handler->catchException();
-        }
-    }
-
-    auto [begin, end] = bindings_.equal_range(code);
-
-    for (auto iter = begin; iter != end; ++iter) {
-        for (auto& [_, f] : iter->second->callbacks_) {
-            try {
-                f(state);
-            } catch (...) {
-                exception_handler->catchException();
-            }
-        }
-    }
+template<class InputType>
+void InputManager::publish(const InputRegistry& registry,
+                           const ExceptionHandler& handler,
+                           const InputEvent<InputType>& event) noexcept {
+    registry.template notify(event.code, event.state, handler);
+    registry.notify<InputCode>(event.code, event.state, handler);
 }
 
 } // namespace folk

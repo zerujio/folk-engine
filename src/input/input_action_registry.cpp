@@ -16,7 +16,7 @@ void InputActionRegistry::notify(InputCode code, InputState state, const Excepti
 
     for (auto iter = begin; iter != end; ++iter) {
         // "collect" exceptions and pass them to the exception handler.
-        iter->second->signal_handler.collect(collector, state);
+        iter->second->m_signal_handler.collect(collector, state);
     }
 }
 

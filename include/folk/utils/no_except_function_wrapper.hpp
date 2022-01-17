@@ -73,11 +73,13 @@ public:
  * @param args The arguments to pass to the function.
  * @return an std::exception pointer to the possibly caught exception (null if the function returned normally).
  */
-template<auto Function, class ReturnType, class... ParamTypes>
+template<auto Function,
+        class... ParamTypes,
+        class ReturnType = std::invoke_result_t<decltype(Function), ParamTypes...>>
 std::enable_if_t<std::is_void_v<ReturnType>, std::exception_ptr>
 NoExceptFunctionWrapper(ParamTypes&&... args) noexcept
 try {
-    Function(std::forward<ParamTypes>(args)...);
+    std::invoke(Function, std::forward<ParamTypes>(args)...);
     return {};
 } catch (...) {
     return std::current_exception();
@@ -91,11 +93,13 @@ try {
  * @param args The arguments to pass to the function.
  * @return a ValueOrException<ReturnType> object.
  */
-template<auto Function, class ReturnType, class... ParamTypes>
+template<auto Function,
+        class... ParamTypes,
+        class ReturnType = std::invoke_result_t<decltype(Function), ParamTypes...>>
 std::enable_if_t<!std::is_void_v<ReturnType>, ValueOrException<ReturnType>>
 NoExceptFunctionWrapper(ParamTypes&&... args) noexcept
 try {
-    return {Function(std::forward<ParamTypes>(args)...)};
+    return {std::invoke(Function, std::forward<ParamTypes>(args)...)};
 } catch (...) {
     return {std::current_exception()};
 }

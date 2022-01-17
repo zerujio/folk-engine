@@ -1,17 +1,31 @@
 #include "folk/input.hpp"
 
-#include "../core/engine_singleton.hpp"
-
-#include "input_manager.hpp"
-#include "utils.hpp"
+#include "../window/window_manager.hpp"
+#include "cast.hpp"
 
 namespace Folk
 {
 
-// Polling functions 
-
 InputState getInput(const Key key) {
-    return INPUT.pollKey(key);
+    return WINDOW.getKey(key);
+}
+
+InputState getInput(const MouseButton mb) {
+    return WINDOW.getMouseButton(mb);
+}
+
+InputState getInput(const InputCode code) {
+    return WINDOW.getInput(code);
+}
+
+InputState getInput(const InputAction& action) {
+
+    for (auto code : action.bindings().data()) {
+        if (getInput(code) == InputState::Press)
+            return InputState::Press;
+    }
+
+    return InputState::Release;
 }
 
 const char* getKeyName(Key key) {
@@ -115,129 +129,14 @@ const char* getKeyName(Key key) {
     }
 }
 
-InputState getInput(const MouseButton mb) {
-    return INPUT.pollMouseButton(mb);
-}
-
-
-// Callback registering functions
-Key_CallbackId addKeyCallback(Key_CallbackType &&f) {
-    auto id = INPUT.genId<Key_CallbackId>();
-    INPUT.key_callbacks_.emplace(id, f);
-    return id;
-}
-
-    [[maybe_unused]] void removeKeyCallback(Key_CallbackId const id)  {
-    INPUT.key_callbacks_.erase(id);
-}
-
-MouseButton_CallbackId addMouseButtonCallback(MouseButton_CallbackType &&f) {
-    auto id = INPUT.genId<MouseButton_CallbackId>();
-    INPUT.mouse_btn_callbacks_.emplace(id, f);
-    return id;
-}
-
-void removeMouseButtonCallback(MouseButton_CallbackId const id) {
-    INPUT.mouse_btn_callbacks_.erase(id);
-}
-
-InputCode_CallbackId addInputCodeCallback(InputCode_CallbackType &&f) {
-    auto id = INPUT.genId<InputCode_CallbackId>();
-    INPUT.input_code_callbacks_.emplace(id, f);
-    return id;
-}
-
-void removeInputCodeCallback(InputCode_CallbackId const id) {
-    INPUT.input_code_callbacks_.erase(id);
-}
-
-// Mouse movement
-namespace Cursor
-{
+namespace Cursor {
 
 Vec2d getPosition() {
-    Vec2d v;
-    glfwGetCursorPos(WINDOW.windowPtr(), &v.x, &v.y);
-    return v;
+    double x, y;
+    glfwGetCursorPos(WINDOW.windowPtr(), &x, &y);
+    return {x, y};
 }
 
-void setPosition(Vec2d pos) {
-    glfwSetCursorPos(WINDOW.windowPtr(), pos.x, pos.y);
 }
-
-void setMode(Mode mode) {
-    int defines[3] {
-        GLFW_CURSOR_NORMAL, 
-        GLFW_CURSOR_HIDDEN, 
-        GLFW_CURSOR_DISABLED
-    };
-
-    glfwSetInputMode(WINDOW.windowPtr(), GLFW_CURSOR, 
-                     defines[static_cast<int>(mode)]);
-}
-
-Mode getMode() {
-    auto mode = glfwGetInputMode(WINDOW.windowPtr(), GLFW_CURSOR);
-    Mode ret;
-    switch (mode) {
-    default:
-    case GLFW_CURSOR_NORMAL:
-        ret =  Mode::Normal;
-        break;
-    
-    case GLFW_CURSOR_HIDDEN:
-        ret = Mode::Hidden;
-        break;
-    
-    case GLFW_CURSOR_DISABLED:
-        ret = Mode::Disabled;
-        break;
-    }
-
-    return ret;
-}
-
-bool isRawMotionSupported() {
-    return glfwRawMouseMotionSupported();
-}
-
-void setRawMotionEnabled(bool value) {
-    glfwSetInputMode(WINDOW.windowPtr(), GLFW_RAW_MOUSE_MOTION,
-                     value ? GLFW_TRUE : GLFW_FALSE);
-}
-
-bool getRawMotionEnabled() {
-    return glfwGetInputMode(WINDOW.windowPtr(), GLFW_RAW_MOUSE_MOTION);
-}
-
-CallbackId addCallback(CallbackType && f) {
-    auto id = INPUT.genId<CallbackId>();
-    INPUT.cursor_callbacks_.emplace(id, f);
-    return id;
-}
-
-void removeCallback(CallbackId const id) {
-    INPUT.cursor_callbacks_.erase(id);
-}
-
-} // namespace Cursor
-
-
-namespace Scroll
-{
-
-CallbackId addCallback(CallbackType && f) {
-    auto id = INPUT.genId<CallbackId>();
-    INPUT.scroll_callbacks_.emplace(id, f);
-    return id;
-}
-
-void removeCallback(CallbackId const id) {
-    INPUT.scroll_callbacks_.erase(id);
-}
-
-} // namespace Scroll
-
-
 
 } // namespace Folk

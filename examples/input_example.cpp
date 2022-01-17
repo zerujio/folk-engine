@@ -7,7 +7,7 @@
 using namespace Folk;
 
 bool remapping = false; 
-InputCode last_key = Key::Space;
+Key last_key = Key::Space;
 InputAction* action_ptr;
 
 void keyCallback(Key key, InputState state) {
@@ -37,7 +37,7 @@ void rebindCallback(InputState state) {
     }
     else {
         remapping = false;
-        if (action_ptr->bindings().count(last_key) == 0) {
+        if (!action_ptr->isBound(last_key)) {
             action_ptr->bind(last_key);
             std::cout << getKeyName(last_key) << " bound\n";
         }
@@ -60,16 +60,16 @@ void Folk::engineInit() {
 }
 
 void Folk::sceneInit(Scene& scene) {
-    auto id = addKeyCallback(keyCallback);
-    auto mb_id = addMouseButtonCallback(onClick);
+    scene.input.events.connect<keyCallback, Key>();
+    scene.input.events.connect<onClick, MouseButton>();
 
-    InputAction& action = InputAction::create("example_action");
-    action.addCallback(actionCallback);
+    InputAction& action = scene.input.actions.create("example_action");
+    action.connect<actionCallback>();
     action.bind(Key::Space);
     action_ptr = &action;
 
-    InputAction& rebind_action = InputAction::create("rebind_action");
-    rebind_action.addCallback(rebindCallback);
+    InputAction& rebind_action = scene.input.actions.create("rebind_action");
+    rebind_action.connect<rebindCallback>();
     rebind_action.bind(Key::LeftShift);
     rebind_action.bind(Key::RightShift);
 

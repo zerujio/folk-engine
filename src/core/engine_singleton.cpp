@@ -76,13 +76,7 @@ void EngineSingleton::update(std::chrono::nanoseconds delta) {
     // update scene
     {
         auto id = perf_monitor.addItem("Scene update");
-        try {
-            scene.updateScene(m_exception_handler, delta);
-        } catch (...) {
-            Log::write(LogLevel::Warning)
-                << "An error ocurred during scene update phase:\n";
-            m_exception_handler.catchException();
-        }
+        scene.updateScene(input_manager, m_exception_handler, delta);
         perf_monitor.stop(id);
     }
 
@@ -121,11 +115,6 @@ void EngineSingleton::update(std::chrono::nanoseconds delta) {
 
     // flush log
     log_thread.wakeUp();
-}
-
-void EngineSingleton::changeScene(Scene &&new_scene) {
-
-    scene.setScene(std::move(new_scene));
 }
 
 } // namespace folk

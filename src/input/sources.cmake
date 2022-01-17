@@ -1,9 +1,8 @@
 set(SOURCES
-        input_event_manager.cpp
-        input_action_handle.cpp
-        input_action_registry.cpp
-        input_event_dispatcher.cpp
-        input_action_manager.cpp
-        input_manager.cpp
+        input_callback_manager.cpp
         input_action.cpp
+        input_action_registry.cpp
+        input_action_manager.cpp
+        input_registry.cpp
+        input_manager.cpp
         input.cpp)

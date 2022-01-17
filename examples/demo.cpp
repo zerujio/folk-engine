@@ -94,15 +94,6 @@ Vec3 getMousePosition() {
     return position;
 }
 
-// Mueve el target que el cubo naranja persigue
-void onClick(EntityHandle target, InputState state) {
-    if (state == InputState::Press)
-        return;
-
-    target.getComponent<TransformComponent>()->position(getMousePosition());
-    target.getComponent<AudioSourceComponent>()->play();
-}
-
 // Crear cubos blancos
 
 // Esta función mantiene un weak_ptr al Visual utilizado por los cubos blancos.
@@ -141,24 +132,32 @@ struct WhiteScript final : public Folk::Script {
     }
 };
 
-// Invocada cuando se hace click derecho.
-void onRightClick(EntityHandle parent, std::shared_ptr<AudioClip> clip, InputState state) {
-    if (state == InputState::Press)
-        return;
+struct CreatorScript final : public Folk::Script {
+    using Script::Script;
 
-    // crea una nueva entidad
-    auto handle = createWhiteCube(parent);
-    handle.getComponent<TransformComponent>()->position(getMousePosition());
+    std::shared_ptr<AudioClip> clip;
 
-    // añade una fuente sonora
-    auto audio_src = handle.addComponent<AudioSourceComponent>();
-    audio_src.setAudioClip(clip);
-    audio_src.play(); // reproduce el sonido
+    void update(std::chrono::duration<float> delta) override {}
 
-    // añade el script
-    auto& script = handle.addComponent<ScriptComponent>().addScript<WhiteScript>();
-    script.angle = float(std::rand())/RAND_MAX;
-}
+    // Invocada cuando se hace click derecho.
+    void onRightClick(InputState state) {
+        if (state == InputState::Press)
+            return;
+
+        // crea una nueva entidad
+        auto handle = createWhiteCube(this_entity);
+        handle.getComponent<TransformComponent>()->position(getMousePosition());
+
+        // añade una fuente sonora
+        auto audio_src = handle.addComponent<AudioSourceComponent>();
+        audio_src.setAudioClip(clip);
+        audio_src.play(); // reproduce el sonido
+
+        // añade el script
+        auto& script = handle.addComponent<ScriptComponent>().addScript<WhiteScript>();
+        script.angle = float(std::rand())/RAND_MAX;
+    }
+};
 
 // Este script hace que el cubo naranjo rote
 struct OrangeScript final : public Folk::Script {
@@ -168,12 +167,29 @@ struct OrangeScript final : public Folk::Script {
     Folk::Vec3 rotation_vector {};
 
     void update(std::chrono::duration<float> delta) override {
+        // Esto hace rotar el cubo
         auto transform = this_entity.getComponent<Folk::TransformComponent>().value();
 
         Folk::Vec3 rotation = transform.rotation();
         rotation += rotation_vector * delta.count();
         transform.rotation(rotation);
     }
+};
+
+struct TargetScript final : public Folk::Script {
+    using Script::Script;
+
+    void update(std::chrono::duration<float> delta) override {}
+
+    // Mueve el target que el cubo naranja persigue
+    void onClick(InputState state) {
+        if (state == InputState::Press)
+            return;
+
+        this_entity.getComponent<TransformComponent>()->position(getMousePosition());
+        this_entity.getComponent<AudioSourceComponent>()->play();
+    }
+
 };
 
 void Folk::sceneInit(Scene &scene) {
@@ -207,15 +223,18 @@ void Folk::sceneInit(Scene &scene) {
 
     // se crea una "acción" de input y se le añade un callback.
     // Esto hace que el objetivo cambie de posición cuando se hace click izquierdo.
-    auto& clickAction = Folk::InputAction::create("onClick");
+    auto& clickAction = scene.input.actions.create("onClick");
     clickAction.bind(MouseButton::Left);
-    clickAction.addCallback([target_entity](auto state){ onClick(target_entity, state); });
+    // Se añade el script que mueve el cubo naranja.
+    auto& target_script = target_entity.addComponent<ScriptComponent>().addScript<TargetScript>();
+    clickAction.connect<&TargetScript::onClick>(target_script);
 
     // se crea otra acción
-    auto& createAction = Folk::InputAction::create("onCreate");
+    auto& createAction = scene.input.actions.create("onCreate");
     createAction.bind(MouseButton::Right);
     // ... y se le asocia otro callback. Este hace que aparezcan cubos blancos cuando se hace click derecho.
     auto ding_clip = AudioClip::createFromFile("ding.wav");
-    auto root = scene.root();
-    createAction.addCallback([root, ding_clip](auto state){ onRightClick(root, ding_clip, state); });
+    auto& root_script = scene.root().addComponent<ScriptComponent>().addScript<CreatorScript>();
+    root_script.clip = ding_clip;
+    createAction.connect<&CreatorScript::onRightClick>(root_script);
 }

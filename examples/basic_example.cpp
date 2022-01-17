@@ -170,14 +170,15 @@ void Folk::sceneInit(Folk::Scene &scene) {
     // Configurar el callback que se invocará en cada frame
     scene.updateCallback = update;
 
-    // Una acción para determinar si se deben mostrar las métricas de rendmiento.
-    InputActionHandle enable_metrics = scene.input_action.create("enable_metrics");
+    // Una acción para determinar si se deben mostrar las métricas de rendimiento.
+    InputAction& enable_metrics = scene.input.actions.create("enable_metrics");
 
-    // Configurar las teclas que activan las metricas de rendimiento
+    // Configurar las teclas que activan las métricas de rendimiento
     // (Alt derecho e izquierdo)
     enable_metrics.bind(Folk::Key::RightAlt);
     enable_metrics.bind(Folk::Key::LeftAlt);
+
     enable_metrics.connect<metricsCallback>();
 
-    scene.input_event.connect<Folk::Key, keyCallback>();
+    scene.input.events.connect<keyCallback, Folk::Key>();
 }

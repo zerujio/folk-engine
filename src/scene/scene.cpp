@@ -6,13 +6,13 @@
 namespace Folk {
 
 Scene::Scene() {
-    m_registry.emplace<SceneGraphNode>(m_root, m_root, "Root");
+    m_entity_registry.emplace<SceneGraphNode>(m_root, m_root, "Root");
 
-    m_registry.on_destroy<CameraComponent>().connect<&Scene::onDestroyCamera>(*this);
+    m_entity_registry.on_destroy<CameraComponent>().connect<&Scene::onDestroyCamera>(*this);
 }
 
 Scene::~Scene() {
-    m_registry.clear();
+    m_entity_registry.clear();
 }
 
 void Scene::onDestroyCamera(const entt::registry&, entt::entity e) {
@@ -22,7 +22,7 @@ void Scene::onDestroyCamera(const entt::registry&, entt::entity e) {
 
 void Scene::setCamera(CameraPtr camera) {
     auto& comp = camera.ref;
-    auto e = entt::to_entity(m_registry, comp);
+    auto e = entt::to_entity(m_entity_registry, comp);
 
     if (e == entt::null)
         throw FOLK_RUNTIME_ERROR("Entity does not belong to scene");
@@ -31,23 +31,12 @@ void Scene::setCamera(CameraPtr camera) {
 }
 
 CameraPtr Scene::getCamera() {
-    if (!m_registry.valid(m_camera))
+    if (!m_entity_registry.valid(m_camera))
         throw FOLK_RUNTIME_ERROR("No camera set");
 
-    entt::handle h {m_registry, m_camera};
+    entt::handle h {m_entity_registry, m_camera};
     CameraPtr ptr {h};
     return ptr;
-}
-
-
-// ============== InputDispatcher ==============
-
-Scene::InputDispatcher::InputDispatcher() {
-    InputEventManager(event_dispatcher).connect<&InputActionRegistry::notify, InputCode>(action_registry);
-}
-
-void Scene::InputDispatcher::update(const ExceptionHandler &handler) noexcept {
-    event_dispatcher.update(handler);
 }
 
 } // namespace folk

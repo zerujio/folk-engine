@@ -5,6 +5,8 @@
 #ifndef INCLUDE_FOLK_INPUT__KEY_HPP
 #define INCLUDE_FOLK_INPUT__KEY_HPP
 
+#include "common.hpp"
+
 namespace Folk {
 
 /// \brief \~spanish Teclas

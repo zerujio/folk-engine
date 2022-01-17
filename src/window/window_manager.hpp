@@ -3,7 +3,15 @@
 
 #include "../utils/singleton.hpp"
 
-#include <GLFW/glfw3.h>
+#include "../input/input_manager.hpp"
+
+#include "folk/input/key.hpp"
+#include "folk/input/mouse_button.hpp"
+#include "folk/input/input_code.hpp"
+
+#include "GLFW/glfw3.h"
+
+#include "entt/entt.hpp"
 
 #include <string>
 
@@ -28,10 +36,11 @@ public:
     // Set window title
     void setWindowTitle(const char*);
 
-    // Get ptr to GLFW window object
-    [[nodiscard]] GLFWwindow* windowPtr() const;
+    InputState getKey(Key);
+    InputState getMouseButton(MouseButton);
+    InputState getInput(InputCode);
 
-    void update() const noexcept;
+    GLFWwindow* windowPtr() { return window; }
 
 private:
     friend class EngineSingleton;
@@ -40,11 +49,16 @@ private:
 
     GLFWwindow* window = nullptr;
     std::string window_title {"Folk Engine Application"};
+    entt::delegate<void(Key, InputState)> m_keyCallback;
+    entt::delegate<void(MouseButton, InputState)> m_mouseButtonCallback;
 
-    WindowManager();
+    explicit WindowManager(InputManager& input_manager);
     ~WindowManager();
 
-    void pollInput() noexcept;
+    void update() const noexcept;
+
+    static void keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods);
+    static void mouseButtonCallback(GLFWwindow*, int button, int action, int mods);
 };
 
 #define WINDOW WindowManager::instance()

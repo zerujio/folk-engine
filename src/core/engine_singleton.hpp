@@ -54,8 +54,11 @@ FOLK_SINGLETON_CLASS_FINAL(EngineSingleton) {
     /// Exception handling
     ExceptionHandler m_exception_handler {ExceptionHandler::CallbackArg<&EngineSingleton::exit>, this};
 
+    /// Input manager
+    InputManager input_manager {};
+
     /// Window manager
-    WindowManager window {};
+    WindowManager window {input_manager};
 
     /// Render module
     Renderer render {m_exception_handler, window};
@@ -65,9 +68,6 @@ FOLK_SINGLETON_CLASS_FINAL(EngineSingleton) {
 
     /// Scene module
     SceneManager scene {};
-
-    /// Input manager
-    InputManager input_manager {m_exception_handler, window};
 
     void update(std::chrono::nanoseconds);
 

@@ -7,7 +7,11 @@
 
 #include "folk/input/input_code.hpp"
 #include "folk/input/connection.hpp"
+#include "folk/input/input_action.hpp"
+#include "folk/input/binding_map_sink.hpp"
+
 #include "folk/core/exception_handler.hpp"
+#include "folk/utils/simple_set.hpp"
 
 #include "entt/entt.hpp"
 
@@ -26,20 +30,15 @@ namespace Folk {
 class InputActionRegistry final {
 
     friend class InputActionManager;
-    friend class InputActionHandle;
-
-    struct InputAction {
-        entt::sigh<std::exception_ptr(InputState)> signal_handler {};
-    };
+    friend class InputAction;
 
     using ActionMap = std::map<std::string, InputAction, std::less<>>;
     ActionMap m_actions {};
 
-    using BindingMap = std::multimap<InputCode, InputAction*>;
-    BindingMap m_bindings {};
+    std::multimap<InputCode, InputAction*> m_bindings {};
+    BindingMapSink<InputCode, InputAction> m_binding_map {m_bindings};
 
 public:
-
     /// Notify all InputActions bound to the given InputCode of an state change.
     void notify(InputCode, InputState, const ExceptionHandler&) const;
 };

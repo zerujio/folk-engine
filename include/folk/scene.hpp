@@ -3,10 +3,7 @@
 
 #include "folk/scene/entity_handle.hpp"
 #include "folk/render/camera_component.hpp"
-#include "folk/input/input_event_dispatcher.hpp"
-#include "folk/input/input_event_manager.hpp"
-#include "folk/input/input_action_registry.hpp"
-#include "folk/input/input_action_manager.hpp"
+#include "folk/input/input_registry.hpp"
 #include "folk/input/connection.hpp"
 
 #include <vector>
@@ -19,28 +16,13 @@ namespace Folk
 class Scene final {
     friend class SceneManager;
 
-    struct InputDispatcher;
-
 public:
     Scene();
     ~Scene();
-    Scene(Scene&&) = default;
-    Scene& operator=(Scene&&) = default;
+    Scene(const Scene&) = delete;
+    Scene(Scene&&) = delete;
 
-    class InputManager final {
-
-        friend class Scene;
-
-        explicit InputManager(InputDispatcher& dispatcher)
-        : events(dispatcher.event_dispatcher), actions(dispatcher.action_registry)
-        {}
-
-    public:
-        InputEventManager events;
-        InputActionManager actions;
-    };
-
-    InputManager input {m_input_dispatcher};
+    InputRegistryManager input {m_input_registry};
 
     using UpdateCallback = void (*)(Scene&, float);
 
@@ -48,7 +30,7 @@ public:
     UpdateCallback updateCallback {nullptr};
 
     /// \~spanish Obtiene el nodo raíz del grafo de escena. \~english Get the root node of this scene.
-    EntityHandle root() {return {{m_registry, m_root}};}
+    EntityHandle root() {return {{m_entity_registry, m_root}};}
 
     /// Configura la cámara a usar.
     /**
@@ -60,32 +42,11 @@ public:
     CameraPtr getCamera();
 
 private:
-
-    class InputDispatcher final {
-
-        friend class Scene::InputManager;
-
-        InputEventDispatcher event_dispatcher {};
-        InputActionRegistry action_registry {};
-
-    public:
-        InputDispatcher();
-
-        /// Enqueue an input event.
-        template<class InputType>
-        void enqueue(InputType code, InputState state) {
-            event_dispatcher.template enqueue(code, state);
-        }
-
-        /// Process all queued input events.
-        void update(const ExceptionHandler& handler) noexcept;
-    };
-
-    entt::registry m_registry {};
-    entt::entity m_root {m_registry.create()};
+    entt::registry m_entity_registry {};
+    entt::entity m_root {m_entity_registry.create()};
     entt::entity m_camera {entt::null};
 
-    InputDispatcher m_input_dispatcher {};
+    InputRegistry m_input_registry {};
 
     void onDestroyCamera(const entt::registry&, entt::entity);
 };

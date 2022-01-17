@@ -2,6 +2,7 @@
 
 #include "folk/error.hpp"
 #include "folk/core/engine.hpp"
+#include "../input/cast.hpp"
 
 #include "../core/engine_singleton.hpp"
 
@@ -15,7 +16,8 @@ void GLAPIENTRY messageCallback(GLenum source, GLenum type, GLuint id,
                                 const GLchar* message, const void* userParam);
 void glfwErrorCallback(int, const char*);
 
-WindowManager::WindowManager() 
+WindowManager::WindowManager(InputManager& input_manager)
+: m_keyCallback()
 {
     glfwSetErrorCallback(glfwErrorCallback);
 
@@ -36,7 +38,8 @@ WindowManager::WindowManager()
         window_title.c_str(),
         nullptr,
         nullptr);
-    
+
+
     if (window == nullptr) {
         glfwTerminate();
         throw FOLK_RUNTIME_ERROR("GLFW: window creation failed.");
@@ -54,6 +57,12 @@ WindowManager::WindowManager()
     glEnable(GL_DEBUG_OUTPUT);
     glDebugMessageCallback(messageCallback, 0); 
     */
+
+    glfwSetKeyCallback(window, keyCallback);
+    glfwSetMouseButtonCallback(window, mouseButtonCallback);
+
+    m_keyCallback.connect<(void(InputManager::*)(Key, InputState)) &InputManager::enqueue>(input_manager);
+    m_mouseButtonCallback.connect<(void(InputManager::*)(MouseButton, InputState)) &InputManager::enqueue>(input_manager);
 }
 
 WindowManager::~WindowManager() 
@@ -67,9 +76,19 @@ void WindowManager::setWindowTitle(const char* title)
     glfwSetWindowTitle(window, window_title.c_str());
 }
 
-GLFWwindow* WindowManager::windowPtr() const
-{
-    return window;
+InputState WindowManager::getInput(const InputCode code) {
+    if (code.isKey())
+        return getKey(Key(code));
+    else
+        return getMouseButton(MouseButton(code));
+}
+
+InputState WindowManager::getKey(const Key key) {
+    return stateCast(glfwGetKey(window, intCast(key)));
+}
+
+InputState WindowManager::getMouseButton(const MouseButton mouse_button) {
+    return stateCast(glfwGetMouseButton(window, intCast(mouse_button)));
 }
 
 void WindowManager::setWindowSize(const WindowDimensions dimensions) {
@@ -85,6 +104,14 @@ WindowManager::WindowDimensions WindowManager::getWindowSize() const
 
 void WindowManager::update() const noexcept {
     glfwPollEvents();
+}
+
+void WindowManager::keyCallback(GLFWwindow *window, int key, int scancode, int action, int mods) {
+    WindowManager::instance().m_keyCallback(keyCast(key), stateCast(action));
+}
+
+void WindowManager::mouseButtonCallback(GLFWwindow *window, int button, int action, int mods) {
+    WindowManager::instance().m_mouseButtonCallback(mouseButtonCast(button), stateCast(action));
 }
 
 static void closeWindowCallback(GLFWwindow *)

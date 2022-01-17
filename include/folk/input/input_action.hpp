@@ -1,106 +1,126 @@
-#ifndef FOLK_INPUT__INPUT_ACTION_HPP
-#define FOLK_INPUT__INPUT_ACTION_HPP
+//
+// Created by sergio on 11-01-22.
+//
 
-#include "folk/input/common.hpp"
+#ifndef SRC_INPUT__INPUT_ACTION_HANDLE_HPP
+#define SRC_INPUT__INPUT_ACTION_HANDLE_HPP
+
 #include "folk/input/input_code.hpp"
-
+#include "folk/input/binding_map_sink.hpp"
+#include "folk/input/connection.hpp"
+#include "folk/core/exception_handler.hpp"
+#include "folk/utils/no_except_function_wrapper.hpp"
 #include "folk/utils/simple_set.hpp"
 
 #include "entt/entt.hpp"
 
-namespace Folk
-{
+#include <exception>
+#include <functional>
 
-/// \brief \~spanish Capa de abstracción que permite la asignación de hasta 4 teclas a la misma acción.
-/// \brief \~english An abstraction layer for input that allows for key remapping.
+namespace Folk {
+
+/// A handle to an InputAction.
 class InputAction final {
 
-    /// The InputManager can trigger the callbacks.
-    friend class InputManager;
+    friend class InputActionRegistry;
 
-    entt::sigh<void(InputState)> m_sigh {};
-    entt::sink<void(InputState)> m_sink {m_sigh};
-    SimpleSet<InputCode> m_bindings {};
+    SimpleSet<InputCode> m_binding_set {};
+    entt::sigh<std::exception_ptr(InputState)> m_signal_handler {};
+    BindingMapSink<InputCode, InputAction> m_binding_sink;
 
 public:
-    using Connection = entt::connection;
-    using ScopedConnection = entt::scoped_connection;
-
-    /// Connects a callback function.
     /**
+     * @brief Construct an input action.
+     * @param map A binding map that will be notified whenever a key is bound or unbound to this action.
+     */
+    explicit InputAction(BindingMapSink<InputCode, InputAction> map) : m_binding_sink(map) {}
+
+    InputAction(const InputAction&) = delete;
+    InputAction(InputAction&&) = delete;
+    ~InputAction();
+
+    /**
+     * @brief Bind this input action to an input code.
+     * If the action was already bound to the given code this operation has no effect.
      *
-     * @tparam Function The function to connect. It should be equivalent to void(*)(InputCode).
-     * @tparam Payload The types of the payload arguments.
-     * @param payload A set of arguments that will be passed to the listener on each invocation. Pass an in instance as
-     * first argument for member functions.
-     * @return A Connection object. May be used to disconnect the function manually or through a ScopedConnection object.
-     */
-    template<auto Function, class... Payload>
-    Connection connect(Payload... payload) {
-        return m_sink.connect<Function>(std::forward<Payload>(payload)...);
-    }
-
-    /// Disconnect a function.
-    /**
-     * If the Function was not previously connected this call will have no effect.
-     *
-     * @tparam Function the function to disconnect.
-     */
-    template<auto Function>
-    void disconnect() {
-        m_sink.disconnect<Function>();
-    }
-
-    /// Disconnect an instance's member function.
-    /**
-     * If the member function was not previously connected then this call will have no effect.
-     * @tparam MemberFunction the function to disconnect.
-     * @tparam Object The class to which the function belongs.
-     * @param instance The instance to which the function is bound.
-     */
-    template<auto MemberFunction, class Object>
-    void disconnect(const Object& instance) {
-        m_sink.disconnect<MemberFunction>(instance);
-    }
-
-    /// Disconnect all callbacks bound to a specific instance.
-    /**
-     * If there are no connections to the given instance then this call will have no effect.
-     * @tparam Object The type of the object to disconnect.
-     * @param instance An instance to disconnect all callbacks to bound to any of its members.
-     */
-    template<class Object>
-    void disconnect(const Object& instance) {
-        m_sink.disconnect(instance);
-    }
-
-    /// Disconnect all callbacks bound to this Action.
-    void disconnectAll() {
-        m_sink.disconnect();
-    }
-
-    /// Binds a new input to this action.
-    /**
-     * If the input was already bound this call will have no effect.
-     * @param code a Key or MouseButton.
+     * @param handle a handle obtained through the get function.
+     * @param code a Key or MouseButton code.
      */
     void bind(InputCode code);
 
     /**
      * @brief Unbind an input code.
-     * If the input code had not been previously bound, this call will have no effect.
-     * @param code a Key or MouseButton.
+     * If the action was not bound to the given code this operation has no effect.
+     *
+     * @param code a Key or MouseButton value.
      */
     void unbind(InputCode code);
 
-    /// Removes all bindings.
-    void unbindAll();
+    /// Return the set of bound input codes.
+    [[nodiscard]] const SimpleSet<InputCode>& bindings() const;
 
-    /// Read-only access to bound input codes.
-    [[nodiscard]]
-    const auto& bindings() const;
+    /**
+     * @brief Check if this action is bound to an input code.
+     * @param code The code for the key or mouse button
+     * @return whether the input is bound to the action.
+     */
+    [[nodiscard]] bool isBound(InputCode code) const;
+
+    /**
+     * @brief Connect a free function as a callback.
+     * @tparam Function The callback function.
+     * @return A Connection object which may be used to disconnect the callback (or create a ScopedConnection).
+     */
+    template<auto Function>
+    Connection connect() {
+        return entt::sink(m_signal_handler).template connect<NoExceptFunctionWrapper<Function, InputState>>();
+    }
+
+    /**
+     * @brief Connect a bound member to the InputAction as a callback.
+     * If the candidate function was already connected, this operation has no effect.
+     *
+     * @tparam Function The member function to connect.
+     * @tparam Object The type of the instance on which to call the function.
+     * @param instance The instance on which to call the function.
+     * @return A Connection object which may be used to disconnect the callback (or create a ScopedConnection).
+     */
+    template<auto Function, class Object>
+    Connection connect(Object& instance) {
+        return entt::sink(m_signal_handler).template connect<NoExceptFunctionWrapper<Function, Object&, InputState>>(instance);
+    }
+
+    /**
+     * @brief Disconnect a free function.
+     * @tparam Function the function to disconnect.
+     */
+    template<auto Function>
+    void disconnect() {
+        entt::sink(m_signal_handler).template disconnect<NoExceptFunctionWrapper<Function, InputState>>();
+    }
+
+    /**
+     * @brief Disconnect a bound member function.
+     * @tparam Function the function to disconnect.
+     * @tparam Object the type of the instance.
+     * @param instance the instance to which the member function was bound.
+     */
+    template<auto Function, class Object>
+    void disconnect(Object& instance) {
+        entt::sink(m_signal_handler).template disconnect<NoExceptFunctionWrapper<Function, Object&, InputState>>(instance);
+    }
+
+    /**
+     * @brief Disconnect all member functions bound to an instance.
+     * @tparam Object The type of the instance.
+     * @param instance An instance of type Object.
+     */
+    template<class Object>
+    void disconnect(Object& instance) {
+        entt::sink(m_signal_handler).disconnect(instance);
+    }
 };
 
 } // namespace Folk
 
-#endif // FOLK_INPUT__INPUT_ACTION_HPP
+#endif //SRC_INPUT__INPUT_ACTION_HANDLE_HPP
