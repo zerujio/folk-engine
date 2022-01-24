@@ -2,7 +2,6 @@
 #include "folk/input.hpp"
 
 #include <iostream>
-#include <set>
 
 using namespace Folk;
 

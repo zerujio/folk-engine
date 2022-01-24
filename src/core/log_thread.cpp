@@ -49,8 +49,25 @@ namespace Folk {
 
     void LogThread::printBuffer(LogData::Buffer &buffer, std::ostream &out) {
         std::scoped_lock lock {buffer.mutex};
+        // if stream is not empty...
+        if (buffer.stream.peek() != decltype(buffer.stream)::traits_type::eof()) {
+            out << buffer.stream.rdbuf();
+            if (!out.good()) {
+                bool out_bad = out.bad();
+                bool out_fail = out.fail();
+                bool out_eof = out.eof();
 
-        out << buffer.stream.rdbuf();
+                bool buf_bad = buffer.stream.bad();
+                bool buf_fail = buffer.stream.fail();
+                bool buf_eof = buffer.stream.eof();
+
+                out.clear();
+
+                out << "Output error [fail|bad|eof]\n"
+                       "buffer : " << buf_fail << buf_bad << buf_eof << "\n" <<
+                       "out    : " << out_fail << out_bad << out_eof << "\n";
+            }
+        }
     }
 
     void LogThread::main() {
