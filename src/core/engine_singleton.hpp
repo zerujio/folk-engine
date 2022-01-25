@@ -14,7 +14,7 @@
 #include "../audio/audio_manager.hpp"
 #include "../window/window_manager.hpp"
 #include "../scene/scene_manager.hpp"
-#include "../input/input_manager.hpp"
+#include "../input/input_event_queue.hpp"
 #include "folk/core/exception_handler.hpp"
 
 // utils
@@ -55,7 +55,7 @@ FOLK_SINGLETON_CLASS_FINAL(EngineSingleton) {
     ExceptionHandler m_exception_handler {ExceptionHandler::CallbackArg<&EngineSingleton::exit>, this};
 
     /// Input manager
-    InputManager input_manager {};
+    InputEventQueue input_manager {};
 
     /// Window manager
     WindowManager window {input_manager};

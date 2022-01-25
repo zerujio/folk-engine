@@ -6,29 +6,29 @@
 namespace Folk
 {
 
-InputState getInput(const Key key) {
+InputState Input::get(const Key key) {
     return WINDOW.getKey(key);
 }
 
-InputState getInput(const MouseButton mb) {
+InputState Input::get(const MouseButton mb) {
     return WINDOW.getMouseButton(mb);
 }
 
-InputState getInput(const InputCode code) {
+InputState Input::get(const InputCode code) {
     return WINDOW.getInput(code);
 }
 
-InputState getInput(const InputAction& action) {
+InputState Input::get(const InputAction& action) {
 
     for (auto code : action.bindings().data()) {
-        if (getInput(code) == InputState::Press)
+        if (Input::get(code) == InputState::Press)
             return InputState::Press;
     }
 
     return InputState::Release;
 }
 
-const char* getKeyName(Key key) {
+const char* Input::getKeyName(Key key) {
     if (key == Key::Space)
         return "Space";
     

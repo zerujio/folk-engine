@@ -16,32 +16,37 @@ namespace Folk
 
 /*========== getInput ==========*/
 
-/**
- * @brief Poll the state of a key in the current frame.
- * @return Either InputState::Press or InputState::Release.
- */
-InputState getInput(Key);
+struct Input final {
+    /**
+     * @brief Poll the state of a key in the current frame.
+     * @return Either InputState::Press or InputState::Release.
+     */
+    static InputState get(Key);
 
-/**
- * @brief Poll the state of a MouseButton in the current frame.
- * @return Either InputState::Press or InputState::Release.
- */
-InputState getInput(MouseButton);
+    /**
+     * @brief Poll the state of a MouseButton in the current frame.
+     * @return Either InputState::Press or InputState::Release.
+     */
+    static InputState get(MouseButton);
 
-/**
- * @brief Poll the state of an InputCode in the current frame.
- * @return Either InputState::Press or InputState::Release.
- */
-InputState getInput(InputCode);
+    /**
+     * @brief Poll the state of an InputCode in the current frame.
+     * @return Either InputState::Press or InputState::Release.
+     */
+    static InputState get(InputCode);
 
-/**
- * @brief Poll the state of an InputAction in the current frame.
- *
- * The action is considered to have been "pressed" if any of the bound keys or mouse buttons is pressed.
- *
- * @return Either InputState::Press or InputState::Release.
- */
-InputState getInput(const InputAction&);
+    /**
+     * @brief Poll the state of an InputAction in the current frame.
+     *
+     * The action is considered to have been "pressed" if any of the bound keys or mouse buttons is pressed.
+     *
+     * @return Either InputState::Press or InputState::Release.
+     */
+    static InputState get(const InputAction&);
+
+    /// Name of a key in US ANSI layout
+    static const char* getKeyName(const Key);
+};
 
 /*=============================== Mouse ======================================*/
 

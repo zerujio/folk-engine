@@ -4,6 +4,7 @@
 #include "folk/render/visual_component.hpp"
 #include "folk/error.hpp"
 #include "folk/log.hpp"
+#include "input.hpp"
 
 // Esta función se llama antes de inicializar la escena
 void Folk::engineInit() {
@@ -66,7 +67,7 @@ void keyCallback(Folk::Key key, Folk::InputState state) {
 }
 
 void update(Folk::Scene& scn, float delta) {
-    if (Folk::getInput(Folk::MouseButton::Left) == Folk::InputState::Press)
+    if (Folk::Input::get(Folk::MouseButton::Left) == Folk::InputState::Press)
         // Para poder ver este mensaje el programa debe iniciarse con la opción "-l trace"
         Folk::Log::trace() << "dt=" << delta << '\n';
 
@@ -80,19 +81,19 @@ void update(Folk::Scene& scn, float delta) {
     {
         auto pos = tr.position();
 
-        if (Folk::getInput(Folk::Key::W) == Folk::InputState::Press) {
+        if (Folk::Input::get(Folk::Key::W) == Folk::InputState::Press) {
             pos.y += dist;
         }
 
-        if (Folk::getInput(Folk::Key::S) == Folk::InputState::Press) {
+        if (Folk::Input::get(Folk::Key::S) == Folk::InputState::Press) {
             pos.y -= dist;
         }
 
-        if (Folk::getInput(Folk::Key::D) == Folk::InputState::Press) {
+        if (Folk::Input::get(Folk::Key::D) == Folk::InputState::Press) {
             pos.x += dist;
         }
 
-        if (Folk::getInput(Folk::Key::A) == Folk::InputState::Press) {
+        if (Folk::Input::get(Folk::Key::A) == Folk::InputState::Press) {
             pos.x -= dist;
         }
 
@@ -104,10 +105,10 @@ void update(Folk::Scene& scn, float delta) {
     {
         auto rot = tr.rotation();
 
-        if (Folk::getInput(Folk::Key::Q) == Folk::InputState::Press) {
+        if (Folk::Input::get(Folk::Key::Q) == Folk::InputState::Press) {
             rot.y -= dist;
         }
-        if (Folk::getInput(Folk::Key::E) == Folk::InputState::Press) {
+        if (Folk::Input::get(Folk::Key::E) == Folk::InputState::Press) {
             rot.y += dist;
         }
 
@@ -119,11 +120,11 @@ void update(Folk::Scene& scn, float delta) {
     {
         auto camera = scn.getCamera();
 
-        if (Folk::getInput(Folk::Key::R) == Folk::InputState::Press) {
+        if (Folk::Input::get(Folk::Key::R) == Folk::InputState::Press) {
             camera.fovy() += dist * 10.0f;
         }
 
-        if (Folk::getInput(Folk::Key::F) == Folk::InputState::Press) {
+        if (Folk::Input::get(Folk::Key::F) == Folk::InputState::Press) {
             camera.fovy() -= dist * 10.0f;
         }
     }

@@ -24,7 +24,7 @@ try {
     Log::error() << "Exception caught during scene destruction (possible resource leak?)";
 }
 
-void SceneManager::updateScene(InputManager& input_manager, const ExceptionHandler &exception_handler, std::chrono::duration<float> delta) noexcept {
+void SceneManager::updateScene(InputEventQueue& input_manager, const ExceptionHandler &exception_handler, std::chrono::duration<float> delta) noexcept {
     // call input callbacks
     input_manager.update(m_scene.m_input_registry, exception_handler);
 

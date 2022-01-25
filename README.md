@@ -17,7 +17,7 @@ programa.
 void Folk::engineInit() {
     // Ajustar configuración global del engine.
     // Ejemplo: cambiar el nombre de la ventana
-    Folk::Engine::setWindowTitle("Hello world!");
+    Folk::Engine::setTitle("Hello world!");
 }
 
 void Folk::sceneInit(Scene &m_scene) {

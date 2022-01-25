@@ -7,6 +7,7 @@
 #include "folk/render.hpp"
 #include "folk/script.hpp"
 #include "folk/ai.hpp"
+#include "input.hpp"
 
 #include <chrono>
 
@@ -18,16 +19,16 @@ struct ControlScript final : public Folk::Script {
     void update(std::chrono::duration<float> delta) override {
         Folk::Vec3 direction {};
 
-        if (Folk::getInput(Folk::Key::A) == Folk::InputState::Press)
+        if (Folk::Input::get(Folk::Key::A) == Folk::InputState::Press)
             direction.x -= 1.0f;
 
-        if (Folk::getInput(Folk::Key::D) == Folk::InputState::Press)
+        if (Folk::Input::get(Folk::Key::D) == Folk::InputState::Press)
             direction.x += 1.0f;
 
-        if (Folk::getInput(Folk::Key::W) == Folk::InputState::Press)
+        if (Folk::Input::get(Folk::Key::W) == Folk::InputState::Press)
             direction.z += 1.0f;
 
-        if (Folk::getInput(Folk::Key::S) == Folk::InputState::Press)
+        if (Folk::Input::get(Folk::Key::S) == Folk::InputState::Press)
             direction.z -= 1.0f;
 
         if (direction.x != 0.0f or direction.z != 0.0f) {

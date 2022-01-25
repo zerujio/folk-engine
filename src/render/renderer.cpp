@@ -31,7 +31,7 @@ Renderer::Renderer(ExceptionHandler& exc, WindowManager& win)
     bgfx_init.platformData.nwh = 
         (void*)(uintptr_t) glfwGetX11Window(window_mngr.windowPtr());
 
-    auto wsize = window_mngr.getWindowSize();
+    auto wsize = window_mngr.getSize();
     bgfx_init.resolution.width = wsize.width;
     bgfx_init.resolution.height = wsize.height;
     bgfx_init.resolution.reset = BGFX_RESET_VSYNC;
@@ -71,7 +71,7 @@ Renderer::~Renderer() {
 void Renderer::drawFrame(SceneManager& scene_mngr, 
                          std::chrono::duration<double> delta)
 {
-    auto wsize = window_mngr.getWindowSize();
+    auto wsize = window_mngr.getSize();
 
     Matrix4f view_mtx;
     Matrix4f proj_mtx;

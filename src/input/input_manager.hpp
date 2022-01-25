@@ -1,47 +1,52 @@
-#ifndef FOLK_INPUT__INPUT_MANAGER
-#define FOLK_INPUT__INPUT_MANAGER
+//
+// Created by sergio on 24-01-22.
+//
 
-#include "../utils/singleton.hpp"
-#include "../utils/simple_queue.hpp"
+#ifndef SRC_INPUT__INPUT_HANDLER_HPP
+#define SRC_INPUT__INPUT_HANDLER_HPP
 
-#include "folk/core/exception_handler.hpp"
+#include "../window/window_manager.hpp"
 
-#include "folk/input/input_registry.hpp"
+#include "folk/input/input_code.hpp"
 
-#include <map>
-#include <string>
+namespace Folk {
 
-namespace Folk
-{
-
-#define INPUT InputManager::instance()
-FOLK_SINGLETON_CLASS_FINAL(InputManager) {
-
+/**
+ * @brief A lightweight object that wraps the windowing system's input polling functions for a window.
+ */
+class InputManager final {
 public:
-    void enqueue(Key code, InputState state);
-    void enqueue(MouseButton code, InputState state);
+    /**
+     * @brief Create an input manager for a window.
+     * The input manager will remain valid as long as the window (not the window manager) exists. This means that the
+     * window manager from which the object was created can be safely moved from.
+     * @param manager A window manager.
+     */
+    explicit InputManager(const WindowManager& manager);
 
-    /// Deliver queued input events to a scene (via an input registry).
-    void update(const InputRegistry& registry, const ExceptionHandler& handler) noexcept;
+    /**
+     * @brief Create an input manager not bound to a window.
+     * Operations other than assignment on a default-initialized input handler will result in an exception.
+     */
+    InputManager() = default;
+
+    /// Poll the state of a key.
+    [[nodiscard]] InputState getKey(Key key) const;
+
+    /// Poll the state of a mouse button.
+    [[nodiscard]] InputState getMouseButton(MouseButton mouse_button) const;
+
+    /// Get the current position of the mouse cursor.
+    [[nodiscard]] Vec2d getCursorPosition() const;
+
+    /// Set a new position for the mouse cursor.
+    void setCursorPosition(Vec2d position) const;
 
 private:
-    template<class InputType>
-    struct InputEvent {
-        InputType code;
-        InputState state;
-
-        InputEvent(InputType code_, InputState state_) : code(code_), state(state_) {}
-    };
-
-    SimpleQueue<InputEvent<Key>> m_key_queue {8};
-    SimpleQueue<InputEvent<MouseButton>> m_mouse_queue {8};
-
-    template<class InputType>
-    static void publish(const InputRegistry& registry,
-                        const ExceptionHandler& handler,
-                        const InputEvent<InputType>& event) noexcept;
+    GLFWwindow* m_window_ptr {nullptr};
 };
 
-} // namespace folk
+} // namespace Folk
 
-#endif // FOLK_INPUT__INPUT_MANAGER
+
+#endif //SRC_INPUT__INPUT_HANDLER_HPP

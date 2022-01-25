@@ -1,13 +1,9 @@
 #ifndef FOLK_WINDOW__MODULE_HPP
 #define FOLK_WINDOW__MODULE_HPP
 
+#include "folk/math/vector.hpp"
+
 #include "../utils/singleton.hpp"
-
-#include "../input/input_manager.hpp"
-
-#include "folk/input/key.hpp"
-#include "folk/input/mouse_button.hpp"
-#include "folk/input/input_code.hpp"
 
 #include "GLFW/glfw3.h"
 
@@ -17,48 +13,71 @@
 
 namespace Folk {
 
-FOLK_SINGLETON_CLASS_FINAL(WindowManager) {
+/**
+ * @brief Manages (i.e. takes ownership of) a window.
+ *
+ * NOTE: WindowingSystem must be initialized before creating non-null managers.
+ */
+class WindowManager final {
+
+    friend class WindowingSystem;
+    friend class InputManager;
 
 public:
-    struct WindowDimensions {
-        int width;
-        int height;
-    };
 
-    static constexpr const char* name() {return "Window Manager";}
+    /// Default constructor: creates a manager that owns a newly created window.
+    explicit WindowManager(const char* window_name);
+    explicit WindowManager(const std::string & window_name);
 
-    // Set width and height of application window
-    void setWindowSize(WindowDimensions);
+    /**
+     * @brief Takes ownership of an existing window.
+     * @param window_ptr a pointer to a GLFW window struct. Pass nullptr to create a manager that owns no window.
+     *
+     * WARNING: operations other that move assignment and bool casting on a null manager are undefined behavior.
+     */
+    explicit WindowManager(GLFWwindow* window_ptr);
 
-    // Retrieve width and height of application window
-    [[nodiscard]] WindowDimensions getWindowSize() const;
+    /// Deleted copy constructor.
+    WindowManager(const WindowManager &) = delete;
 
-    // Set window title
-    void setWindowTitle(const char*);
+    /**
+     * @brief takes ownership of another object's window.
+     * @param other a manager to take the window from. Will be left owning no window.
+     */
+    WindowManager(WindowManager && other) noexcept ;
 
-    InputState getKey(Key);
-    InputState getMouseButton(MouseButton);
-    InputState getInput(InputCode);
+    /// Deleted copy assignment operator.
+    WindowManager & operator=(const WindowManager &) = delete;
 
-    GLFWwindow* windowPtr() { return window; }
+    /// Takes ownership of another object's window, similarly to move construction.
+    WindowManager & operator=(WindowManager && other) noexcept;
 
-private:
-    friend class EngineSingleton;
-
-    static constexpr WindowDimensions default_window_size {800, 600};
-
-    GLFWwindow* window = nullptr;
-    std::string window_title {"Folk Engine Application"};
-    entt::delegate<void(Key, InputState)> m_keyCallback;
-    entt::delegate<void(MouseButton, InputState)> m_mouseButtonCallback;
-
-    explicit WindowManager(InputManager& input_manager);
+    /// Destroys the owned window, if any.
     ~WindowManager();
 
-    void update() const noexcept;
+    /// Evaluates to true if the manager owns a window.
+    operator bool() const;
 
-    static void keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods);
-    static void mouseButtonCallback(GLFWwindow*, int button, int action, int mods);
+    /// Returns true if the manager does not own a window.
+    [[nodiscard]] bool isNull() const;
+
+    /// Set window title, as shown in the OS.
+    void setTitle(const char* title) const;
+    void setTitle(const std::string& title) const;
+
+    /// Set width and height of application window
+    void setSize(Vector2<int> size) const;
+
+    /// Retrieve width and height of application window
+    [[nodiscard]] Vector2<int> getSize() const;
+
+private:
+    static constexpr Vector2<int> s_default_window_size {800, 600};
+
+    GLFWwindow* m_window_ptr;
+
+    /// Destroy owned window, leaving this object in null state.
+    void destroyWindow();
 };
 
 #define WINDOW WindowManager::instance()

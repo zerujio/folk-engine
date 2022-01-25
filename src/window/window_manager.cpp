@@ -10,115 +10,72 @@
 
 namespace Folk {
 
-static void closeWindowCallback(GLFWwindow*);
-void GLAPIENTRY messageCallback(GLenum source, GLenum type, GLuint id, 
-                                GLenum severity, GLsizei length,
-                                const GLchar* message, const void* userParam);
-void glfwErrorCallback(int, const char*);
+void glfwErrorCallback(int code, const char* message) {
+    Log::error() << "GLFW error " << code << ": " << message;
+}
 
-WindowManager::WindowManager(InputManager& input_manager)
-: m_keyCallback()
+WindowManager::WindowManager(const char* window_name) :
+        m_window_ptr(glfwCreateWindow(s_default_window_size.x, s_default_window_size.y, window_name, nullptr, nullptr))
 {
-    glfwSetErrorCallback(glfwErrorCallback);
-
-    if (!glfwInit())
-        throw FOLK_RUNTIME_ERROR("GLFW initialization failed.");
-
-    /* 
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, gl_version.major);
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, gl_version.minor);
-    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-    */
-    glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
-    glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
-
-    window = glfwCreateWindow(
-        default_window_size.width,
-        default_window_size.height,
-        window_title.c_str(),
-        nullptr,
-        nullptr);
-
-
-    if (window == nullptr) {
-        glfwTerminate();
-        throw FOLK_RUNTIME_ERROR("GLFW: window creation failed.");
-    }
-
-    glfwSetWindowCloseCallback(window, closeWindowCallback);
-
-    // glfwMakeContextCurrent(window);
-
-    /* 
-    if (!gladLoadGLLoader((GLADloadproc) glfwGetProcAddress))
-        throw CriticalEngineError("OpenGL context initialization error: "
-                                "gladLoadGLLoader returned an error");
-    
-    glEnable(GL_DEBUG_OUTPUT);
-    glDebugMessageCallback(messageCallback, 0); 
-    */
-
-    glfwSetKeyCallback(window, keyCallback);
-    glfwSetMouseButtonCallback(window, mouseButtonCallback);
-
-    m_keyCallback.connect<(void(InputManager::*)(Key, InputState)) &InputManager::enqueue>(input_manager);
-    m_mouseButtonCallback.connect<(void(InputManager::*)(MouseButton, InputState)) &InputManager::enqueue>(input_manager);
+    if (!m_window_ptr)
+        throw FOLK_RUNTIME_ERROR("Window creation failed");
 }
 
-WindowManager::~WindowManager() 
-{
-    glfwTerminate();
+WindowManager::WindowManager(const std::string &window_name) : WindowManager(window_name.c_str()) {}
+
+WindowManager::WindowManager(GLFWwindow *window_ptr) : m_window_ptr(window_ptr) {}
+
+WindowManager::WindowManager(WindowManager &&other) noexcept : m_window_ptr(other.m_window_ptr) {
+    other.m_window_ptr = nullptr;
 }
 
-void WindowManager::setWindowTitle(const char* title)
-{
-    window_title = title;
-    glfwSetWindowTitle(window, window_title.c_str());
+WindowManager &WindowManager::operator=(WindowManager &&other) noexcept {
+    if (m_window_ptr)
+        destroyWindow();
+
+    m_window_ptr = other.m_window_ptr;
+    other.m_window_ptr = nullptr;
+
+    return *this;
 }
 
-InputState WindowManager::getInput(const InputCode code) {
-    if (code.isKey())
-        return getKey(Key(code));
-    else
-        return getMouseButton(MouseButton(code));
+WindowManager::~WindowManager() {
+    if (m_window_ptr)
+        destroyWindow();
 }
 
-InputState WindowManager::getKey(const Key key) {
-    return stateCast(glfwGetKey(window, intCast(key)));
+void WindowManager::destroyWindow() {
+    glfwDestroyWindow(m_window_ptr);
+    m_window_ptr = nullptr;
 }
 
-InputState WindowManager::getMouseButton(const MouseButton mouse_button) {
-    return stateCast(glfwGetMouseButton(window, intCast(mouse_button)));
+WindowManager::operator bool() const {
+    return m_window_ptr;
 }
 
-void WindowManager::setWindowSize(const WindowDimensions dimensions) {
-    glfwSetWindowSize(window, dimensions.width, dimensions.height);
+bool WindowManager::isNull() const {
+    return !m_window_ptr;
 }
 
-WindowManager::WindowDimensions WindowManager::getWindowSize() const
-{
-    int width, height;
-    glfwGetWindowSize(window, &width, &height);
-    return {width, height};
+void WindowManager::setTitle(const char *title) const {
+    glfwSetWindowTitle(m_window_ptr, title);
 }
 
-void WindowManager::update() const noexcept {
-    glfwPollEvents();
+void WindowManager::setTitle(const std::string &title) const {
+    setTitle(title.c_str());
 }
 
-void WindowManager::keyCallback(GLFWwindow *window, int key, int scancode, int action, int mods) {
-    WindowManager::instance().m_keyCallback(keyCast(key), stateCast(action));
+void WindowManager::setSize(Vector2<int> size) const {
+    glfwSetWindowSize(m_window_ptr, size.x, size.y);
 }
 
-void WindowManager::mouseButtonCallback(GLFWwindow *window, int button, int action, int mods) {
-    WindowManager::instance().m_mouseButtonCallback(mouseButtonCast(button), stateCast(action));
+Vector2<int> WindowManager::getSize() const {
+    int x, y;
+    glfwGetWindowSize(m_window_ptr, &x, &y);
+    return {x, y};
 }
 
-static void closeWindowCallback(GLFWwindow *)
-{
-    Engine::exit();
-}
-
+#if FOLK_OPENGL
 void GLAPIENTRY messageCallback(GLenum source, GLenum type, GLuint id, 
                                 GLenum severity, GLsizei length,
                                 const GLchar* message, const void* userParam)
@@ -223,9 +180,6 @@ void GLAPIENTRY messageCallback(GLenum source, GLenum type, GLuint id,
                                 << "\nseverity  : " << severity_str
                                 << '\n' << message << "\n\n";
 }
-
-void glfwErrorCallback(int code, const char* message) {
-    Log::error() << "GLFW error " << code << ": " << message;
-}
+#endif
 
 } // namespace folk

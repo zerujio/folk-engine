@@ -1,27 +1,32 @@
+//
+// Created by sergio on 24-01-22.
+//
+
 #include "input_manager.hpp"
 
-namespace Folk
-{
+#include "../window/glfw_call.hpp"
+#include "cast.hpp"
 
-void InputManager::enqueue(Key code, InputState state) {
-    m_key_queue.push(code, state);
+namespace Folk {
+
+InputManager::InputManager(const WindowManager &manager) : m_window_ptr(manager.m_window_ptr) {}
+
+InputState InputManager::getKey(Key key) const {
+    FOLK_GLFW_CALL( glfwGetKey(m_window_ptr, intCast(key)); )
 }
 
-void InputManager::enqueue(MouseButton code, InputState state) {
-    m_mouse_queue.push(code, state);
+InputState InputManager::getMouseButton(MouseButton mouse_button) const {
+    FOLK_GLFW_CALL( glfwGetMouseButton(m_window_ptr, intCast(mouse_button)); )
 }
 
-void InputManager::update(const InputRegistry &registry, const ExceptionHandler &handler) noexcept {
-    m_key_queue.collect<&InputManager::publish<Key>>(registry, handler);
-    m_mouse_queue.collect<&InputManager::publish<MouseButton>>(registry, handler);
+Vec2d InputManager::getCursorPosition() const {
+    double x, y;
+    FOLK_GLFW_CALL(glfwGetCursorPos(m_window_ptr, &x, &y);)
+    return {x, y};
 }
 
-template<class InputType>
-void InputManager::publish(const InputRegistry& registry,
-                           const ExceptionHandler& handler,
-                           const InputEvent<InputType>& event) noexcept {
-    registry.template notify(event.code, event.state, handler);
-    registry.notify<InputCode>(event.code, event.state, handler);
+void InputManager::setCursorPosition(Vec2d position) const {
+    FOLK_GLFW_CALL(glfwSetCursorPos(m_window_ptr, position.x, position.y);)
 }
 
-} // namespace folk
+} // namespace Folk

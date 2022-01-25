@@ -161,10 +161,6 @@ enum class ModKey {
     NumLock     = 0x0020
 };
 
-
-/// El nombre de la tecla, ajustado a la distribución de teclado.
-const char* getKeyName(const Key);
-
 } // namespace Folk
 
 #endif //INCLUDE_FOLK_INPUT__KEY_HPP

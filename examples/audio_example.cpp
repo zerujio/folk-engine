@@ -2,6 +2,7 @@
 #include "folk/render.hpp"
 #include "folk/audio.hpp"
 #include "folk/input.hpp"
+#include "input.hpp"
 
 #include <cmath>
 
@@ -47,19 +48,19 @@ void onUpdate(Folk::Scene& scene, float deltaT) {
                                  ->getComponent<Folk::TransformComponent>();
     auto pos = transform->position();
 
-    if (Folk::getInput(Folk::Key::W) == Folk::InputState::Press) {
+    if (Folk::Input::get(Folk::Key::W) == Folk::InputState::Press) {
         pos.z += dist;
     }
 
-    if (Folk::getInput(Folk::Key::S) == Folk::InputState::Press) {
+    if (Folk::Input::get(Folk::Key::S) == Folk::InputState::Press) {
         pos.z -= dist;
     }
 
-    if (Folk::getInput(Folk::Key::D) == Folk::InputState::Press) {
+    if (Folk::Input::get(Folk::Key::D) == Folk::InputState::Press) {
         pos.x += dist;
     }
 
-    if (Folk::getInput(Folk::Key::A) == Folk::InputState::Press) {
+    if (Folk::Input::get(Folk::Key::A) == Folk::InputState::Press) {
         pos.x -= dist;
     }
 
@@ -68,11 +69,11 @@ void onUpdate(Folk::Scene& scene, float deltaT) {
 
     auto rot = transform->rotation();
 
-    if (Folk::getInput(Folk::Key::Q) == Folk::InputState::Press) {
+    if (Folk::Input::get(Folk::Key::Q) == Folk::InputState::Press) {
         rot.y += dist;
     }
 
-    if (Folk::getInput(Folk::Key::E) == Folk::InputState::Press) {
+    if (Folk::Input::get(Folk::Key::E) == Folk::InputState::Press) {
         rot.y -= dist;
     }
 
