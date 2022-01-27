@@ -17,49 +17,65 @@ struct CLibraryError : public RuntimeError {
 };
 
 /**
- * @brief Return type for error checking functions.
- * @tparam What a type such that an std::logic_error or std::runtime_error may be initialized with it.
- */
-template<class What>
-struct CLibraryErrorDescriptor final {
-    /// `true` if no error occurred.
-    bool ok;
-    /// If an error occurred, contains a description of it.
-    What what;
-};
-
-/**
  * @brief Wrapper for C library calls.
- * @tparam errorCheck An error checking function. It should return a CLibraryErrorDescriptor.
- * @tparam Function A function pointer type.
+ * @tparam getError An error checking function. It should return an std::optional containing a descriptive message in
+ * case of an error and be empty otherwise.
+ * @tparam function A function to call.
  * @tparam Args Types of function parameters.
  * @param file name of source file.
  * @param line source line.
  * @param calling_function name of calling function.
- * @param function The function to call.
  * @param args The arguments to pass to the function.
  * @return The result of `function_ptr(args...);`
  */
-template<auto errorCheck, class Function, class... Args>
-auto libraryCall(const char* file, int line, const char* calling_function, Function function, Args&&... args)
+template<auto getError, auto function, class... Args>
+auto libraryCall(const char* file, int line, const char* calling_function, Args&&... args)
 {
-    static_assert(std::is_invocable_v<Function, Args...>, "Invalid argument types!");
+    static_assert(std::is_invocable_v<decltype(function), Args...>, "Invalid argument types!");
 
-    constexpr bool returns_void {std::is_void_v<decltype(function(args...))>};
-
-    if constexpr (returns_void) {
+    if constexpr (std::is_void_v<decltype(function(args...))>) {
+        // void return type
         function(args...);
-        auto check = errorCheck();
-        if (!check.ok)
-            throw CLibraryError(check.what, file, line, calling_function);
+        auto error = getError();
+        if (error)
+            throw CLibraryError(*error, file, line, calling_function);
+
     } else {
         auto value = function(args...);
-        auto check = errorCheck();
-        if (!check.ok)
-            throw CLibraryError(check.what, file, line, calling_function);
+        auto error = getError();
+        if (error)
+            throw CLibraryError(*error, file, line, calling_function);
         return value;
     }
 }
+
+/// C library call wrapper with an error checking function that takes a single argument.
+template<auto getError, class ErrorCheckArg, auto function, class... FunctionArgs>
+auto libraryCall(const char* file, int line, const char* calling_function, ErrorCheckArg&& error_arg, FunctionArgs&&... args)
+{
+    static_assert(std::is_invocable_v<decltype(function), FunctionArgs...>, "Invalid function argument types.");
+    static_assert(std::is_invocable_v<decltype(getError), ErrorCheckArg>, "Invalid error check function argument type.");
+
+    if constexpr (std::is_void_v<decltype(function(args...))>) {
+        // void return type
+        function(args...);
+        auto error = getError(error_arg);
+        if (error)
+            throw CLibraryError(*error, file, line, calling_function);
+    } else {
+        auto value = function(args...);
+        auto error = getError(error_arg);
+        if (error)
+            throw CLibraryError(*error, file, line, calling_function);
+        return value;
+    }
+}
+
+#define FOLK_C_LIBRARY_CALL(errorCheck, function, ...)\
+libraryCall<errorCheck, function>(__FILE__, __LINE__, __PRETTY_FUNCTION__, ##__VA_ARGS__)
+
+#define FOLK_C_LIBRARY_CALL_ERR_ARG(errorCheck, error_arg, function, ...)\
+libraryCall<errorCheck, function>(__FILE_, __LINE__, __PRETTY_FUNCTION__, err_arg, ##__VA_ARGS__)
 
 } // namespace Folk
 

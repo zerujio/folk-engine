@@ -11,7 +11,7 @@ void Engine::exit()
 
 void Engine::setWindowTitle(const char* text)
 {
-    ENGINE.window.setTitle(text);
+    ENGINE.m_game_window.setTitle(text);
 }
 
 void Engine::setPerformanceMetricsEnabled(bool value)

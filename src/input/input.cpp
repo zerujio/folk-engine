@@ -1,21 +1,48 @@
 #include "folk/input.hpp"
+#include "input_initializer.hpp"
 
-#include "../window/window_manager.hpp"
-#include "cast.hpp"
+#include "input_manager.hpp"
+#include "input_event_queue.hpp"
 
-namespace Folk
+#include "GLFW/glfw3.h"
+
+namespace Folk {
+
+InputManager g_input_manager;
+InputEventQueue* g_input_queue;
+
+template<class InputType>
+void inputCallback(InputType code, InputState state) {
+    g_input_queue->enqueue(code, state);
+}
+
+Input::ScopedInitializer::ScopedInitializer(InputManager input_manager, InputEventQueue &input_queue)
 {
+    g_input_manager = InputManager(input_manager);
+    g_input_queue = &input_queue;
+
+    g_input_manager.setKeyCallback<inputCallback>();
+    g_input_manager.setMouseButtonCallback<inputCallback>();
+}
+
+Input::ScopedInitializer::~ScopedInitializer() {
+    g_input_manager.clearKeyCallback();
+    g_input_manager.clearMouseButtonCallback();
+}
 
 InputState Input::get(const Key key) {
-    return WINDOW.getKey(key);
+    return g_input_manager.getKey(key);
 }
 
 InputState Input::get(const MouseButton mb) {
-    return WINDOW.getMouseButton(mb);
+    return g_input_manager.getMouseButton(mb);
 }
 
 InputState Input::get(const InputCode code) {
-    return WINDOW.getInput(code);
+    if (code.isKey())
+        return g_input_manager.getKey(Key(code));
+    else
+        return g_input_manager.getMouseButton(MouseButton(code));
 }
 
 InputState Input::get(const InputAction& action) {
@@ -129,14 +156,12 @@ const char* Input::getKeyName(Key key) {
     }
 }
 
-namespace Cursor {
-
-Vec2d getPosition() {
-    double x, y;
-    glfwGetCursorPos(WINDOW.windowPtr(), &x, &y);
-    return {x, y};
+Vec2d Input::Cursor::getPosition() {
+    return g_input_manager.getCursorPosition();
 }
 
+void Input::Cursor::setPosition(Vec2d position) {
+    g_input_manager.setCursorPosition(position);
 }
 
 } // namespace Folk

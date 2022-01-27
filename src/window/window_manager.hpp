@@ -6,10 +6,13 @@
 #include "../utils/singleton.hpp"
 
 #include "GLFW/glfw3.h"
+#include "glfw_call.hpp"
 
 #include "entt/entt.hpp"
 
 #include <string>
+
+struct GLFWwindow;
 
 namespace Folk {
 
@@ -22,6 +25,7 @@ class WindowManager final {
 
     friend class WindowingSystem;
     friend class InputManager;
+    friend class Renderer;
 
 public:
 
@@ -71,16 +75,26 @@ public:
     /// Retrieve width and height of application window
     [[nodiscard]] Vector2<int> getSize() const;
 
+    /// Sets a callback for when the window is set to close,
+    template<void (*Callback)()>
+    void setCloseCallback() const {
+        FOLK_GLFW_CALL(glfwSetWindowCloseCallback, m_window_ptr, [](auto){ Callback(); });
+    }
+
+    /// Clears the close callback.
+    void clearCloseCallback() const;
+
 private:
     static constexpr Vector2<int> s_default_window_size {800, 600};
 
     GLFWwindow* m_window_ptr;
 
+    /// Handle used by the windowing library.
+    [[nodiscard]] GLFWwindow* handle() const;
+
     /// Destroy owned window, leaving this object in null state.
     void destroyWindow();
 };
-
-#define WINDOW WindowManager::instance()
 
 } // namespace folk
 

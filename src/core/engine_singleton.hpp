@@ -7,24 +7,37 @@
 #include <exception>
 #include <thread>
 
-#include "folk/scene.hpp"
+// log
+#include "log_thread.hpp"
 
-// modules
-#include "../render/renderer.hpp"
-#include "../audio/audio_manager.hpp"
-#include "../window/window_manager.hpp"
-#include "../scene/scene_manager.hpp"
-#include "../input/input_event_queue.hpp"
+// exception handling
 #include "folk/core/exception_handler.hpp"
+
+// renderer
+#include "../render/renderer.hpp"
+
+// audio
+#include "../audio/audio_manager.hpp"
+
+// windowing
+#include "../window/window_manager.hpp"
+#include "../window/windowing_system.hpp"
+
+// input
+#include "folk/input.hpp"
+#include "../input/input_manager.hpp"
+#include "../input/input_event_queue.hpp"
+#include "../input/input_initializer.hpp"
+
+// scene management
+#include "folk/scene.hpp"
+#include "../scene/scene_manager.hpp"
+#include "../debug/performance_monitor.hpp"
 
 // utils
 #include "../utils/singleton.hpp"
-#include "../utils/processing_queue.hpp"
 #include "../utils/delta_clock.hpp"
 
-#include "../debug/performance_monitor.hpp"
-
-#include "log_thread.hpp"
 #include "main.hpp"
 
 namespace Folk
@@ -51,17 +64,19 @@ FOLK_SINGLETON_CLASS_FINAL(EngineSingleton) {
     /// Performance monitor
     PerformanceMonitor perf_monitor {};
 
-    /// Exception handling
-    ExceptionHandler m_exception_handler {ExceptionHandler::CallbackArg<&EngineSingleton::exit>, this};
+    /// Exception handler
+    ExceptionHandler m_exception_handler {ExceptionHandler::CallbackArg<&EngineSingleton::exit>};
 
-    /// Input manager
-    InputEventQueue input_manager {};
+    /// Windowing
+    WindowingSystem::ScopedInitializer windowing_system_init {};
+    WindowManager m_game_window {"Unnamed Folk Engine application"};
 
-    /// Window manager
-    WindowManager window {input_manager};
+    /// Input handling
+    InputEventQueue m_input_queue {};
+    Input::ScopedInitializer m_input_init {InputManager(m_game_window), m_input_queue};
 
     /// Render module
-    Renderer render {m_exception_handler, window};
+    Renderer render {m_exception_handler, m_game_window};
 
     /// Audio module
     AudioManager audio {m_exception_handler};
@@ -81,7 +96,7 @@ public:
     void mainLoop() noexcept;
 
     /// Signal the engine to exit.
-    void exit() noexcept;
+    static void exit() noexcept;
 };
 
 } // namespace folk

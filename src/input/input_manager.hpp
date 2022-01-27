@@ -5,9 +5,12 @@
 #ifndef SRC_INPUT__INPUT_HANDLER_HPP
 #define SRC_INPUT__INPUT_HANDLER_HPP
 
-#include "../window/window_manager.hpp"
-
 #include "folk/input/input_code.hpp"
+#include "../window/window_manager.hpp"
+#include "../window/glfw_call.hpp"
+#include "cast.hpp"
+
+#include "GLFW/glfw3.h"
 
 namespace Folk {
 
@@ -41,6 +44,35 @@ public:
 
     /// Set a new position for the mouse cursor.
     void setCursorPosition(Vec2d position) const;
+
+    /// Evaluates to true if there's a window associated.
+    operator bool() const;
+
+    /// Sets the manager to default initialized state (no window associated).
+    void clear();
+
+    /// Configures a key callback.
+    template<void (*Function)(Key, InputState)>
+    void setKeyCallback() const {
+
+        FOLK_GLFW_CALL(glfwSetKeyCallback, m_window_ptr, [](GLFWwindow*, int key, int, int state, int){
+            Function(keyCast(key), stateCast(state));
+        });
+    }
+
+    /// Removes currently bound key callback.
+    void clearKeyCallback() const;
+
+    /// Configures a mouse button callback.
+    template<void (*Function)(MouseButton, InputState)>
+    void setMouseButtonCallback() const {
+        FOLK_GLFW_CALL(glfwSetMouseButtonCallback, m_window_ptr, [](GLFWwindow*, int button, int state, int){
+            Function(mouseButtonCast(button), stateCast(state));
+        });
+    }
+
+    /// Removes currently bound mouse callback.
+    void clearMouseButtonCallback() const;
 
 private:
     GLFWwindow* m_window_ptr {nullptr};

@@ -13,7 +13,8 @@ using InputCodeIntType = INPUT_CODE_INT_TYPE;
 /// \brief \~english Possible key states.
 enum InputState : uint8_t {
     Release = 0,
-    Press = 1
+    Press = 1,
+    Repeat
 };
 
 } // namespace Folk

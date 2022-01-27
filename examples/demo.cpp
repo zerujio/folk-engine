@@ -85,7 +85,7 @@ Vec3 getMousePosition() {
     constexpr float width = 800;
     constexpr float height = 600;
 
-    auto coords = Cursor::getPosition();
+    auto coords = Input::Cursor::getPosition();
 
     Vec3 position {(float(coords.x) / width) * 8 * scale - 8 * scale / 2,
                    0.0f,

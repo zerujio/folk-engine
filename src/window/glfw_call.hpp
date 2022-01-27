@@ -5,9 +5,9 @@
 #ifndef SRC_WINDOW__GLFW_CALL_HPP
 #define SRC_WINDOW__GLFW_CALL_HPP
 
-#include <type_traits>
+#include "../utils/library_call.hpp"
 
-#include "GLFW/glfw3.h"
+#include <optional>
 
 namespace Folk::GLFW {
 
@@ -15,16 +15,9 @@ struct Error : public RuntimeError {
     using RuntimeError::RuntimeError;
 };
 
-void checkErrors(const char* file, int line, const char* function)
-{
-    const char* description {nullptr};
-
-    if (glfwGetError(&description) != GLFW_NO_ERROR)
-        throw Error(description, file, line, function);
+std::optional<const char*> getError();
 }
 
-#define FOLK_GLFW_CALL(expression) expression GLFW::checkErrors(__FILE__, __LINE__, __PRETTY_FUNCTION__);
-
-}
+#define FOLK_GLFW_CALL(function, ...) FOLK_C_LIBRARY_CALL(GLFW::getError, function, ##__VA_ARGS__)
 
 #endif //SRC_WINDOW__GLFW_CALL_HPP

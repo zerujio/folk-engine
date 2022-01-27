@@ -10,8 +10,20 @@ Key last_key = Key::Space;
 InputAction* action_ptr;
 
 void keyCallback(Key key, InputState state) {
-    std::cout << getKeyName(key) << ": " 
-              << ((state == InputState::Press) ? "press" : "release") << "\n";
+    const char* state_str;
+    switch (state) {
+        case InputState::Press:
+            state_str = "Press";
+            break;
+        case InputState::Release:
+            state_str = "Release";
+            break;
+        case InputState::Repeat:
+            state_str = "Repeat";
+            break;
+    }
+
+    std::cout << Input::getKeyName(key) << ": " << state_str << "\n";
 
     if (key == Key::Escape && state == InputState::Press) {
         Engine::exit();
@@ -38,18 +50,18 @@ void rebindCallback(InputState state) {
         remapping = false;
         if (!action_ptr->isBound(last_key)) {
             action_ptr->bind(last_key);
-            std::cout << getKeyName(last_key) << " bound\n";
+            std::cout << Input::getKeyName(last_key) << " bound\n";
         }
         else {
             action_ptr->unbind(last_key);
-            std::cout << getKeyName(last_key) << " unbound\n";
+            std::cout << Input::getKeyName(last_key) << " unbound\n";
         }
     }
 }
 
 void onClick(MouseButton mb, InputState state) {
     if (state == InputState::Release) {
-        auto pos = Cursor::getPosition();
+        auto pos = Input::Cursor::getPosition();
         std::cout << "pos= (" << pos.x << ", " << pos.y << ")\n";
     }
 }

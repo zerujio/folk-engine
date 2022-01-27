@@ -8,6 +8,8 @@
 
 namespace Folk {
 
+struct WindowManager;
+
 class WindowingSystem final {
 
     friend class EngineSingleton;
@@ -17,6 +19,9 @@ class WindowingSystem final {
 
     /// De-initialize the windowing library.
     static void shutDown();
+
+    /// Update input, invoke callbacks, etc...
+    static void pollEvents();
 
     /**
      * @brief Initializes/de-initializes the windowing library in RAII style.

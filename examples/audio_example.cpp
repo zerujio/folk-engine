@@ -2,7 +2,7 @@
 #include "folk/render.hpp"
 #include "folk/audio.hpp"
 #include "folk/input.hpp"
-#include "input.hpp"
+#include "folk/input.hpp"
 
 #include <cmath>
 

@@ -4,7 +4,7 @@
 #include "folk/render/visual_component.hpp"
 #include "folk/error.hpp"
 #include "folk/log.hpp"
-#include "input.hpp"
+#include "folk/input.hpp"
 
 // Esta función se llama antes de inicializar la escena
 void Folk::engineInit() {

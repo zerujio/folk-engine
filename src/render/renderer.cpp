@@ -29,11 +29,11 @@ Renderer::Renderer(ExceptionHandler& exc, WindowManager& win)
     bgfx::Init bgfx_init;
     bgfx_init.platformData.ndt = glfwGetX11Display();
     bgfx_init.platformData.nwh = 
-        (void*)(uintptr_t) glfwGetX11Window(window_mngr.windowPtr());
+        (void*)(uintptr_t) glfwGetX11Window(window_mngr.handle());
 
     auto wsize = window_mngr.getSize();
-    bgfx_init.resolution.width = wsize.width;
-    bgfx_init.resolution.height = wsize.height;
+    bgfx_init.resolution.width = wsize.x;
+    bgfx_init.resolution.height = wsize.y;
     bgfx_init.resolution.reset = BGFX_RESET_VSYNC;
     bgfx_init.callback = &bgfx_callback_handler;
 
@@ -44,7 +44,7 @@ Renderer::Renderer(ExceptionHandler& exc, WindowManager& win)
 
     // view_id = 0;
 	bgfx::setViewClear(view_id, BGFX_CLEAR_COLOR | BGFX_CLEAR_DEPTH);
-	bgfx::setViewRect(view_id, 0, 0, wsize.width, wsize.height);
+	bgfx::setViewRect(view_id, 0, 0, wsize.x, wsize.y);
 
     const bx::Vec3 at = {0.0f, 0.0f, 0.0f};
     const bx::Vec3 eye = {0.0f, 0.0f, 5.0f};
@@ -55,7 +55,7 @@ Renderer::Renderer(ExceptionHandler& exc, WindowManager& win)
     float proj_mat[16];
     bx::mtxProj(proj_mat, 
                 60.0f, 
-                float(wsize.width)/float(wsize.height),
+                float(wsize.x)/float(wsize.y),
                 0.1f,
                 100.0f,
                 bgfx::getCaps()->homogeneousDepth);
@@ -84,7 +84,7 @@ void Renderer::drawFrame(SceneManager& scene_mngr,
         bx::mtxLookAt(view_mtx, eye_, at_);
         bx::mtxProj(proj_mtx,
                     60.0f,
-                    float(wsize.width) / float(wsize.height),
+                    float(wsize.x) / float(wsize.y),
                     0.1f,
                     100.0f,
                     bgfx::getCaps()->homogeneousDepth);
@@ -103,7 +103,7 @@ void Renderer::drawFrame(SceneManager& scene_mngr,
         const auto& camera_comp = scene_mngr.registry().get<CameraComponent>(cam_entity);
         bx::mtxProj(proj_mtx, 
                     camera_comp.fovy,
-                    float(wsize.width) / float(wsize.height),
+                    float(wsize.x) / float(wsize.y),
                     camera_comp.near,
                     camera_comp.far,
                     bgfx::getCaps()->homogeneousDepth);
@@ -117,7 +117,7 @@ void Renderer::drawFrame(SceneManager& scene_mngr,
                                                     SceneGraphNode& transform,
                                                     const VisualComponent& visual)
         {
-            bgfx::setViewRect(view_id, 0, 0, wsize.width, wsize.height);
+            bgfx::setViewRect(view_id, 0, 0, wsize.x, wsize.y);
             bgfx::setViewTransform(view_id, view_mtx, proj_mtx);
 
             auto mesh = visual.visual->getMesh();

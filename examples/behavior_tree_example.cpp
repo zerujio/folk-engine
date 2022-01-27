@@ -7,7 +7,7 @@
 #include "folk/render.hpp"
 #include "folk/script.hpp"
 #include "folk/ai.hpp"
-#include "input.hpp"
+#include "folk/input.hpp"
 
 #include <chrono>
 

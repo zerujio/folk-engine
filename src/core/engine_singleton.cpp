@@ -10,6 +10,9 @@ namespace Folk {
 // EngineSingleton
 EngineSingleton::EngineSingleton(LogLevel level)
 {
+    // window close callback
+    m_game_window.setCloseCallback<&EngineSingleton::exit>();
+
     // initialize engine
     try {
         Folk::AudioManager::connectRegistry(scene.registry());
@@ -43,7 +46,7 @@ try {
 
 void EngineSingleton::exit() noexcept
 {
-    exit_flag = true;
+    instance().exit_flag = true;
 }
 
 void EngineSingleton::mainLoop() noexcept
@@ -68,15 +71,15 @@ void EngineSingleton::update(std::chrono::nanoseconds delta) {
 
     // update window / process input
     {
-        auto monitor_id = perf_monitor.addItem("Input processing");
-        window.update();
+        auto monitor_id = perf_monitor.addItem("Event polling (windowing system)");
+        WindowingSystem::pollEvents();
         perf_monitor.stop(monitor_id);
     }
 
     // update scene
     {
         auto id = perf_monitor.addItem("Scene update");
-        scene.updateScene(input_manager, m_exception_handler, delta);
+        scene.updateScene(m_input_queue, m_exception_handler, delta);
         perf_monitor.stop(id);
     }
 
@@ -87,7 +90,7 @@ void EngineSingleton::update(std::chrono::nanoseconds delta) {
             audio.update(m_exception_handler, scene, delta);
         } catch (...) {
             Log::write(LogLevel::Warning)
-                << "An error ocurred during audio processing phase:\n";
+                << "An error occurred during audio processing phase:\n";
             m_exception_handler.catchException();
         }
         perf_monitor.stop(id);
@@ -100,7 +103,7 @@ void EngineSingleton::update(std::chrono::nanoseconds delta) {
             render.drawFrame(scene, delta);
         } catch (...) {
             Log::write(LogLevel::Warning)
-                << "An error ocurred during draw phase:\n";
+                << "An error occurred during draw phase:\n";
             m_exception_handler.catchException();
         }
         perf_monitor.stop(id);

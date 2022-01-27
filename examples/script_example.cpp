@@ -6,7 +6,7 @@
 #include "folk/script.hpp"
 #include "folk/input.hpp"
 #include "folk/render.hpp"
-#include "input.hpp"
+#include "folk/input.hpp"
 
 struct CameraScript final : public Folk::Script {
 

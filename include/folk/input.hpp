@@ -15,7 +15,6 @@ namespace Folk
 {
 
 /*========== getInput ==========*/
-
 struct Input final {
     /**
      * @brief Poll the state of a key in the current frame.
@@ -45,45 +44,30 @@ struct Input final {
     static InputState get(const InputAction&);
 
     /// Name of a key in US ANSI layout
-    static const char* getKeyName(const Key);
+    static const char* getKeyName(Key);
+
+    /// Cursor related functions
+    struct Cursor final {
+        Cursor() = delete;
+
+        /// Consulta la posición del cursor.
+        /**
+         * \return la posición del cursor en coordenadas de la pantalla, con origen en la
+         * esquina superior izquierda y medida en pixeles.
+         */
+        static Vec2d getPosition();
+
+        /// Cambia la posición del cursor.
+        static void setPosition(Vec2d);
+    };
+
+private:
+    friend class EngineSingleton;
+
+    struct ScopedInitializer;
 };
 
 /*=============================== Mouse ======================================*/
-
-namespace Cursor {
-
-/// Consulta la posición del cursor.
-/**
- * \return la posición del cursor en coordenadas de la pantalla, con origen en la
- * esquina superior izquierda y medida en pixeles.
- */
-Vec2d getPosition();
-
-/// Cambia la posición del cursor.
-void setPosition(Vec2d);
-
-enum class Mode {Normal, Hidden, Disabled};
-
-/// Cambia el modo del cursor.
-/**
- * - Normal: funcionamiento estándar.
- * - Hidden: igual al modo normal, pero el cursor no es visible.
- * - Disabled: movimiento ilimitado, cursor invisible y re-centrado 
- *  automáticamente. Sirve para implementar _mouse look_.
-*/
-void setMode(Mode);
-
-/// Consulta el modo del cursor.
-Mode getMode();
-
-/// Consulta si la plataforma soporta el modo _raw motion_ (sin escalamiento ni aceleración).
-bool isRawMotionSupported();
-
-void setRawMotionEnabled(bool);
-
-bool getRawMotionEnabled();
-
-} // namespace Mouse
 
 } // namespace folk
 

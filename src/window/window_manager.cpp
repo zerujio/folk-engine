@@ -1,24 +1,18 @@
 #include "window_manager.hpp"
 
-#include "folk/error.hpp"
 #include "folk/core/engine.hpp"
-#include "../input/cast.hpp"
 
-#include "../core/engine_singleton.hpp"
+#include "../window/glfw_call.hpp"
 
-#include <sstream>
+#include "GLFW/glfw3.h"
 
 namespace Folk {
 
-void glfwErrorCallback(int code, const char* message) {
-    Log::error() << "GLFW error " << code << ": " << message;
-}
-
-WindowManager::WindowManager(const char* window_name) :
-        m_window_ptr(glfwCreateWindow(s_default_window_size.x, s_default_window_size.y, window_name, nullptr, nullptr))
+WindowManager::WindowManager(const char* window_name)
 {
-    if (!m_window_ptr)
-        throw FOLK_RUNTIME_ERROR("Window creation failed");
+    FOLK_GLFW_CALL(glfwWindowHint, GLFW_RESIZABLE, GLFW_FALSE);
+    FOLK_GLFW_CALL(glfwWindowHint, GLFW_CLIENT_API, GLFW_NO_API);
+    m_window_ptr = FOLK_GLFW_CALL(glfwCreateWindow, s_default_window_size.x, s_default_window_size.y, window_name, nullptr, nullptr);
 }
 
 WindowManager::WindowManager(const std::string &window_name) : WindowManager(window_name.c_str()) {}
@@ -45,7 +39,7 @@ WindowManager::~WindowManager() {
 }
 
 void WindowManager::destroyWindow() {
-    glfwDestroyWindow(m_window_ptr);
+    FOLK_GLFW_CALL(glfwDestroyWindow, m_window_ptr);
     m_window_ptr = nullptr;
 }
 
@@ -58,7 +52,7 @@ bool WindowManager::isNull() const {
 }
 
 void WindowManager::setTitle(const char *title) const {
-    glfwSetWindowTitle(m_window_ptr, title);
+    FOLK_GLFW_CALL(glfwSetWindowTitle, m_window_ptr, title);
 }
 
 void WindowManager::setTitle(const std::string &title) const {
@@ -66,16 +60,24 @@ void WindowManager::setTitle(const std::string &title) const {
 }
 
 void WindowManager::setSize(Vector2<int> size) const {
-    glfwSetWindowSize(m_window_ptr, size.x, size.y);
+    FOLK_GLFW_CALL(glfwSetWindowSize, m_window_ptr, size.x, size.y);
 }
 
 Vector2<int> WindowManager::getSize() const {
     int x, y;
-    glfwGetWindowSize(m_window_ptr, &x, &y);
+    FOLK_GLFW_CALL(glfwGetWindowSize, m_window_ptr, &x, &y);
     return {x, y};
 }
 
-#if FOLK_OPENGL
+GLFWwindow *WindowManager::handle() const {
+    return m_window_ptr;
+}
+
+void WindowManager::clearCloseCallback() const {
+    FOLK_GLFW_CALL(glfwSetWindowCloseCallback, m_window_ptr, nullptr);
+}
+
+#if 0
 void GLAPIENTRY messageCallback(GLenum source, GLenum type, GLuint id, 
                                 GLenum severity, GLsizei length,
                                 const GLchar* message, const void* userParam)

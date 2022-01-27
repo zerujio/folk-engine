@@ -45,10 +45,13 @@ class DeviceManager {
 
 public:
 
-    // open default device
+    /// open default device
     DeviceManager();
-    // take ownership of device 
+
+    /// take ownership of device
     DeviceManager(ALCdevice* device) : m_device(device) {}
+
+    /// Close owned device, if any.
     ~DeviceManager();
 
     DeviceManager(const DeviceManager&) = delete;
