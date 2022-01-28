@@ -1,7 +1,9 @@
 set(SOURCES
-    audio_manager.cpp
-    drlib_impl.cpp
-    open_al.cpp
-    open_alc.cpp
-    audio_clip.cpp
-    audio_source_component.cpp)
+        audio_manager.cpp
+        drlib_impl.cpp
+        al.cpp
+        al_buffer.cpp
+        al_source.cpp
+        alc.cpp
+        audio_clip.cpp
+        audio_source_component.cpp)

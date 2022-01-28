@@ -1,8 +1,8 @@
-#include "folk/audio/open_al.hpp"
+#include "folk/audio/al.hpp"
 
 namespace Folk::al {
 
-const char* ALError::errorString(const ALenum error) {
+const char* errorString(const ALenum error) {
     switch (error)
     {
     case AL_NO_ERROR:
@@ -28,10 +28,11 @@ const char* ALError::errorString(const ALenum error) {
     }
 }
 
-void checkErrors(const char* file, unsigned int line, const char* func) {
+std::optional<const char*> getError() {
     auto err = alGetError();
-
     if (err != AL_NO_ERROR)
-        throw ALError(err, file, line, func);
+        return {errorString(err)};
+    return {};
 }
+
 } // namespace al

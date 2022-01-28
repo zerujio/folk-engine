@@ -15,9 +15,7 @@ EngineSingleton::EngineSingleton(LogLevel level)
 
     // initialize engine
     try {
-        Folk::AudioManager::connectRegistry(scene.registry());
         engineInit();
-
     } catch (...) {
         m_exception_handler.catchException();
         throw std::runtime_error("engineInit() error");

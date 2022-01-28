@@ -93,8 +93,7 @@ std::shared_ptr<AudioClip> AudioClip::createFromFile(std::filesystem::path file)
     return ptr;
 }
 
-AudioClip::AudioClip(const AudioBuffer& audio_buffer) 
-: buffer_mngr(al::BufferManager::createId()) 
+AudioClip::AudioClip(const AudioBuffer& audio_buffer)
 {
     ALint format;
     if (audio_buffer.channels == 1)
@@ -105,19 +104,6 @@ AudioClip::AudioClip(const AudioBuffer& audio_buffer)
         throw FOLK_RUNTIME_ERROR("Too many channels in audio clip");
     
     buffer_mngr.copyData(format, audio_buffer.data, audio_buffer.size(), audio_buffer.sample_rate);
-}
-
-AudioClip::~AudioClip() {
-    auto err = buffer_mngr.destroy();
-
-    if (err == AL_INVALID_OPERATION)
-        Log::error() << "~AudioClip: buffer is still in use and cannot be deleted or no OpenAL context exists!";
-
-    else if (err == AL_INVALID_NAME)
-        Log::error() << "~AudioClip: buffer id is invalid, can't delete";
-
-    else if (err != AL_NO_ERROR)
-        Log::error() << "~AudioClip: unexpected error during buffer deletion";
 }
 
 } // namespace Folk

@@ -14,7 +14,7 @@ using InputCodeIntType = INPUT_CODE_INT_TYPE;
 enum InputState : uint8_t {
     Release = 0,
     Press = 1,
-    Repeat
+    Repeat = 2
 };
 
 } // namespace Folk

@@ -8,34 +8,32 @@ std::shared_ptr<AudioClip> AudioSourcePtr::getAudioClip() const {
 }
 
 void AudioSourcePtr::setAudioClip(std::shared_ptr<AudioClip> new_clip) const {
-    ref.audio_clip = new_clip;
-    AL_CALL(alSourcei, ref.source_handle, AL_BUFFER, ref.audio_clip->buffer_mngr.id());
+    ref.audio_clip = std::move(new_clip);
+    ref.source_manager.setBuffer(ref.audio_clip->buffer_mngr);
 }
 
 bool AudioSourcePtr::getLooping() const {
-    ALint ret;
-    AL_CALL(alGetSourcei, ref.source_handle, AL_LOOPING, &ret);
-    return ret;
+    return ref.source_manager.getLooping();
 }
 
 void AudioSourcePtr::setLooping(bool v) const {
-    AL_CALL(alSourcei, ref.source_handle, AL_LOOPING, v);
+    return ref.source_manager.setLooping(v);
 }
 
 void AudioSourcePtr::play() const {
-    AL_CALL(alSourcePlay, ref.source_handle);
+    ref.source_manager.play();
 }
 
 void AudioSourcePtr::pause() const {
-    AL_CALL(alSourcePause, ref.source_handle);
+    ref.source_manager.pause();
 }
 
 void AudioSourcePtr::stop() const {
-    AL_CALL(alSourceStop, ref.source_handle);
+    ref.source_manager.stop();
 }
 
 void AudioSourcePtr::rewind() const {
-    AL_CALL(alSourceRewind, ref.source_handle);
+    ref.source_manager.rewind();
 }
 
 } // namespace Folk

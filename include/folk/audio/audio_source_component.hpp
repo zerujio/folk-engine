@@ -3,6 +3,7 @@
 
 #include "folk/scene/component_ptr.hpp"
 #include "folk/audio/audio_clip.hpp"
+#include "folk/audio/al_source.hpp"
 
 #include <memory>
 
@@ -15,8 +16,8 @@ struct AudioSourceComponent final {
     using ptr_type = AudioSourcePtr;
     static constexpr const char* type_name = "AudioSource";
 
-    std::shared_ptr<AudioClip> audio_clip;
-    ALuint source_handle;
+    std::shared_ptr<AudioClip> audio_clip {};
+    al::SourceManager source_manager {};
 };
 
 struct AudioSourcePtr final : public ComponentPtr<AudioSourceComponent> {
@@ -24,13 +25,13 @@ struct AudioSourcePtr final : public ComponentPtr<AudioSourceComponent> {
     using ComponentPtr::ComponentPtr;
 
     /// Puntero al AudioClip en uso
-    std::shared_ptr<AudioClip> getAudioClip() const;
+    [[nodiscard]] std::shared_ptr<AudioClip> getAudioClip() const;
 
     /// Configura el clip de audio a reproducir
     void setAudioClip(std::shared_ptr<AudioClip> audio_clip) const;
 
     /// Consulta si esta fuente está configurada para repetirse.
-    bool getLooping() const;
+    [[nodiscard]] bool getLooping() const;
 
     /// Configura esta fuente para repetir el clip de audio.
     void setLooping(bool) const;

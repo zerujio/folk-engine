@@ -6,7 +6,7 @@
 #include "../scene/scene_manager.hpp"
 #include "folk/core/exception_handler.hpp"
 
-#include "open_alc.hpp"
+#include "alc.hpp"
 
 #include <entt/entt.hpp>
 
@@ -26,9 +26,7 @@ class AudioManager final {
 public:
     static const char* name() {return "AudioManager";}
 
-    AudioManager(const ExceptionHandler&);
-
-    static void connectRegistry(entt::registry&);
+    explicit AudioManager(const ExceptionHandler&);
 
     void update(const ExceptionHandler&, SceneManager&, std::chrono::duration<double>) const noexcept;
 };

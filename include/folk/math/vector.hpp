@@ -35,7 +35,7 @@ struct Vec3 final {
 
     constexpr Vec3() = default;
     constexpr Vec3(const float x_, const float y_, const float z_) noexcept : x(x_), y(y_), z(z_) {}
-    explicit constexpr Vec3(const bx::Vec3 v) noexcept : x(v.x), y(v.y), z(v.z) {}
+    constexpr Vec3(const bx::Vec3 v) noexcept : x(v.x), y(v.y), z(v.z) {}
 
     template<float (*F)(float, float)>
     Vec3& map(const float k) {
@@ -72,6 +72,14 @@ struct Vec3 final {
 
     explicit constexpr operator bx::Vec3() const {
         return {x, y, z};
+    }
+
+    operator const float*() const {
+        return reinterpret_cast<const float*>(this);
+    }
+
+    operator float*() {
+        return reinterpret_cast<float *>(this);
     }
 
     [[nodiscard]] Vec3 normalized() const {
