@@ -1,14 +1,9 @@
+#include "renderer.hpp"
+
 #include "folk/render/visual_component.hpp"
 #include "folk/scene/transform_component.hpp"
 
 #include "../core/engine_singleton.hpp"
-#include "../window/window_manager.hpp"
-#include "../render/shader_loader.hpp"
-
-
-#include "common.hpp"
-#include "renderer.hpp"
-#include "default_shader.hpp"
 
 #include <bgfx/bgfx.h>
 #include <bgfx/platform.h>
@@ -20,7 +15,7 @@
 
 namespace Folk {
 
-Renderer::Renderer(ExceptionHandler& exc, WindowManager& win)
+Renderer::Renderer(ExceptionHandler& exc, const WindowManager& win)
     : bgfx_callback_handler(exc), window_mngr(win)
 {
     // bgfx
@@ -28,12 +23,11 @@ Renderer::Renderer(ExceptionHandler& exc, WindowManager& win)
 
     bgfx::Init bgfx_init;
     bgfx_init.platformData.ndt = glfwGetX11Display();
-    bgfx_init.platformData.nwh = 
-        (void*)(uintptr_t) glfwGetX11Window(window_mngr.handle());
+    bgfx_init.platformData.nwh = (void*)(uintptr_t) glfwGetX11Window(window_mngr.handle());
 
-    auto wsize = window_mngr.getSize();
-    bgfx_init.resolution.width = wsize.x;
-    bgfx_init.resolution.height = wsize.y;
+    auto window_size = window_mngr.getSize();
+    bgfx_init.resolution.width = window_size.x;
+    bgfx_init.resolution.height = window_size.y;
     bgfx_init.resolution.reset = BGFX_RESET_VSYNC;
     bgfx_init.callback = &bgfx_callback_handler;
 
@@ -42,9 +36,9 @@ Renderer::Renderer(ExceptionHandler& exc, WindowManager& win)
     if (!bgfx::init(bgfx_init))
         throw FOLK_CRITICAL_ERROR("bgfx initialization failed");
 
-    // view_id = 0;
+    // view_id = 0;bgfx_callback_handler
 	bgfx::setViewClear(view_id, BGFX_CLEAR_COLOR | BGFX_CLEAR_DEPTH);
-	bgfx::setViewRect(view_id, 0, 0, wsize.x, wsize.y);
+	bgfx::setViewRect(view_id, 0, 0, window_size.x, window_size.y);
 
     const bx::Vec3 at = {0.0f, 0.0f, 0.0f};
     const bx::Vec3 eye = {0.0f, 0.0f, 5.0f};
@@ -54,8 +48,8 @@ Renderer::Renderer(ExceptionHandler& exc, WindowManager& win)
 
     float proj_mat[16];
     bx::mtxProj(proj_mat, 
-                60.0f, 
-                float(wsize.x)/float(wsize.y),
+                60.0f,
+                float(window_size.x) / float(window_size.y),
                 0.1f,
                 100.0f,
                 bgfx::getCaps()->homogeneousDepth);
@@ -68,8 +62,7 @@ Renderer::~Renderer() {
     bgfx::shutdown();
 }
 
-void Renderer::drawFrame(SceneManager& scene_mngr, 
-                         std::chrono::duration<double> delta)
+void Renderer::drawFrame(SceneManager& scene_mngr, std::chrono::duration<double> delta)
 {
     auto wsize = window_mngr.getSize();
 
@@ -111,11 +104,10 @@ void Renderer::drawFrame(SceneManager& scene_mngr,
     
     bgfx::touch(view_id);
 
-    auto reg_view = scene_mngr.registry().view<SceneGraphNode, 
-                                               const VisualComponent>();
-    reg_view.each([this, wsize, view_mtx, proj_mtx](const auto entity,
-                                                    SceneGraphNode& transform,
-                                                    const VisualComponent& visual)
+    auto reg_view = scene_mngr.registry().view<SceneGraphNode, const VisualComponent>();
+    reg_view.each(
+            [this, wsize, view_mtx, proj_mtx]
+            (const auto entity, SceneGraphNode& transform, const VisualComponent& visual)
         {
             bgfx::setViewRect(view_id, 0, 0, wsize.x, wsize.y);
             bgfx::setViewTransform(view_id, view_mtx, proj_mtx);

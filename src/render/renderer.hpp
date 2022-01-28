@@ -28,13 +28,12 @@ private:
     const bgfx::ViewId view_id {0};
 
     BGFXCallbackHandler bgfx_callback_handler;
-    WindowManager& window_mngr;
+    const WindowManager& window_mngr;
 
-    Renderer(ExceptionHandler&, WindowManager&);
+    Renderer(ExceptionHandler&, const WindowManager&);
     ~Renderer();
 
-    void drawFrame(SceneManager& scene,
-                   std::chrono::duration<double>);
+    void drawFrame(SceneManager& scene, std::chrono::duration<double>);
 
     static void drawPerfMon(const PerformanceMonitor&, DeltaClock::milliseconds_double) noexcept;
 };

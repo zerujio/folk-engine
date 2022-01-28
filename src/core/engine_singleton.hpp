@@ -69,7 +69,7 @@ FOLK_SINGLETON_CLASS_FINAL(EngineSingleton) {
 
     /// Windowing
     WindowingSystem::ScopedInitializer windowing_system_init {};
-    WindowManager m_game_window {"Unnamed Folk Engine application"};
+    const WindowManager m_game_window {"Unnamed Folk Engine application"};
 
     /// Input handling
     InputEventQueue m_input_queue {};
@@ -89,9 +89,6 @@ FOLK_SINGLETON_CLASS_FINAL(EngineSingleton) {
 public:
     explicit EngineSingleton(LogLevel level);
     ~EngineSingleton();
-
-    /// Change current scene. Argument will be left in a moved from state.
-    void changeScene(Scene&&);
 
     void mainLoop() noexcept;
 
