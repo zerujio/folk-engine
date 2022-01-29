@@ -19,10 +19,10 @@ struct VisualComponent final {
     static constexpr const char* type_name = "Visual";
 
     /// Visual que determina el material y la malla.
-    std::shared_ptr<Visual> visual;
+    std::shared_ptr<Visual> visual {Visual::create()};
 
     /// Construye un componente con una malla vacía y el shader predeterminado.
-    VisualComponent() : visual(Visual::create()) {}
+    VisualComponent() = default;
 
     /// Construye un nuevo componente que utiliza el Visual referenciado.
     VisualComponent(std::shared_ptr<Visual> visual_) : visual(visual_) {}
@@ -33,6 +33,7 @@ public:
     using ComponentPtr::ComponentPtr;
 
     std::shared_ptr<Visual>& visual() { return ref.visual; }
+
     void setVisual(std::shared_ptr<Visual>& v) { ref.visual = v; }
 };
 

@@ -9,10 +9,6 @@
 #include "../debug/performance_monitor.hpp"
 #include "../utils/delta_clock.hpp"
 
-#include "bgfx_callback_handler.hpp"
-
-#include <bgfx/bgfx.h>
-
 #include <map>
 
 namespace Folk {
@@ -25,9 +21,6 @@ public:
 private:
     friend class EngineSingleton;
 
-    const bgfx::ViewId view_id {0};
-
-    BGFXCallbackHandler bgfx_callback_handler;
     const WindowManager& window_mngr;
 
     Renderer(ExceptionHandler&, const WindowManager&);

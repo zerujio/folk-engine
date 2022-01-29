@@ -8,4 +8,4 @@ set(SOURCES
     default_shader.cpp
     shader_loader.cpp
     camera_component.cpp
-    bgfx_callback_handler.cpp)
+        )

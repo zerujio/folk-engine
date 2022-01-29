@@ -2,8 +2,6 @@
 #include "folk/scene/entity_handle.hpp"
 #include "folk/scene/scene_graph_node.hpp"
 
-#include "bx/math.h"
-
 namespace Folk
 {
 

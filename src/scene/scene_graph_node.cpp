@@ -1,7 +1,5 @@
 #include "folk/scene/scene_graph_node.hpp"
 
-#include <bx/math.h>
-
 namespace Folk {
 
 void SceneGraphNode::changeParent(SceneGraphNode* new_parent_ptr) {

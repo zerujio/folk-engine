@@ -2,8 +2,6 @@
 
 #include "folk/audio/audio_source_component.hpp"
 
-#include <bx/math.h>
-
 namespace Folk {
 
 AudioManager::AudioManager(const ExceptionHandler &exception_handler)

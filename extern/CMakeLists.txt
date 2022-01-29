@@ -27,15 +27,8 @@ target_include_directories(entt INTERFACE entt/single_include)
 # cxxopts
 add_subdirectory(cxxopts)
 
-# bgfx
-set(BGFX_OPENGL_VERSION ${FOLK_OPENGL_VERSION})
-add_subdirectory(bgfx.cmake)
-add_library(bgfx_interface INTERFACE)
-target_link_libraries(bgfx_interface INTERFACE bgfx bx bimg)
-
 # OpenAL
 add_subdirectory(openal-soft)
-
 
 # dr_libs
 add_library(dr_libs INTERFACE)

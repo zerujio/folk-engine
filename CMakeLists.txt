@@ -10,9 +10,6 @@ find_package(Doxygen)
 # external dependencies
 add_subdirectory(extern)
 
-# shaderc
-include(shaderc.cmake)
-
 # configure engine library
 add_subdirectory(src)
 

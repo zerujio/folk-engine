@@ -6,9 +6,6 @@
 namespace Folk
 {
 
-const bgfx::ShaderHandle loadShaderFile(const char* filename);
-const bgfx::ProgramHandle buildProgram(const bgfx::ShaderHandle vert, const bgfx::ShaderHandle frag);
-
 } // namespace Folk
 
 
