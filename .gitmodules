@@ -10,9 +10,6 @@
 [submodule "extern/cxxopts"]
 	path = extern/cxxopts
 	url = git@github.com:jarro2783/cxxopts.git
-[submodule "extern/bgfx.cmake"]
-	path = extern/bgfx.cmake
-	url = git@github.com:bkaradzic/bgfx.cmake.git
 [submodule "extern/openal-soft"]
 	path = extern/openal-soft
 	url = git@github.com:kcat/openal-soft.git
