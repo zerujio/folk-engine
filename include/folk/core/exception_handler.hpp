@@ -30,9 +30,9 @@ public:
     {}
 
     /// Set the function to be invoked whenever a critical error is handled.
-    template<class Function, class... Args>
-    void setCriticalErrorCallback(Args&&... args) {
-        m_critical_error_callback.connect<Function>(std::forward<Args>(args)...);
+    template<auto Function, class T>
+    void setCriticalErrorCallback(T&& arg) {
+        m_critical_error_callback.connect<Function>(arg);
     }
     
     /// Handle the current exception.

@@ -19,6 +19,9 @@ add_subdirectory(src)
 # examples
 add_subdirectory(examples)
 
+# tests
+add_subdirectory(test)
+
 # documentation
 if(DOXYGEN_FOUND)
     set(DOXYGEN_USE_MDFILE_AS_MAINPAGE README.md)

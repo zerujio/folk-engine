@@ -60,6 +60,8 @@ namespace Folk
         friend class LogInitializer;
 
     public:
+        Log() = delete;
+
         /// Begin writing a message to the log with the given LogLevel.
         static ConcurrentStreamWriter write(LogLevel level);
 
