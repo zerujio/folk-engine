@@ -7,8 +7,8 @@
 #include "core/log_thread.hpp"
 #include "folk/core/exception_handler.hpp"
 
-void inc(int* px) {
-    ++(*px);
+void inc(int& px) {
+    px++;
 }
 
 TEST_CASE("ExceptionHandler")
@@ -47,7 +47,7 @@ TEST_CASE("ExceptionHandler")
 
     SECTION("Critical error callback") {
         int x {0};
-        handler.setCriticalErrorCallback<inc>(&x);
+        handler.setCriticalErrorCallback<inc>(x);
 
         handler.throwException<CriticalError>("what", "file", 0, "function");
         REQUIRE(x == 1);
