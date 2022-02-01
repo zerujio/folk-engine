@@ -8,41 +8,17 @@
 
 namespace Folk {
 
-struct WindowManager;
-
-class WindowingSystem final {
-
-    friend class EngineSingleton;
+struct WindowingSystem final {
 
     /// Initialize the windowing library.
-    static void startUp();
+    static void initialize();
 
     /// De-initialize the windowing library.
-    static void shutDown();
+    static void terminate();
 
     /// Update input, invoke callbacks, etc...
     static void pollEvents();
 
-    /**
-     * @brief Initializes/de-initializes the windowing library in RAII style.
-     */
-    struct ScopedInitializer final {
-        /// Calls startUp();
-        ScopedInitializer() {
-            startUp();
-        }
-
-        /// Calls shutDown();
-        ~ScopedInitializer() {
-            shutDown();
-        }
-
-        ScopedInitializer(const ScopedInitializer &) = delete;
-        ScopedInitializer& operator=(const ScopedInitializer &) = delete;
-    };
-
-public:
-    WindowingSystem() = delete;
 };
 
 } // namespace Folk

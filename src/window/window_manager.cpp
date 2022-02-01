@@ -1,23 +1,15 @@
-#include "window_manager.hpp"
+#include "folk/window/window_manager.hpp"
 
 #include "folk/core/engine.hpp"
-
-#include "../window/glfw_call.hpp"
-
-#include "GLFW/glfw3.h"
 
 namespace Folk {
 
 WindowManager::WindowManager(const char* window_name)
 {
-    FOLK_GLFW_CALL(glfwWindowHint, GLFW_RESIZABLE, GLFW_FALSE);
-    FOLK_GLFW_CALL(glfwWindowHint, GLFW_CLIENT_API, GLFW_NO_API);
     m_window_ptr = FOLK_GLFW_CALL(glfwCreateWindow, s_default_window_size.x, s_default_window_size.y, window_name, nullptr, nullptr);
 }
 
 WindowManager::WindowManager(const std::string &window_name) : WindowManager(window_name.c_str()) {}
-
-WindowManager::WindowManager(GLFWwindow *window_ptr) : m_window_ptr(window_ptr) {}
 
 WindowManager::WindowManager(WindowManager &&other) noexcept : m_window_ptr(other.m_window_ptr) {
     other.m_window_ptr = nullptr;
@@ -59,11 +51,11 @@ void WindowManager::setTitle(const std::string &title) const {
     setTitle(title.c_str());
 }
 
-void WindowManager::setSize(Vector2<int> size) const {
+void WindowManager::setSize(Vec2i size) const {
     FOLK_GLFW_CALL(glfwSetWindowSize, m_window_ptr, size.x, size.y);
 }
 
-Vector2<int> WindowManager::getSize() const {
+Vec2i WindowManager::getSize() const {
     int x, y;
     FOLK_GLFW_CALL(glfwGetWindowSize, m_window_ptr, &x, &y);
     return {x, y};

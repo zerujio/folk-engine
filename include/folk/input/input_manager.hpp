@@ -6,11 +6,11 @@
 #define SRC_INPUT__INPUT_HANDLER_HPP
 
 #include "folk/input/input_code.hpp"
-#include "../window/window_manager.hpp"
-#include "../window/glfw_call.hpp"
+#include "folk/window/window_manager.hpp"
+#include "folk/window/glfw_call.hpp"
 #include "cast.hpp"
 
-#include "GLFW/glfw3.h"
+#include <GLFW/glfw3.h>
 
 namespace Folk {
 

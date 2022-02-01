@@ -2,7 +2,7 @@
 // Created by sergio on 24-01-22.
 //
 
-#include "input_manager.hpp"
+#include "folk/input/input_manager.hpp"
 
 namespace Folk {
 

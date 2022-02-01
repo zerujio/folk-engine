@@ -2,8 +2,6 @@
 
 #include "shader_loader.hpp"
 
-#include "common.hpp"
-
 #include <fstream>
 
 namespace Folk

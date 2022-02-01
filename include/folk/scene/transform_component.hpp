@@ -42,7 +42,7 @@ public:
     void scale(const Vec3&);
 
     /// Matriz de transformación local.
-    [[nodiscard]] const Matrix4f& transformMatrix();
+    [[nodiscard]] const Mat4& transformMatrix();
 };
 
 using TransformComponent = SceneGraphNode;

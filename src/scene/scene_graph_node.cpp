@@ -1,5 +1,7 @@
 #include "folk/scene/scene_graph_node.hpp"
 
+#include "glm/gtc/matrix_transform.hpp"
+
 namespace Folk {
 
 void SceneGraphNode::changeParent(SceneGraphNode* new_parent_ptr) {
@@ -33,7 +35,7 @@ SceneGraphNode* SceneGraphNode::findChild(const char* name) const {
     return nullptr;
 }
 
-const Matrix4f& SceneGraphNode::transformMatrix() {
+const Mat4& SceneGraphNode::transformMatrix() {
     if (!m_transform.is_mtx_valid)
         updateTransformMatrix();
     
@@ -48,35 +50,22 @@ void SceneGraphNode::invalidateMtxCache() {
 }
 
 void SceneGraphNode::updateTransformMatrix() {
-    float a[16], b[16], c[16];
+    // identity matrix
+    Mat4 transform {1.0f};
     
     // scale
-    bx::mtxScale(a, m_transform.scale.x, 
-                    m_transform.scale.y, 
-                    m_transform.scale.z);
+    glm::scale(transform, m_transform.scale);
     
     // rotation
-    bx::mtxRotateY(b, m_transform.rotation.y);
-    bx::mtxMul(c, a, b);
-
-    bx::mtxRotateZ(a, m_transform.rotation.z);
-    bx::mtxMul(b, c, a);
-
-    bx::mtxRotateX(c, m_transform.rotation.x);
-    bx::mtxMul(a, b, c);
+    glm::rotate(transform, m_transform.rotation.y, {.0f, 1.0f, .0f});
+    glm::rotate(transform, m_transform.rotation.z, {.0f, .0f, 1.0f});
+    glm::rotate(transform, m_transform.rotation.x, {1.0f, .0f, .0f});
 
     // position
-    bx::mtxTranslate(b, m_transform.position.x, 
-                        m_transform.position.y, 
-                        m_transform.position.z);
+    glm::translate(transform, m_transform.position);
     
-    if (m_parent_ptr) {
-        // c = scale * rotation * position
-        bx::mtxMul(c, a, b);
-        bx::mtxMul(m_transform.matrix, c, m_parent_ptr->transformMatrix());
-    
-    } else
-        bx::mtxMul(m_transform.matrix, a, b);
+    if (m_parent_ptr)
+        transform *= m_parent_ptr->transformMatrix();
 
     m_transform.is_mtx_valid = true;
 }

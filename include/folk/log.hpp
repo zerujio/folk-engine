@@ -1,8 +1,11 @@
 #ifndef FOLK_CORE__LOG_HPP
 #define FOLK_CORE__LOG_HPP
 
+#include <thread>
 #include <mutex>
+#include <condition_variable>
 #include <iostream>
+#include <sstream>
 
 namespace Folk
 {
@@ -49,17 +52,10 @@ namespace Folk
         }
     };
 
-    struct LogData;
+    template<class C> class ScopedInitializer;
 
-    class Log final {
-        static LogLevel s_level;    // LogLevel
-        static LogData* s_data;     // dynamically allocated data (i.e. buffers)
-        static std::mutex s_mutex;
+    struct Log {
 
-        friend class LogThread;
-        friend class LogInitializer;
-
-    public:
         Log() = delete;
 
         /// Begin writing a message to the log with the given LogLevel.
@@ -69,6 +65,46 @@ namespace Folk
         static auto message() { return write(LogLevel::Message); }
         static auto warning() { return write(LogLevel::Warning); }
         static auto error() { return write(LogLevel::Error); }
+
+    private:
+
+        friend class ScopedInitializer<Log>;
+
+        struct Buffer {
+            std::stringstream stream {};
+            std::mutex mutex {};
+        };
+
+        static void initialize(Log::Buffer& out_buf, Log::Buffer& err_buf);
+        static void terminate() noexcept;
+
+        static void main();
+        static void printBuffer(Buffer& buffer, std::ostream& out);
+
+        static LogLevel s_level;
+        static std::thread s_thread;
+        static std::mutex s_mutex;
+        static std::condition_variable s_condition;
+        static bool s_terminate_flag;
+        static bool s_wake_up_flag;
+        static Buffer* s_out_buf_ptr;
+        static Buffer* s_err_buf_ptr;
+    };
+
+    template<>
+    struct ScopedInitializer<Log> {
+
+        ScopedInitializer();
+        ~ScopedInitializer() noexcept;
+
+        ScopedInitializer(const ScopedInitializer&) = delete;
+        ScopedInitializer& operator=(const ScopedInitializer&) = delete;
+
+        void wakeUp();
+
+    private:
+        Log::Buffer out_buf {};
+        Log::Buffer err_buf {};
     };
 
 } // namespace Folk

@@ -35,12 +35,14 @@ auto libraryCall(const char* file, int line, const char* calling_function, Args&
 
     if constexpr (std::is_void_v<decltype(function(args...))>) {
         // void return type
+        getError();
         function(args...);
         auto error = getError();
         if (error)
             throw CLibraryError(*error, file, line, calling_function);
 
     } else {
+        getError();
         auto value = function(args...);
         auto error = getError();
         if (error)

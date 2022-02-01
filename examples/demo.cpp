@@ -57,7 +57,7 @@ struct IsNear final {
     Folk::BehaviorTreeStatus update(Folk::EntityHandle entity, Folk::FloatDelta delta) const {
         auto transform = entity.getComponent<Folk::TransformComponent>().value();
 
-        if ((target - transform.position()).lengthSquared() <= distance * distance)
+        if (glm::length(target - transform.position()) <= distance)
             return Folk::BehaviorTreeStatus::Success;
         return Folk::BehaviorTreeStatus::Failure;
     }

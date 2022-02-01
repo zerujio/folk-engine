@@ -1,10 +1,8 @@
 #include "performance_monitor.hpp"
 
-#include "../render/common.hpp"
+#include "folk/window/window_manager.hpp"
 
-#include "../window/window_manager.hpp"
-
-#include "../core/engine_singleton.hpp"
+#include "../core/engine.hpp"
 
 #include "folk/error.hpp"
 

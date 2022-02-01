@@ -1,7 +1,7 @@
 #ifndef FOLK_INPUT__INPUT_MANAGER
 #define FOLK_INPUT__INPUT_MANAGER
 
-#include "../utils/simple_queue.hpp"
+#include "folk/utils/simple_queue.hpp"
 
 #include "folk/core/exception_handler.hpp"
 

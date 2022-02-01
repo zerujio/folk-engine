@@ -12,7 +12,7 @@
 #include "folk/utils/no_except_function_wrapper.hpp"
 #include "folk/utils/simple_set.hpp"
 
-#include "entt/entt.hpp"
+#include <entt/entt.hpp>
 
 #include <exception>
 #include <functional>

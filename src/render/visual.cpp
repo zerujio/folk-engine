@@ -1,6 +1,6 @@
 #include "folk/render/visual.hpp"
 
-#include "../core/engine_singleton.hpp"
+#include "../core/engine.hpp"
 
 #include "visual_data.hpp"
 #include "renderer.hpp"

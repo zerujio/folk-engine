@@ -21,7 +21,7 @@ TEST_CASE("Vector")
         y = {-1, 1, -1};
         REQUIRE(x + y == Vec3(0, 1, -1));
 
-        x += {1, 1, 1};
+        x += Vec3(1, 1, 1);
         REQUIRE(x == Vec3(2, 1, 1));
 
         REQUIRE(x - y == Vec3(3, 0, 2));
@@ -30,8 +30,8 @@ TEST_CASE("Vector")
     SECTION("Multiplication/division") {
         Vec3 x = {1, 1, 1};
 
-        REQUIRE(x * 1 == x);
-        REQUIRE(x * 2 == Vec3(2, 2, 2));
-        REQUIRE(x / 2 == Vec3(.5f, .5f, .5f));
+        REQUIRE(x * 1.0f == x);
+        REQUIRE(x * 2.0f == Vec3(2, 2, 2));
+        REQUIRE(x / 2.0f == Vec3(.5f, .5f, .5f));
     }
 }

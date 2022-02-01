@@ -4,7 +4,7 @@
 
 #include "catch.hpp"
 
-#include "core/log_thread.hpp"
+#include "folk/log.hpp"
 #include "folk/core/exception_handler.hpp"
 
 void inc(int& px) {
@@ -15,7 +15,7 @@ TEST_CASE("ExceptionHandler")
 {
     using namespace Folk;
 
-    LogInitializer log_init {};
+    ScopedInitializer<Log> log_init {};
     ExceptionHandler handler {};
 
     SECTION("throwException") {

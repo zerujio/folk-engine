@@ -6,6 +6,8 @@
 #include "folk/input/key.hpp"
 #include "folk/input/mouse_button.hpp"
 #include "folk/input/input_action.hpp"
+#include "folk/input/input_manager.hpp"
+#include "folk/input/input_event_queue.hpp"
 
 #include "folk/math/vector.hpp"
 
@@ -13,6 +15,8 @@
 
 namespace Folk
 {
+
+template <class C> class ScopedInitializer;
 
 /*========== getInput ==========*/
 struct Input final {
@@ -62,9 +66,16 @@ struct Input final {
     };
 
 private:
-    friend class EngineSingleton;
+    friend class ScopedInitializer<Input>;
 
-    struct ScopedInitializer;
+    static void initialize(InputManager manager, InputEventQueue& queue);
+    static void terminate();
+
+    static InputManager s_input_manager;
+    static InputEventQueue* s_input_queue_ptr;
+
+    template<class T>
+    static void inputCallback(T code, InputState state);
 };
 
 /*=============================== Mouse ======================================*/

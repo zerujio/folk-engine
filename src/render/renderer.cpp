@@ -3,47 +3,45 @@
 #include "folk/render/visual_component.hpp"
 #include "folk/scene/transform_component.hpp"
 
-#include "../core/engine_singleton.hpp"
+#include "folk/window/glfw.hpp"
 
-#include <GLFW/glfw3.h>
-#define GLFW_EXPOSE_NATIVE_X11
-#include <GLFW/glfw3native.h>
+#include <glm/gtc/matrix_transform.hpp>
 
 namespace Folk {
 
-Renderer::Renderer(ExceptionHandler& exc, const WindowManager& win)
-: window_mngr(win)
+RenderContextHandle Renderer::s_handle {};
+bool Renderer::s_frame_buffer_size_changed {false};
+Vec2i Renderer::s_frame_buffer_size {};
+
+
+void Renderer::drawFrame(SceneManager &scene, std::chrono::duration<double> delta)
 {
+    if (s_frame_buffer_size_changed) {
+        glViewport(0, 0, s_frame_buffer_size.x, s_frame_buffer_size.y);
+        s_frame_buffer_size_changed = false;
+    }
 
-}
+    auto aspect_ratio = static_cast<float>(s_frame_buffer_size.x) / static_cast<float>(s_frame_buffer_size.y);
 
-Renderer::~Renderer() {
-
-}
-
-void Renderer::drawFrame(SceneManager& scene_mngr, std::chrono::duration<double> delta)
-{
-    auto wsize = window_mngr.getSize();
-
-    Matrix4f view_mtx;
-    Matrix4f proj_mtx;
+    Mat4 view_mtx {1.0f};
+    Mat4 proj_mtx {1.0f};
     
-    auto cam_entity = scene_mngr.camera();
+    auto cam_entity = scene.camera();
 
     // calculate view and projection matrix
     if (cam_entity == entt::null) {
         // at_vector = {0, 0, 0};
         // eye_vector = {0, 0, 0};
-    
+        proj_mtx = glm::perspective(60.0f, aspect_ratio, 0.1f, 100.0f);
     } else {
-        // eye_vector = {0, 0, 0} * camera_transform_matrix
-        // at_vector = {0, 0, 1} * camera_transform_matrix
+        view_mtx = glm::inverse(scene.registry().get<TransformComponent>(cam_entity).transformMatrix());
+        const auto& cam_data = scene.registry().get<CameraComponent>(cam_entity);
+        proj_mtx = glm::perspective(cam_data.fovy, aspect_ratio, cam_data.near, cam_data.far);
     }
 
-    auto reg_view = scene_mngr.registry().view<SceneGraphNode, const VisualComponent>();
+    auto reg_view = scene.registry().view<SceneGraphNode, const VisualComponent>();
     reg_view.each(
-            [this, wsize, view_mtx, proj_mtx]
-            (const auto entity, SceneGraphNode& transform, const VisualComponent& visual)
+            [] (const auto entity, SceneGraphNode& transform, const VisualComponent& visual)
             {
                 // setViewTransform(view_mtx, proj_mtx);
 
@@ -58,7 +56,10 @@ void Renderer::drawFrame(SceneManager& scene_mngr, std::chrono::duration<double>
             }
     );
 
+    glClear(GL_COLOR_BUFFER_BIT);
+
     // end frame (swap buffers?)
+    s_handle.swapBuffers();
 }
 
 void Renderer::drawPerfMon(const PerformanceMonitor& perf_monitor,
@@ -66,5 +67,19 @@ void Renderer::drawPerfMon(const PerformanceMonitor& perf_monitor,
 {
     // draw perfomance monitor
 }
+
+void Renderer::setContext(RenderContextHandle handle) {
+    s_handle = handle;
+    s_handle.makeContextCurrent();
+    s_handle.setFrameBufferSizeCallback<setFrameBufferSize>();
+    setFrameBufferSize(s_handle.getFrameBufferSize());
+    glClearColor(.1f, .1f, .1f, 1.0f);
+}
+
+void Renderer::setFrameBufferSize(Vec2i size) {
+    s_frame_buffer_size_changed = true;
+    s_frame_buffer_size = size;
+}
+
 
 } // namespace folk

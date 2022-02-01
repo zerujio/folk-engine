@@ -51,16 +51,16 @@ protected:
         FOLK_AL_CALL(Setter, m_id, property, value);
     }
 
-    template<class T, auto GetterV>
-    T getV(ALenum property) const {
-        T value;
-        FOLK_AL_CALL(GetterV, m_id, property, value);
-        return value;
+    template<class VectorT, auto GetterV>
+    VectorT getV(ALenum property) const {
+        VectorT vector;
+        FOLK_AL_CALL(GetterV, m_id, property, &vector.x);
+        return vector;
     }
 
-    template<class T, auto SetterV>
-    void setV(ALenum property, const T value) const {
-        FOLK_AL_CALL(SetterV, m_id, property, value);
+    template<class VectorT, auto SetterV>
+    void setV(ALenum property, const VectorT vector) const {
+        FOLK_AL_CALL(SetterV, m_id, property, &vector.x);
     }
 
     explicit ObjectHandle(ALuint id) : m_id(id) {}

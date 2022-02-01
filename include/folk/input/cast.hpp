@@ -1,7 +1,9 @@
 #ifndef FOLK_INPUT__UTILS_HPP
 #define FOLK_INPUT__UTILS_HPP
 
-#include "folk/input.hpp"
+#include "key.hpp"
+#include "mouse_button.hpp"
+#include "input_code.hpp"
 
 namespace Folk
 {

@@ -1,6 +1,6 @@
 #include "scene_manager.hpp"
 
-#include "../core/engine_singleton.hpp"
+#include "../core/engine.hpp"
 
 #include "folk/script/script_component.hpp"
 #include "folk/ai.hpp"

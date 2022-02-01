@@ -3,7 +3,7 @@
 #include "folk/core/engine.hpp"
 
 #include "main.hpp"
-#include "engine_singleton.hpp"
+#include "engine.hpp"
 
 #include <cxxopts.hpp>
 
@@ -70,8 +70,7 @@ int main(int argc, char** argv) {
         
         std::cout << "LogLevel: " << loglevel << "\n";
 
-        Folk::EngineSingleton engine {loglevel};
-        engine.mainLoop();
+        Folk::Engine::main(loglevel);
 
     } catch (std::exception &e) {
         std::cerr << e.what() << "\n";

@@ -1,6 +1,6 @@
 #include "folk/audio/audio_clip.hpp"
 
-#include "../core/engine_singleton.hpp"
+#include "../core/engine.hpp"
 
 #include <dr_wav.h>
 #include <dr_mp3.h>

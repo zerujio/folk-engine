@@ -1,35 +1,17 @@
 #ifndef FOLK_MATH__MATRIX_HPP
 #define FOLK_MATH__MATRIX_HPP
 
+#include "glm/mat4x4.hpp"
+
 #include <iostream>
-#include <cstdint>
 
 namespace Folk
 {
 
-class Matrix4f {
-public:
-    float* operator[](const std::size_t k) {
-        return m_array[k];
-    }
+/// 4 by 4 floating point matrix.
+using Mat4 = glm::mat4;
 
-    const float* operator[](const std::size_t k) const {
-        return m_array[k];
-    }
-
-    operator const float*() const {
-        return m_array[0];
-    }
-
-    operator float*() {
-        return m_array[0];
-    }
-
-private:
-    float m_array[4][4];
-};
-
-std::ostream& operator<<(std::ostream& out, const Matrix4f& mat); 
+std::ostream& operator<<(std::ostream& out, const Mat4& mat);
 
 } // namespace Folk
 

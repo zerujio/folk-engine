@@ -1,8 +1,7 @@
 #include "folk/render/mesh.hpp"
 
-#include "../core/engine_singleton.hpp"
+#include "../core/engine.hpp"
 
-#include "common.hpp"
 #include "renderer.hpp"
 
 namespace Folk

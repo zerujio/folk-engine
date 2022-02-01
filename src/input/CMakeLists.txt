@@ -1,4 +1,4 @@
-set(SOURCES
+ target_sources(folk_engine PRIVATE
         input_callback_manager.cpp
         input_action.cpp
         input_action_registry.cpp

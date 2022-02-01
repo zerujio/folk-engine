@@ -4,7 +4,7 @@
 #include "folk/scene.hpp"
 #include "folk/scene/entity_handle.hpp"
 #include "folk/core/exception_handler.hpp"
-#include "../input/input_event_queue.hpp"
+#include "folk/input/input_event_queue.hpp"
 
 #include <entt/entt.hpp>
 
@@ -43,7 +43,11 @@ public:
         return m_scene.m_root;
     }
 
-    const Scene &getScene() const {
+    const Scene& scene() const {
+        return m_scene;
+    }
+
+    Scene& scene() {
         return m_scene;
     }
 

@@ -3,16 +3,12 @@
 
 #include "folk/math/vector.hpp"
 
-#include "../utils/singleton.hpp"
-
-#include "GLFW/glfw3.h"
+#include "glfw.hpp"
 #include "glfw_call.hpp"
 
-#include "entt/entt.hpp"
+#include <entt/entt.hpp>
 
 #include <string>
-
-struct GLFWwindow;
 
 namespace Folk {
 
@@ -25,21 +21,13 @@ class WindowManager final {
 
     friend class WindowingSystem;
     friend class InputManager;
-    friend class Renderer;
+    friend class RenderContextHandle;
 
 public:
 
     /// Default constructor: creates a manager that owns a newly created window.
     explicit WindowManager(const char* window_name);
     explicit WindowManager(const std::string & window_name);
-
-    /**
-     * @brief Takes ownership of an existing window.
-     * @param window_ptr a pointer to a GLFW window struct. Pass nullptr to create a manager that owns no window.
-     *
-     * WARNING: operations other that move assignment and bool casting on a null manager are undefined behavior.
-     */
-    explicit WindowManager(GLFWwindow* window_ptr);
 
     /// Deleted copy constructor.
     WindowManager(const WindowManager &) = delete;
@@ -70,10 +58,10 @@ public:
     void setTitle(const std::string& title) const;
 
     /// Set width and height of application window
-    void setSize(Vector2<int> size) const;
+    void setSize(Vec2i size) const;
 
     /// Retrieve width and height of application window
-    [[nodiscard]] Vector2<int> getSize() const;
+    [[nodiscard]] Vec2i getSize() const;
 
     /// Sets a callback for when the window is set to close,
     template<void (*Callback)()>
@@ -85,7 +73,7 @@ public:
     void clearCloseCallback() const;
 
 private:
-    static constexpr Vector2<int> s_default_window_size {800, 600};
+    static constexpr Vec2i s_default_window_size {800, 600};
 
     GLFWwindow* m_window_ptr;
 

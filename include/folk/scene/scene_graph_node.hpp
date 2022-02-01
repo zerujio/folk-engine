@@ -35,7 +35,7 @@ public:
 
     SceneGraphNode* findChild(const char* name) const;
 
-    const Matrix4f& transformMatrix();
+    const Mat4& transformMatrix();
 
     [[nodiscard]] const Vec3& position() const noexcept;
     [[nodiscard]] const Vec3& rotation() const noexcept;
@@ -56,7 +56,7 @@ private:
         Vec3 rotation {0, 0, 0};
         Vec3 scale    {1, 1, 1};
         
-        Matrix4f matrix {};
+        Mat4 matrix {};
 
         // is transform matrix valid (up to date)?
         bool is_mtx_valid {false};

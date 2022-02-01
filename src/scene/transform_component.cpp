@@ -34,7 +34,7 @@ void TransformPtr::scale(const Vec3& scale) {
     ref.invalidateMtxCache();
 }
 
-const Matrix4f& TransformPtr::transformMatrix() {
+const Mat4& TransformPtr::transformMatrix() {
     return ref.transformMatrix();
 }
 

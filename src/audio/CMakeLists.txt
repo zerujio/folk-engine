@@ -1,4 +1,5 @@
-set(SOURCES
+target_sources(folk_engine
+    PRIVATE
         audio_manager.cpp
         drlib_impl.cpp
         al.cpp

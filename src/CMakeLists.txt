@@ -2,36 +2,17 @@ add_library(folk_engine STATIC)
 set_property(TARGET folk_engine PROPERTY FOLDER lib)
 target_compile_features(folk_engine PUBLIC cxx_std_17)
 
-#include directories
-#set(EXTERN_INCLUDE_DIRS "glad/include" "glfw/include" "entt/single_include")
-#list(TRANSFORM EXTERN_INCLUDE_DIRS PREPEND "${CMAKE_CURRENT_SOURCE_DIR}/extern/")
-
-#set(FOLK_INCLUDE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/include")
-#set(FOLK_LIBS glfw glad imgui ${OPENGL_LIBRARIES})
-
 target_include_directories(folk_engine PUBLIC ../include)
-target_link_libraries(folk_engine PUBLIC entt 
-                                         bgfx_interface
-                                         OpenAL)
-target_link_libraries(folk_engine PRIVATE glad 
-                                          glfw 
-                                          cxxopts 
-                                          dr_libs)
+target_link_libraries(folk_engine PUBLIC entt OpenAL glm glad glfw)
+target_link_libraries(folk_engine PRIVATE cxxopts dr_libs)
 
-function(add_engine_subdir FOLDER)
-    set(SOURCES "")
-    include(${FOLDER}/sources.cmake)
-    list(TRANSFORM SOURCES PREPEND "${FOLDER}/")
-    target_sources(folk_engine PRIVATE ${SOURCES})
-endfunction(add_engine_subdir)
-
-add_engine_subdir(audio)
-add_engine_subdir(core)
-add_engine_subdir(render)
-add_engine_subdir(scene)
-add_engine_subdir(utils)
-add_engine_subdir(window)
-add_engine_subdir(input)
-add_engine_subdir(debug)
-add_engine_subdir(math)
-add_engine_subdir(script)
+add_subdirectory(audio)
+add_subdirectory(core)
+add_subdirectory(render)
+add_subdirectory(scene)
+add_subdirectory(utils)
+add_subdirectory(window)
+add_subdirectory(input)
+add_subdirectory(debug)
+add_subdirectory(math)
+add_subdirectory(script)

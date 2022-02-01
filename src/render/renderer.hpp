@@ -1,34 +1,36 @@
 #ifndef FOLK_RENDER__MODULE_HPP
 #define FOLK_RENDER__MODULE_HPP
 
-#include "folk/render/shader.hpp"
-#include "folk/render/mesh.hpp"
+#include "folk/math/vector.hpp"
 
-#include "../scene/scene_manager.hpp"
-#include "../window/window_manager.hpp"
-#include "../debug/performance_monitor.hpp"
+#include "render_context.hpp"
+
 #include "../utils/delta_clock.hpp"
-
-#include <map>
+#include "../debug/performance_monitor.hpp"
+#include "../scene/scene_manager.hpp"
 
 namespace Folk {
 
-class Renderer final {
+/// Manages rendering operations. Should only be called from the main thread
+struct Renderer final {
+    Renderer() = delete;
 
-public:
-    static const char* name() {return "Renderer";}
+    /// Draw a frame.
+    static void drawFrame(SceneManager &scene, std::chrono::duration<double> delta);
+
+    /// Draw the performance monitor.
+    static void drawPerfMon(const PerformanceMonitor&, DeltaClock::milliseconds_double) noexcept;
+
+    /// Set the rendering context to perform rendering operations on.
+    static void setContext(RenderContextHandle);
+
+    static void setFrameBufferSize(Vec2i size);
 
 private:
-    friend class EngineSingleton;
+    static RenderContextHandle s_handle;
 
-    const WindowManager& window_mngr;
-
-    Renderer(ExceptionHandler&, const WindowManager&);
-    ~Renderer();
-
-    void drawFrame(SceneManager& scene, std::chrono::duration<double>);
-
-    static void drawPerfMon(const PerformanceMonitor&, DeltaClock::milliseconds_double) noexcept;
+    static bool s_frame_buffer_size_changed;
+    static Vec2i s_frame_buffer_size;
 };
 
 } // namespace folk

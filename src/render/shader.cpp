@@ -1,9 +1,5 @@
 #include "folk/render/shader.hpp"
-#include "folk/error.hpp"
-#include "common.hpp"
 #include "renderer.hpp"
-#include "default_shader.hpp"
-#include "shader_loader.hpp"
 
 namespace Folk
 {
