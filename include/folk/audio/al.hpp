@@ -7,14 +7,13 @@
 
 #include <optional>
 
+#define FOLK_AL_CALL(func, ...) FOLK_C_LIBRARY_CALL(al::getError, func, ##__VA_ARGS__)
 
 /// Detalles de implementación
 namespace Folk::al {
 
 const char* errorString(ALenum);
 std::optional<const char*> getError();
-
-#define FOLK_AL_CALL(func, ...) FOLK_C_LIBRARY_CALL(al::getError, func, ##__VA_ARGS__)
 
 /// Base class for non owning handles to OpenAL objects.
 template<ALboolean (*isValid)(ALuint)>

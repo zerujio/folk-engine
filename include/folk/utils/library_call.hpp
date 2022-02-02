@@ -73,11 +73,20 @@ auto libraryCall(const char* file, int line, const char* calling_function, Error
     }
 }
 
+#if FOLK_DEBUG
+
 #define FOLK_C_LIBRARY_CALL(errorCheck, function, ...)\
 libraryCall<errorCheck, function>(__FILE__, __LINE__, __PRETTY_FUNCTION__, ##__VA_ARGS__)
 
 #define FOLK_C_LIBRARY_CALL_ERR_ARG(errorCheck, error_arg, function, ...)\
-libraryCall<errorCheck, function>(__FILE_, __LINE__, __PRETTY_FUNCTION__, err_arg, ##__VA_ARGS__)
+libraryCall<errorCheck, function>(__FILE__, __LINE__, __PRETTY_FUNCTION__, err_arg, ##__VA_ARGS__)
+
+#else
+
+#define FOLK_C_LIBRARY_CALL(errorCheck, function, ...) function(##__VA_ARGS__)
+#define FOLK_C_LIBRARY_CALL_ERR_ARG(errorCheck, error_arg, function, ...) function(##__VA_ARGS__)
+
+#endif // FOLK_DEBUG
 
 } // namespace Folk
 

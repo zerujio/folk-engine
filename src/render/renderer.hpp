@@ -7,6 +7,7 @@
 
 #include "../utils/delta_clock.hpp"
 #include "../utils/performance_monitor.hpp"
+#include "../utils/scoped_initializer.hpp"
 #include "../scene/scene_manager.hpp"
 
 namespace Folk {
@@ -14,6 +15,9 @@ namespace Folk {
 /// Manages rendering operations. Should only be called from the main thread
 struct Renderer final {
     Renderer() = delete;
+
+    /// OpenGL setup
+    static void initialize();
 
     /// Draw a frame.
     static void drawFrame(SceneManager &scene, std::chrono::duration<double> delta);

@@ -9,7 +9,9 @@ namespace Folk
 /// \~spanish Un programa de shaders (vertex + fragment).
 class Shader final : public Resource
 {
+
     friend class Renderer;
+
 public:
     using Ref = std::shared_ptr<Shader>;
 
@@ -30,6 +32,7 @@ public:
     static Ref createFromFiles(const char* vertex, const char* fragment);
 
 private:
+
 };
 
 } // namespace Folk
