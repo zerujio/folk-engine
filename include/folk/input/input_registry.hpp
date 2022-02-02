@@ -11,7 +11,7 @@
 #include "input_action_manager.hpp"
 #include "common.hpp"
 
-#include "folk/core/exception_handler.hpp"
+#include "folk/utils/exception_handler.hpp"
 
 namespace Folk {
 

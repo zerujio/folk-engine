@@ -6,7 +6,7 @@
 #include "render_context.hpp"
 
 #include "../utils/delta_clock.hpp"
-#include "../debug/performance_monitor.hpp"
+#include "../utils/performance_monitor.hpp"
 #include "../scene/scene_manager.hpp"
 
 namespace Folk {

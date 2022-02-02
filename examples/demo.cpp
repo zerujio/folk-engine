@@ -17,8 +17,8 @@ using namespace Folk;
 
 // Esta función es invocada antes de inicializar la escena, pero después de inicializar el engine
 void Folk::engineInit() {
-    Engine::setWindowTitle("Demo!");
-    Engine::setPerformanceMetricsEnabled(true);
+    Game::setWindowTitle("Demo!");
+    Game::setPerformanceMetricsEnabled(true);
 }
 
 // BehaviorTree utilizado por el cubo naranja

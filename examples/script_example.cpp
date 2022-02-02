@@ -82,6 +82,6 @@ void Folk::sceneInit(Scene& scene) {
 }
 
 void Folk::engineInit() {
-    Engine::setWindowTitle("Script Example");
-    Engine::setPerformanceMetricsEnabled(true);
+    Game::setWindowTitle("Script Example");
+    Game::setPerformanceMetricsEnabled(true);
 }

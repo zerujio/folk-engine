@@ -1,6 +1,6 @@
 #include "folk/window/window_manager.hpp"
 
-#include "folk/core/engine.hpp"
+#include "folk/core/game.hpp"
 
 namespace Folk {
 

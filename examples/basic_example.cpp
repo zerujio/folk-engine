@@ -8,8 +8,8 @@
 
 // Esta función se llama antes de inicializar la escena
 void Folk::engineInit() {
-    Folk::Engine::setWindowTitle("Hello world!");
-    Folk::Engine::setPerformanceMetricsEnabled(true);
+    Folk::Game::setWindowTitle("Hello world!");
+    Folk::Game::setPerformanceMetricsEnabled(true);
 }
 
 void metricsCallback(Folk::InputState state) {
@@ -18,7 +18,7 @@ void metricsCallback(Folk::InputState state) {
     if (state == Folk::InputState::Press) {
         // se activan las métricas de rendimiento.
         show = !show;
-        Folk::Engine::setPerformanceMetricsEnabled(show);
+        Folk::Game::setPerformanceMetricsEnabled(show);
     }
 }
 
@@ -30,27 +30,27 @@ void keyCallback(Folk::Key key, Folk::InputState state) {
     {
     case Folk::Key::Num1:
         // 15 fps
-        Folk::Engine::setMinFrameTime(0.066);
+        Folk::Game::setMinFrameTime(0.066);
         break;
 
     case Folk::Key::Num2:
         // 30
-        Folk::Engine::setMinFrameTime(0.033);
+        Folk::Game::setMinFrameTime(0.033);
         break;
 
     case Folk::Key::Num3:
         // 60
-        Folk::Engine::setMinFrameTime(0.016);
+        Folk::Game::setMinFrameTime(0.016);
         break;
 
     case Folk::Key::Num4:
         // 144
-        Folk::Engine::setMinFrameTime(0.007);
+        Folk::Game::setMinFrameTime(0.007);
         break;
 
     case Folk::Key::Num0:
         // ilimitado
-        Folk::Engine::setMinFrameTime(0.0);
+        Folk::Game::setMinFrameTime(0.0);
         break;
 
     case Folk::Key::Escape:

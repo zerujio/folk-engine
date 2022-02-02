@@ -8,7 +8,7 @@
 #include "folk/input/input_code.hpp"
 #include "folk/input/binding_map_sink.hpp"
 #include "folk/input/connection.hpp"
-#include "folk/core/exception_handler.hpp"
+#include "folk/utils/exception_handler.hpp"
 #include "folk/utils/no_except_function_wrapper.hpp"
 #include "folk/utils/simple_set.hpp"
 

@@ -5,20 +5,22 @@
 
 namespace Folk {
 
-/// Functions that modify global engine state.
-namespace Engine {
+/// Functions that modify global application state.
+struct Game final {
+
+    Game() = delete;
 
     /// \brief \~spanish Emite una señal para salir de la aplicación.
     /// \brief \~english Signal the engine to exit (close the application).
-    void exit() noexcept;
+    static void exit() noexcept;
 
     /// \brief \~spanish Configura el título de la ventana.
     /// \brief \~english Set the title of the game window.
-    void setWindowTitle(const char *);
+    static void setWindowTitle(const char *);
 
     /// \brief \~spanish Mostrar estadísticas de rendimiento en una ventana de ImGUI.
     /// \brief \~english Show performance statistics in an ImGUI dialog.
-    void setPerformanceMetricsEnabled(bool);
+    static void setPerformanceMetricsEnabled(bool);
 
     /// \brief \~spanish Congigura el tiempo mínimo entre cuadros (i.e. el framerate maximo).
     /// \brief \~english Configure the minimum time between frames (i.e. maximum framerate).
@@ -29,7 +31,7 @@ namespace Engine {
      * \~english
      * \param time time in seconds.
     */
-    void setMinFrameTime(double time);
+    static void setMinFrameTime(double time);
 
 }; // class Engine
 

@@ -26,7 +26,7 @@ void keyCallback(Key key, InputState state) {
     std::cout << Input::getKeyName(key) << ": " << state_str << "\n";
 
     if (key == Key::Escape && state == InputState::Press) {
-        Engine::exit();
+        Game::exit();
     }
 
     if (state == InputState::Press && remapping 
@@ -67,7 +67,7 @@ void onClick(MouseButton mb, InputState state) {
 }
 
 void Folk::engineInit() {
-    Folk::Engine::setPerformanceMetricsEnabled(true);
+    Folk::Game::setPerformanceMetricsEnabled(true);
 }
 
 void Folk::sceneInit(Scene& scene) {

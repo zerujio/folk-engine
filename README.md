@@ -1,11 +1,11 @@
-# Folk Engine
+# Folk Game
 CC5512 - Arquitectura de Motores de Juegos
 
 Segundo semestre de 2021
 
 ## Resumen
 
-Folk Engine es un motor para juegos de tipo RTS, city builder o colony sim. El foco de este proyecto es simulaciones con grandes cantidades de agentes capaces de interactuar entre sí y con el terreno.
+Folk Game es un motor para juegos de tipo RTS, city builder o colony sim. El foco de este proyecto es simulaciones con grandes cantidades de agentes capaces de interactuar entre sí y con el terreno.
 
 ### ¿Cómo funciona?
 
@@ -17,7 +17,7 @@ programa.
 void Folk::engineInit() {
     // Ajustar configuración global del engine.
     // Ejemplo: cambiar el nombre de la ventana
-    Folk::Engine::setTitle("Hello world!");
+    Folk::Game::setTitle("Hello world!");
 }
 
 void Folk::sceneInit(Scene &m_scene) {

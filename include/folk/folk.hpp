@@ -3,7 +3,7 @@
 
 #include "scene.hpp"
 #include "folk/scene/entity_handle.hpp"
-#include "folk/core/engine.hpp"
+#include "folk/core/game.hpp"
 
 /// folk engine namespace
 namespace Folk

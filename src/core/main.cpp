@@ -1,6 +1,6 @@
 #include "folk/log.hpp"
 #include "folk/error.hpp"
-#include "folk/core/engine.hpp"
+#include "folk/core/game.hpp"
 
 #include "main.hpp"
 #include "engine.hpp"
@@ -15,7 +15,7 @@
 #include <cctype>
 
 void signalHandler(int) {
-    Folk::Engine::exit();
+    Folk::Game::exit();
 }
 
 void setSignalHandler() {

@@ -5,7 +5,7 @@
 #include "catch.hpp"
 
 #include "folk/log.hpp"
-#include "folk/core/exception_handler.hpp"
+#include "folk/utils/exception_handler.hpp"
 
 void inc(int& px) {
     px++;

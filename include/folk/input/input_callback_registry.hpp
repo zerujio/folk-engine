@@ -10,7 +10,7 @@
 #include "folk/input/mouse_button.hpp"
 #include "folk/input/input_code.hpp"
 
-#include "folk/core/exception_handler.hpp"
+#include "folk/utils/exception_handler.hpp"
 
 #include "entt/entt.hpp"
 

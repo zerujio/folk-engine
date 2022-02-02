@@ -1,95 +1,95 @@
-#include "folk/folk.hpp"
+//
+// Created by sergio on 01-02-22.
+//
 
-#include "folk/core/engine.hpp"
 #include "engine.hpp"
 
-#include "folk/log.hpp"
+#include "folk/core/game.hpp"
 
-#include "../utils/delta_clock.hpp"
+#include "folk/utils/exception_handler.hpp"
 #include "../utils/scoped_initializer.hpp"
 
-#include "../debug/performance_monitor.hpp"
-
 #include "../window/windowing_system.hpp"
-#include "folk/window/window_manager.hpp"
 
-#include "folk/input/input_event_queue.hpp"
-#include "folk/input/input_manager.hpp"
 #include "folk/input.hpp"
 
 #include "../audio/audio_manager.hpp"
 
-#include "../scene/scene_manager.hpp"
-
 #include "../render/renderer.hpp"
 
-namespace Folk::Engine {
+#include "folk/folk.hpp"
 
-bool exit_flag {false};
+namespace Folk {
 
-void exit() noexcept
-{
-    exit_flag = true;
-}
+template<class T>
+class ScopedAssignment final {
 
-void setPerformanceMetricsEnabled(bool value) {
-    // empty
-}
+public:
+    ScopedAssignment(T& variable, T new_value) : var(variable), old_value(variable) {
+        var = new_value;
+    }
 
-void setWindowTitle(const char* title) {
+    ~ScopedAssignment() {
+        var = old_value;
+    }
 
-}
+private:
+    T& var;
+    T old_value;
+};
 
-void main(LogLevel level) {
+DeltaClock::nanoseconds Engine::min_frame_time {};
+const WindowManager* Engine::game_window_ptr {nullptr};
+bool Engine::exit_flag {false};
 
-    // delta clock
-    DeltaClock delta_clock {};
-    DeltaClock::nanoseconds min_frame_time {0};
-
-    // initialize log thread
-    ScopedInitializer<Log> log_initializer {};
-
-    // Performance monitor
-    PerformanceMonitor perf_monitor {};
+void Engine::main(LogLevel level) {
 
     // Exception handler
-    ExceptionHandler m_exception_handler {ExceptionHandler::CallbackArg<exit>};
+    ExceptionHandler exception_handler {ExceptionHandler::CallbackArg<Game::exit>};
 
-    // Windowing
+    // initialize log thread
+    ScopedInitializer<Log> log_initializer{};
+
+    // create main window
     ScopedInitializer<Folk::WindowingSystem> window_init {};
-    const WindowManager m_game_window {"Unnamed Folk Engine application"};
+    const WindowManager game_window {"Unnamed Folk Engine application"};
+    game_window.setCloseCallback<Game::exit>();
+    ScopedAssignment ptr_assignment {game_window_ptr, &game_window};
 
     // Input handling
-    InputEventQueue m_input_queue {};
-    ScopedInitializer<Input> input_initializer {InputManager(m_game_window), m_input_queue};
+    InputEventQueue input_queue{};
+    ScopedInitializer<Input> input_initializer{InputManager(game_window), input_queue};
 
-    // Audio module
-    AudioManager audio {m_exception_handler};
+    // Audio
+    AudioManager audio_manager {exception_handler};
 
-    // Scene module
-    SceneManager scene_manager {};
+    // Renderer
+    Renderer::setContext(game_window);
 
-    // window close callback
-    m_game_window.setCloseCallback<exit>();
+    // Scene manager
+    SceneManager scene_manager{};
 
-    Renderer::setContext(m_game_window);
-
-    // finish engine initialization.
+    // Allow user to change engine settings.
     try {
         engineInit();
     } catch (...) {
-        m_exception_handler.catchException();
+        exception_handler.catchException();
         throw std::runtime_error("engineInit() error");
     }
 
     // initialize scene
     try {
         sceneInit(scene_manager.scene());
-
     } catch (...) {
-        m_exception_handler.catchException();
+        exception_handler.catchException();
         throw std::runtime_error("sceneInit() error");
     }
+
+    // Performance monitor
+    PerformanceMonitor perf_monitor {};
+
+    // delta clock
+    DeltaClock delta_clock {};
 
     while (!exit_flag) {
         delta_clock.click();
@@ -101,59 +101,64 @@ void main(LogLevel level) {
             delta += std::chrono::steady_clock::now() - ti;
         }
 
-        // start frame
+        // frame start
         auto frame_time_id = perf_monitor.addItem("Frame time");
 
-        // update window / process input
-        {
-            auto monitor_id = perf_monitor.addItem("Event polling (windowing system)");
-            WindowingSystem::pollEvents();
-            perf_monitor.stop(monitor_id);
-        }
+        pollEvents(perf_monitor, exception_handler);
+        updateScene(perf_monitor, exception_handler, scene_manager, input_queue, delta);
+        updateAudio(perf_monitor, exception_handler, audio_manager, scene_manager, delta);
+        drawFrame(perf_monitor, exception_handler, scene_manager, delta);
 
-        // update scene
-        {
-            auto id = perf_monitor.addItem("Scene update");
-            scene_manager.updateScene(m_input_queue, m_exception_handler, delta);
-            perf_monitor.stop(id);
-        }
-
-        // update audio
-        {
-            auto id = perf_monitor.addItem("Audio update");
-            try {
-                audio.update(m_exception_handler, scene_manager, delta);
-            } catch (...) {
-                Log::write(LogLevel::Warning)
-                        << "An error occurred during audio processing phase:\n";
-                m_exception_handler.catchException();
-            }
-            perf_monitor.stop(id);
-        }
-
-        // draw
-        {
-            auto id = perf_monitor.addItem("Renderer");
-            try {
-                Renderer::drawFrame(scene_manager, delta);
-            } catch (...) {
-                Log::write(LogLevel::Warning)
-                        << "An error occurred during draw phase:\n";
-                m_exception_handler.catchException();
-            }
-            perf_monitor.stop(id);
-        }
-
-        // end frame
+        // frame end
         perf_monitor.stop(frame_time_id);
 
-        // draw performance metrics
         Renderer::drawPerfMon(perf_monitor, delta);
         perf_monitor.clear();
-
-        // flush log
-        log_initializer.wakeUp();
+        log_initializer.wakeUp(); // print log buffer to console
     }
 }
 
-} // namespace folk
+void Engine::pollEvents(PerformanceMonitor &perf_monitor, const ExceptionHandler& exception_handler) noexcept
+try {
+    auto monitor_id = perf_monitor.addItem("Event polling (windowing system)");
+    WindowingSystem::pollEvents();
+    perf_monitor.stop(monitor_id);
+} catch (...) {
+    exception_handler.catchException();
+    return;
+}
+
+void Engine::updateScene(PerformanceMonitor &perf_monitor, const ExceptionHandler &exception_handler,
+                         SceneManager &scene_manager, InputEventQueue &event_queue,
+                         DeltaClock::seconds_double delta) noexcept
+{
+    auto id = perf_monitor.addItem("Scene update");
+    scene_manager.updateScene(event_queue, exception_handler, delta);
+    perf_monitor.stop(id);
+}
+
+void Engine::updateAudio(PerformanceMonitor &perf_monitor, const ExceptionHandler &exception_handler,
+                         AudioManager &audio_manager, SceneManager& scene_manager,
+                         DeltaClock::seconds_double delta) noexcept
+{
+    auto id = perf_monitor.addItem("Audio update");
+    audio_manager.update(exception_handler, scene_manager, delta);
+    perf_monitor.stop(id);
+}
+
+void Engine::drawFrame(PerformanceMonitor &perf_monitor, const ExceptionHandler &exception_handler,
+                       SceneManager &scene_manager, DeltaClock::seconds_double delta) noexcept
+try
+{
+    auto id = perf_monitor.addItem("Renderer");
+    Renderer::drawFrame(scene_manager, delta);
+    perf_monitor.stop(id);
+}
+catch (...)
+{
+    Log::write(LogLevel::Error) << "An error occurred during draw phase:\n";
+    exception_handler.catchException();
+    return;
+}
+
+} // namespace Folk

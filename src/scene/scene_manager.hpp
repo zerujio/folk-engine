@@ -3,7 +3,7 @@
 
 #include "folk/scene.hpp"
 #include "folk/scene/entity_handle.hpp"
-#include "folk/core/exception_handler.hpp"
+#include "folk/utils/exception_handler.hpp"
 #include "folk/input/input_event_queue.hpp"
 
 #include <entt/entt.hpp>
@@ -25,7 +25,7 @@ public:
 
     static const char* name() {return "Scene update";}
 
-    void updateScene(InputEventQueue& input_manager, const ExceptionHandler &exception_handler, std::chrono::duration<float> delta) noexcept;
+    void updateScene(InputEventQueue& event_queue, const ExceptionHandler &exception_handler, std::chrono::duration<float> delta) noexcept;
 
     const entt::registry& registry() const {
         return m_scene.m_entity_registry;

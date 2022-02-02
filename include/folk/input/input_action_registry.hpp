@@ -10,7 +10,7 @@
 #include "folk/input/input_action.hpp"
 #include "folk/input/binding_map_sink.hpp"
 
-#include "folk/core/exception_handler.hpp"
+#include "folk/utils/exception_handler.hpp"
 #include "folk/utils/simple_set.hpp"
 
 #include "entt/entt.hpp"

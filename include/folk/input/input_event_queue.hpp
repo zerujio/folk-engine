@@ -3,7 +3,7 @@
 
 #include "folk/utils/simple_queue.hpp"
 
-#include "folk/core/exception_handler.hpp"
+#include "folk/utils/exception_handler.hpp"
 
 #include "folk/input/input_registry.hpp"
 

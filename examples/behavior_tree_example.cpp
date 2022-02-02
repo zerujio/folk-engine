@@ -98,8 +98,8 @@ public:
 };
 
 void Folk::engineInit() {
-    Folk::Engine::setWindowTitle("Behavior trees");
-    Folk::Engine::setPerformanceMetricsEnabled(true);
+    Folk::Game::setWindowTitle("Behavior trees");
+    Folk::Game::setPerformanceMetricsEnabled(true);
 }
 
 void Folk::sceneInit(Scene &scene) {
