@@ -29,11 +29,4 @@ const char* errorString(const ALenum error) {
     }
 }
 
-std::optional<const char *> getError() {
-    auto error = alGetError();
-    if (error)
-        return {errorString(error)};
-    return {};
-}
-
 } // namespace al

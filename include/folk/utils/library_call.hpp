@@ -24,16 +24,20 @@ struct LibraryError : public Error {
 
 /**
  * @brief Creates callables that invoke C library functions and perform error checking (if enabled).
- * @tparam ErrorReturn Return type of the error checking function.
+ * @tparam Exception An exception object. It should inherit from Folk::Error (or CriticalError) and a similar constructor.
+ * @tparam getError An error checking function. Generally, it should be a wrapper for a function like glGetError().
  * @tparam ErrorArgs Arguments to forward to the error checking function.
  *
- * The signature for the error checking function is: std::optional<ErrorReturn> (*) (ErrorArgs...)
+ * The signature for the error checking function is: R (*) (ErrorArgs...), where R is either:
+ * - a type implicitly convertible to bool, such that it evaluates to true if an error occurred and false otherwise,
+ * AND the type is such that an object of type Exception may be initialized from it. Or,
+ * - std::optional<T>, where T is a type such that an object of type Exception may be initialized from it. The return
+ * value should contain an object only if an error occurred.
  *
- *
- * The std::optional object should only contain an ErrorReturn object if an error occurred. The ErrorReturn type must
- * be such that it is possible to initialize an std::logic_error instance with it (i.e. it is some sort of string).
+ * The constructor of Folk::Error is Error(StringType what, source_location = source_location::current()) in debug builds
+ * and Error(StringType what) on release builds.
  */
-template<auto getError, class... ErrorArgs>
+template<class Exception, auto getError, class... ErrorArgs>
 class LibCall final {
 public:
 
@@ -148,27 +152,38 @@ public:
     }
 
 private:
+
+    template<class R>
+    static constexpr R getErrorReturnValue(R error) {
+        return error;
+    }
+
+    template<class R>
+    static constexpr const R& getErrorReturnValue(const std::optional<R>& an_optional) {
+        return *an_optional;
+    }
+
     template<bool Throwing>
-    static constexpr auto checkErrors(ErrorArgs... error_args) noexcept(!Throwing)
+    static constexpr void checkErrors(ErrorArgs... error_args) noexcept(!Throwing)
     {
         auto error = getError(error_args...);
         if (error) {
             if constexpr (Throwing)
-                throw LibraryError(*error);
+                throw Exception(getErrorReturnValue(error));
             else
-                Log::error() << *error << '\n';
+                Log::error() << getErrorReturnValue(error) << '\n';
         }
     }
 
     template<bool Throwing>
-    static constexpr auto checkErrors(const source_location loc, ErrorArgs... error_args) noexcept(!Throwing)
+    static constexpr void checkErrors(const source_location loc, ErrorArgs... error_args) noexcept(!Throwing)
     {
         auto error = getError(error_args...);
         if (error) {
             if constexpr (Throwing)
-                throw LibraryError(*error, loc);
+                throw Exception(getErrorReturnValue(error), loc);
             else
-                Log::error() << loc << " : " << *error << '\n';
+                Log::error() << loc << " : " << getErrorReturnValue(error) << '\n';
         }
     }
 

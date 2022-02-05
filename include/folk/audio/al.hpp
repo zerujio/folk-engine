@@ -11,9 +11,14 @@ namespace Folk::al {
 
 const char* errorString(ALenum);
 
-std::optional<const char*> getError();
+struct ALError : public Error {
+    using Error::Error;
 
-using call = LibCall<getError>;
+    template<class... Args>
+    explicit ALError(ALenum code, Args... args) : Error(errorString(code), args...) {}
+};
+
+using call = LibCall<ALError, alGetError>;
 
 template<auto isValid>
 using BaseHandle = ObjectHandle<call, isValid, ALuint>;

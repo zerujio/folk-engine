@@ -16,9 +16,9 @@ struct GLFWError : public Folk::Error {
     using Error::Error;
 };
 
-std::optional<const char*> getError();
+const char * getError();
 
-using call = LibCall<getError>;
+using call = LibCall<GLFWError, getError>;
 
 }
 

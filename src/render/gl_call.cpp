@@ -34,12 +34,8 @@ const char* gl::errorString(GLenum error) noexcept
     }
 }
 
-std::optional<const char *> gl::getError() noexcept {
-    auto err = glGetError();
-    if (err)
-        return {errorString(err)};
-    else
-        return {};
+GLenum gl::getError() noexcept {
+    return glGetError();
 }
 
 constexpr const char *errorSourceString(GLenum source) noexcept {

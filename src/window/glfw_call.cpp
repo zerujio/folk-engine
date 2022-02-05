@@ -6,15 +6,14 @@
 
 #include "GLFW/glfw3.h"
 
+#include <string>
+
 namespace Folk::GLFW {
 
-std::optional<const char*> getError() {
+const char * getError() {
     const char* description {nullptr};
 
-    if (glfwGetError(&description) != GLFW_NO_ERROR)
-        return {description};
-
-    return {}; // no error
+    return description;
 }
 
 }

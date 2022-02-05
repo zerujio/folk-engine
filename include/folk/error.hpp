@@ -12,13 +12,17 @@
 namespace Folk
 {
 
+
 /// \brief \~spanish Error del engine.
 /// \brief \~english Standard engine error.
+#ifdef FOLK_DEBUG
 struct Error : public std::logic_error
 {
-    template<class What>
-    explicit Error(What what, std::experimental::source_location loc = std::experimental::source_location::current())
+    explicit Error(const std::string& what, std::experimental::source_location loc = std::experimental::source_location::current())
     : std::logic_error(what), m_location(loc) {}
+
+    explicit Error(const char* what, source_location loc = source_location::current())
+    : logic_error(what), m_location(loc) {}
 
     [[nodiscard]]
     constexpr const auto& location() const {
@@ -28,6 +32,11 @@ struct Error : public std::logic_error
 private:
     std::experimental::source_location m_location;
 };
+#else
+struct Error : public std::logic_error {
+    using logic_error::logic_error;
+};
+#endif
 
 std::ostream& operator<<(std::ostream& os, const Error& err);
 

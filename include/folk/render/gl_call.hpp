@@ -20,9 +20,16 @@ namespace Folk::gl {
 
 const char* errorString(GLenum error) noexcept;
 
-std::optional<const char*> getError() noexcept;
+struct GLError : public Error {
+    using Error::Error;
 
-using call = LibCall<getError>;
+    template<class... Args>
+    explicit GLError(GLenum code, Args&&... args) : Error(errorString(code), args...) {}
+};
+
+GLenum getError() noexcept;
+
+using call = LibCall<GLError, getError>;
 
 void GLAPIENTRY debugMessageCallback(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar* message, const void* userParam);
 

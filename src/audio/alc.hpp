@@ -15,15 +15,15 @@ namespace Folk::alc
 const char* errorString(ALCenum error);
 
 struct ALCError : public Error {
-    explicit ALCError(ALCenum error, source_location loc = source_location::current())
-    : Error(errorString(error), loc) {}
+    template<class... Args>
+    explicit ALCError(ALCenum error, Args... args) : Error(errorString(error), args...) {}
 
     using Error::Error;
 };
 
 std::optional<const char *> getError(ALCdevice* device) noexcept;
 
-using call = LibCall<getError, ALCdevice*>;
+using call = LibCall<ALCError, getError, ALCdevice*>;
 
 class DeviceManager {
 
