@@ -5,19 +5,21 @@
 #ifndef SRC_WINDOW__GLFW_CALL_HPP
 #define SRC_WINDOW__GLFW_CALL_HPP
 
+#include "folk/error.hpp"
 #include "folk/utils/library_call.hpp"
 
 #include <optional>
 
 namespace Folk::GLFW {
 
-struct Error : public RuntimeError {
-    using RuntimeError::RuntimeError;
+struct GLFWError : public Folk::Error {
+    using Error::Error;
 };
 
 std::optional<const char*> getError();
-}
 
-#define FOLK_GLFW_CALL(function, ...) FOLK_C_LIBRARY_CALL(GLFW::getError, function, ##__VA_ARGS__)
+using call = LibCall<getError>;
+
+}
 
 #endif //SRC_WINDOW__GLFW_CALL_HPP

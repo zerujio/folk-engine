@@ -55,7 +55,7 @@ public:
     template<void (*Function)(Key, InputState)>
     void setKeyCallback() const {
 
-        FOLK_GLFW_CALL(glfwSetKeyCallback, m_window_ptr, [](GLFWwindow*, int key, int, int state, int){
+        GLFW::call::slow(glfwSetKeyCallback)(m_window_ptr, [](GLFWwindow*, int key, int, int state, int){
             Function(keyCast(key), stateCast(state));
         });
     }
@@ -66,7 +66,7 @@ public:
     /// Configures a mouse button callback.
     template<void (*Function)(MouseButton, InputState)>
     void setMouseButtonCallback() const {
-        FOLK_GLFW_CALL(glfwSetMouseButtonCallback, m_window_ptr, [](GLFWwindow*, int button, int state, int){
+        GLFW::call::slow(glfwSetMouseButtonCallback)(m_window_ptr, [](GLFWwindow*, int button, int state, int){
             Function(mouseButtonCast(button), stateCast(state));
         });
     }

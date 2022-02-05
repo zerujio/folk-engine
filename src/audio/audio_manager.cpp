@@ -32,7 +32,7 @@ try {
 
     if (scene_manager.camera() != entt::null) {
         Vec3 old_position {0.0f, 0.0f, 0.0f};
-        FOLK_AL_CALL(alGetListener3f, AL_POSITION, &old_position.x, &old_position.y, &old_position.z);
+        al::call::fast(alGetListener3f)(AL_POSITION, &old_position.x, &old_position.y, &old_position.z);
         old_position.z *= -1;
 
         auto& camera_node = scene_manager.registry().get<SceneGraphNode>(scene_manager.camera());
@@ -45,11 +45,11 @@ try {
         at -= position;
     }
 
-    FOLK_AL_CALL(alListener3f, AL_POSITION, position.x, position.y, -position.z);
-    FOLK_AL_CALL(alListener3f, AL_VELOCITY, velocity.x, velocity.y, -velocity.z);
+    al::call::fast(alListener3f)(AL_POSITION, position.x, position.y, -position.z);
+    al::call::fast(alListener3f)(AL_VELOCITY, velocity.x, velocity.y, -velocity.z);
 
     float orientation[] = {at.x, at.y, -at.z, up.x, up.y, -up.z};
-    FOLK_AL_CALL(alListenerfv, AL_ORIENTATION, orientation);
+    al::call::fast(alListenerfv)(AL_ORIENTATION, orientation);
 
 } catch (...) {
     exception_handler.catchException();

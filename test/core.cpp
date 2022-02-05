@@ -31,7 +31,7 @@ TEST_CASE("ExceptionHandler")
         }
 
         try {
-            throw FOLK_RUNTIME_ERROR("Hello!");
+            throw Error("Hello!");
         } catch (...) {
             handler.catchException();
         }
@@ -39,7 +39,7 @@ TEST_CASE("ExceptionHandler")
 
     SECTION("handleException") {
         try {
-            throw FOLK_RUNTIME_ERROR("some error");
+            throw Error("some error");
         } catch (...) {
             handler.handleException(std::current_exception());
         }

@@ -25,14 +25,14 @@ void Scene::setCamera(CameraPtr camera) {
     auto e = entt::to_entity(m_entity_registry, comp);
 
     if (e == entt::null)
-        throw FOLK_RUNTIME_ERROR("Entity does not belong to scene");
+        throw Error("Entity does not belong to scene");
 
     m_camera = e;
 }
 
 CameraPtr Scene::getCamera() {
     if (!m_entity_registry.valid(m_camera))
-        throw FOLK_RUNTIME_ERROR("No camera set");
+        throw Error("No camera set");
 
     entt::handle h {m_entity_registry, m_camera};
     CameraPtr ptr {h};

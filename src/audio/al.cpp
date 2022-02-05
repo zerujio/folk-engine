@@ -1,4 +1,5 @@
 #include "folk/audio/al.hpp"
+#include "folk/log.hpp"
 
 namespace Folk::al {
 
@@ -28,10 +29,10 @@ const char* errorString(const ALenum error) {
     }
 }
 
-std::optional<const char*> getError() {
-    auto err = alGetError();
-    if (err != AL_NO_ERROR)
-        return {errorString(err)};
+std::optional<const char *> getError() {
+    auto error = alGetError();
+    if (error)
+        return {errorString(error)};
     return {};
 }
 

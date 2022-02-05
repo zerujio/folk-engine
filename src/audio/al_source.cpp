@@ -32,7 +32,7 @@ void SourceHandle::setDirection(Vec3 dir) const {
 }
 
 void SourceHandle::setBuffer(BufferHandle buffer) const {
-    set<ALint, alSourcei>(AL_BUFFER, buffer.m_id);
+    set<ALint, alSourcei>(AL_BUFFER, buffer.id());
 }
 
 void SourceHandle::clearBuffer() const {
@@ -40,7 +40,7 @@ void SourceHandle::clearBuffer() const {
 }
 
 BufferHandle SourceHandle::getBuffer() const {
-    return BufferHandle(get<ALint, alGetSourcei>(AL_BUFFER));
+    return {static_cast<ALuint>(get<ALint, alGetSourcei>(AL_BUFFER))};
 }
 
 bool SourceHandle::getLooping() const {
@@ -52,19 +52,19 @@ void SourceHandle::setLooping(const bool value) const {
 }
 
 void SourceHandle::play() const {
-    FOLK_AL_CALL(alSourcePlay, m_id);
+    call::fast(alSourcePlay)(id());
 }
 
 void SourceHandle::pause() const {
-    FOLK_AL_CALL(alSourcePause, m_id);
+    call::fast(alSourcePause)(id());
 }
 
 void SourceHandle::stop() const {
-    FOLK_AL_CALL(alSourcePause, m_id);
+    call::fast(alSourcePause)(id());
 }
 
 void SourceHandle::rewind() const {
-    FOLK_AL_CALL(alSourcePause, m_id);
+    call::fast(alSourcePause)(id());
 }
 
 

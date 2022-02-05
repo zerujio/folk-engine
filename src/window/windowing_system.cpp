@@ -11,19 +11,22 @@
 namespace Folk {
 
 void WindowingSystem::initialize() {
-    FOLK_GLFW_CALL(glfwInit);
-    FOLK_GLFW_CALL(glfwWindowHint, GLFW_RESIZABLE, GLFW_FALSE);
-    FOLK_GLFW_CALL(glfwWindowHint, GLFW_CONTEXT_VERSION_MAJOR, FOLK_OPENGL_VERSION_MAJOR);
-    FOLK_GLFW_CALL(glfwWindowHint, GLFW_CONTEXT_VERSION_MINOR, FOLK_OPENGL_VERSION_MINOR);
-    FOLK_GLFW_CALL(glfwWindowHint, GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+    GLFW::call::slow(glfwInit)();
+    GLFW::call::slow(glfwWindowHint)(GLFW_RESIZABLE, GLFW_FALSE);
+    GLFW::call::slow(glfwWindowHint)(GLFW_CONTEXT_VERSION_MAJOR, FOLK_OPENGL_VERSION_MAJOR);
+    GLFW::call::slow(glfwWindowHint)(GLFW_CONTEXT_VERSION_MINOR, FOLK_OPENGL_VERSION_MINOR);
+    GLFW::call::slow(glfwWindowHint)(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+#ifdef FOLK_DEBUG
+    GLFW::call::slow(glfwWindowHint)(GLFW_OPENGL_DEBUG_CONTEXT, GLFW_TRUE);
+#endif
 }
 
 void WindowingSystem::terminate() {
-    FOLK_GLFW_CALL(glfwTerminate);
+    GLFW::call::slow(glfwTerminate);
 }
 
 void WindowingSystem::pollEvents() {
-    FOLK_GLFW_CALL(glfwPollEvents);
+    GLFW::call::slow(glfwPollEvents)();
 }
 
 } // namespace Folk

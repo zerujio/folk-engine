@@ -51,7 +51,7 @@ Folk::LogLevel parseLevel(std::string const& str) {
         return Folk::LogLevel::Trace;
 
     else
-        throw FOLK_ERROR(Folk::RuntimeError, "can't parse log level: " + str);
+        throw Folk::Error("can't parse log level: " + str);
 }
 
 int main(int argc, char** argv) {

@@ -55,11 +55,11 @@ void keyCallback(Folk::Key key, Folk::InputState state) {
 
     case Folk::Key::Escape:
         using Folk::CriticalError;
-        throw FOLK_CRITICAL_ERROR("Dummy critical error.");
+        throw CriticalError("Dummy critical error.");
 
     case Folk::Key::Space:
-        using Folk::RuntimeError;
-        throw FOLK_RUNTIME_ERROR("Dummy runtime error");
+        using Folk::Error;
+        throw Error("Dummy runtime error");
 
     default:
         break;

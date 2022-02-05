@@ -12,7 +12,7 @@ InputAction& InputActionManager::create(StringType name) const {
     auto [iter, inserted] = m_registry->m_actions.template emplace(name, m_registry->m_binding_map);
 
     if (!inserted)
-        throw FOLK_RUNTIME_ERROR("An InputAction by this name already exists.");
+        throw Error("An InputAction by this name already exists.");
 
     return iter->second;
 }
@@ -31,7 +31,7 @@ InputAction& InputActionManager::get(StringType name) const {
     auto iter = m_registry->m_actions.find<StringType>(name);
 
     if (iter == m_registry->m_actions.end())
-        throw FOLK_RUNTIME_ERROR("No InputAction by this name exists.");
+        throw Error("No InputAction by this name exists.");
 
     return iter->second;
 }
@@ -51,7 +51,7 @@ void InputActionManager::destroy(StringType name) const {
 
     // check if action exists
     if (action_iter == m_registry->m_actions.end())
-        throw FOLK_RUNTIME_ERROR("No InputAction by this name exists.");
+        throw Error("No InputAction by this name exists.");
 
     // destroy the action
     m_registry->m_actions.erase(action_iter);

@@ -6,11 +6,13 @@
 #define FOLK_AUDIO__AL_BUFFER_HPP
 
 #include "al.hpp"
+#include "folk/utils/object_handle.hpp"
+#include "folk/utils/object_manager.hpp"
 
 namespace Folk::al {
 
 /// Wrapper para un buffer de OpenAL (non-owning)
-class BufferHandle : public ObjectHandle<alIsBuffer> {
+class BufferHandle : public BaseHandle<alIsBuffer>{
 public:
 
     [[nodiscard]] int frequency() const;

@@ -36,7 +36,7 @@ public:
     /// (Main thread only) Set the callback to invoke whenever the frame buffer is resized.
     template<auto Func>
     void setFrameBufferSizeCallback() const {
-        FOLK_GLFW_CALL(glfwSetFramebufferSizeCallback, m_window_ptr, [](auto, int w, int h){ Func(Vec2i(w, h)); });
+        GLFW::call::slow(glfwSetFramebufferSizeCallback)(m_window_ptr, [](auto, int w, int h){ Func(Vec2i(w, h)); });
     }
 
     /// (Main thread only) Get the current frame buffer size.

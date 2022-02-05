@@ -12,7 +12,7 @@ class Singleton {
 public:
     Singleton() {
         if (instance_ptr)
-            throw FOLK_CRITICAL_ERROR("attempted to instantiate a singleton class twice");
+            throw CriticalError("attempted to instantiate a singleton class twice");
 
         static_assert(std::is_base_of_v<Singleton<T>, T>, "T must inherit from Singleton<T>");
         instance_ptr = static_cast<T*>(this);
@@ -28,7 +28,7 @@ public:
         [[likely]]
         if (instance_ptr)
             return *instance_ptr;
-        throw FOLK_CRITICAL_ERROR("Singleton class has not been initialized!");
+        throw CriticalError("Singleton class has not been initialized!");
     }
 };
 

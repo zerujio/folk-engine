@@ -27,7 +27,7 @@ void ScopedInitializer<Log>::wakeUp() {
 
 void Log::initialize(Log::Buffer &out_buf, Log::Buffer &err_buf) {
     if (s_out_buf_ptr || s_err_buf_ptr)
-        throw FOLK_CRITICAL_ERROR("Log initialized twice");
+        throw CriticalError("Log initialized twice");
 
     std::scoped_lock lk {s_mutex};
     s_out_buf_ptr = &out_buf;
@@ -138,7 +138,7 @@ ConcurrentStreamWriter Log::write(LogLevel lvl)
     std::scoped_lock lock {s_mutex};
 
     if (!s_out_buf_ptr or !s_err_buf_ptr)
-        throw FOLK_RUNTIME_ERROR("Log has not been initialized");
+        throw Error("Log has not been initialized");
 
     if (lvl >= s_level) {
         Log::Buffer &buffer = (lvl <= LogLevel::Message) ? *s_out_buf_ptr : *s_err_buf_ptr;

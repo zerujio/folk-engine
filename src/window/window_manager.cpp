@@ -6,7 +6,8 @@ namespace Folk {
 
 WindowManager::WindowManager(const char* window_name)
 {
-    m_window_ptr = FOLK_GLFW_CALL(glfwCreateWindow, s_default_window_size.x, s_default_window_size.y, window_name, nullptr, nullptr);
+    m_window_ptr = GLFW::call::slow(glfwCreateWindow)(s_default_window_size.x, s_default_window_size.y, window_name,
+                                                      nullptr, nullptr);
 }
 
 WindowManager::WindowManager(const std::string &window_name) : WindowManager(window_name.c_str()) {}
@@ -31,7 +32,7 @@ WindowManager::~WindowManager() {
 }
 
 void WindowManager::destroyWindow() {
-    FOLK_GLFW_CALL(glfwDestroyWindow, m_window_ptr);
+    GLFW::call::slowNoExcept(glfwDestroyWindow)(m_window_ptr);
     m_window_ptr = nullptr;
 }
 
@@ -44,7 +45,7 @@ bool WindowManager::isNull() const {
 }
 
 void WindowManager::setTitle(const char *title) const {
-    FOLK_GLFW_CALL(glfwSetWindowTitle, m_window_ptr, title);
+    GLFW::call::slow(glfwSetWindowTitle)(m_window_ptr, title);
 }
 
 void WindowManager::setTitle(const std::string &title) const {
@@ -52,12 +53,12 @@ void WindowManager::setTitle(const std::string &title) const {
 }
 
 void WindowManager::setSize(Vec2i size) const {
-    FOLK_GLFW_CALL(glfwSetWindowSize, m_window_ptr, size.x, size.y);
+    GLFW::call::slow(glfwSetWindowSize)(m_window_ptr, size.x, size.y);
 }
 
 Vec2i WindowManager::getSize() const {
     int x, y;
-    FOLK_GLFW_CALL(glfwGetWindowSize, m_window_ptr, &x, &y);
+    GLFW::call::slow(glfwGetWindowSize)(m_window_ptr, &x, &y);
     return {x, y};
 }
 
@@ -66,7 +67,7 @@ GLFWwindow *WindowManager::handle() const {
 }
 
 void WindowManager::clearCloseCallback() const {
-    FOLK_GLFW_CALL(glfwSetWindowCloseCallback, m_window_ptr, nullptr);
+    GLFW::call::slow(glfwSetWindowCloseCallback)(m_window_ptr, nullptr);
 }
 
 } // namespace folk

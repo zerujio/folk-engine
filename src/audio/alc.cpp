@@ -1,39 +1,42 @@
 #include "alc.hpp"
+#include "folk/log.hpp"
 
 namespace Folk::alc
 {
 
-const char* ALCError::errorString(ALCenum err) {
-    switch (err)
+const char* errorString(ALCenum error) {
+    switch (error)
     {
     case ALC_NO_ERROR:
         return "ALC_NO_ERROR";
 
     case ALC_INVALID_VALUE:
-        return "ALC_INVALID_VALUE: an invalid value was passed to an OpenAL function";
+        return "ALC_INVALID_VALUE";
         
     case ALC_INVALID_DEVICE:
-        return "ALC_INVALID_DEVICE: a bad device was passed to an OpenAL function";
+        return "ALC_INVALID_DEVICE";
         
     case ALC_INVALID_CONTEXT:
-        return "ALC_INVALID_CONTEXT: a bad context was passed to an OpenAL function";
+        return "ALC_INVALID_CONTEXT";
         
     case ALC_INVALID_ENUM:
-        return "ALC_INVALID_ENUM: an unknown enum value was passed to an OpenAL function";
+        return "ALC_INVALID_ENUM";
         
     case ALC_OUT_OF_MEMORY:
-        return "ALC_OUT_OF_MEMORY: operation caused OpenAL to run out of memory";
+        return "ALC_OUT_OF_MEMORY";
 
     default:
         return "UNKNOWN ALC ERROR";
     }
 }
 
-void checkErrors(ALCdevice* device, const char* file, unsigned int line, const char* func) {
+std::optional<const char *> getError(ALCdevice* device) noexcept {
     auto err = alcGetError(device);
 
-    if (err != ALC_NO_ERROR)
-        throw ALCError(err, file, line, func);
+    if (err)
+        return {errorString(err)};
+    else
+        return {};
 }
 
 // Device
@@ -42,36 +45,29 @@ DeviceManager::DeviceManager() {
     m_device = alcOpenDevice(nullptr);
 
     if (!m_device)
-        FOLK_ERROR(ALCError, "Couldn't open default device");
+        throw ALCError("[ALC ERROR] Failed to open default device.");
 }
 
-DeviceManager::~DeviceManager() {
-    alcCloseDevice(m_device);
+DeviceManager::~DeviceManager() noexcept {
+    if (!alcCloseDevice(m_device)) {
+        Log::error() << "[ALC_ERROR] Couldn't close device: there may be contexts and/or buffers that have not been destroyed.";
+    }
 }
 
 // Context
 
 ContextManager::ContextManager(DeviceManager& device) {
-    m_context = alcCreateContext(device.handle(), nullptr);
-
-    auto error = alcGetError(device.handle());
-
-    if (error == ALC_INVALID_VALUE)
-        FOLK_ERROR(ALCError, "ALC_INVALID_VALUE: An additional context can not be created for this device.");
-    
-    else if (error == ALC_INVALID_DEVICE)
-        FOLK_ERROR(ALCError, "ALC_INVALID_DEVICE: The specified device is not a valid output device.");
+    m_context = call::slow(alcCreateContext, device.handle())(device.handle(), nullptr);
 }
 
 ContextManager::~ContextManager() {
     alcMakeContextCurrent(nullptr);
-    alcDestroyContext(m_context);
+
+    call::slowNoExcept(alcDestroyContext, alcGetContextsDevice(m_context))(m_context);
 }
 
 void ContextManager::makeCurrent() {
-    auto device = alcGetContextsDevice(m_context);
-
-    ALC_CALL(device, alcMakeContextCurrent, m_context);
+    call::slow(alcMakeContextCurrent, alcGetContextsDevice(m_context))(m_context);
 }
 
 } // namespace alc

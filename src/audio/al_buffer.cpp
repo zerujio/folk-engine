@@ -23,7 +23,7 @@ int BufferHandle::size() const {
 }
 
 void BufferHandle::copyData(const int format, const void *data, const int size, const int freq) const {
-    FOLK_AL_CALL(alBufferData, m_id, format, data, size, freq);
+    call::slow(alBufferData)(id(), format, data, size, freq);
 }
 
 }

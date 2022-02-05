@@ -7,12 +7,14 @@
 
 #include "al.hpp"
 
+#include "folk/utils/object_handle.hpp"
+#include "folk/utils/object_manager.hpp"
 #include "folk/audio/al_buffer.hpp"
 #include "folk/math/vector.hpp"
 
 namespace Folk::al {
 
-class SourceHandle : public ObjectHandle<alIsSource> {
+class SourceHandle : public BaseHandle<alIsSource> {
 public:
     /// Get current position of audio source.
     [[nodiscard]] Vec3 getPosition() const;

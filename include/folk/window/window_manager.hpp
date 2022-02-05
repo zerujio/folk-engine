@@ -66,7 +66,7 @@ public:
     /// Sets a callback for when the window is set to close,
     template<void (*Callback)()>
     void setCloseCallback() const {
-        FOLK_GLFW_CALL(glfwSetWindowCloseCallback, m_window_ptr, [](auto){ Callback(); });
+        GLFW::call::slow(glfwSetWindowCloseCallback)(m_window_ptr, [](auto){ Callback(); });
     }
 
     /// Clears the close callback.

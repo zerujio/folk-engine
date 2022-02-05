@@ -30,7 +30,7 @@ void EntityHandle::addChild(const EntityHandle& e) const {
     auto& other = e.node();
 
     if (other.m_parent_ptr)
-        throw FOLK_RUNTIME_ERROR("Can't add root entity as child");
+        throw Error("Can't add root entity as child");
 
     other.changeParent(&node());
 }

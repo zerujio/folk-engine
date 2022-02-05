@@ -16,7 +16,7 @@ void DeltaClock::click() {
 
 void DeltaClock::setMaxDelta(std::chrono::nanoseconds dt) {
     if (dt <= std::chrono::nanoseconds::zero()) {
-        throw FOLK_RUNTIME_ERROR(
+        throw Error(
             "DeltaClock::setMaxDelta: maxDelta must be greater than zero.");
     
     _max_delta = dt;

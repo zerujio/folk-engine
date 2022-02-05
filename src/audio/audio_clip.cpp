@@ -26,7 +26,7 @@ static void checkReadErrors(std::filesystem::path& file, const AudioBuffer& buff
     if (!buffer.data) {
         std::string msg = "Couldn't read file: ";
         msg += file.string();
-        throw FOLK_RUNTIME_ERROR(msg);
+        throw Error(msg);
     }
 }
 
@@ -87,7 +87,7 @@ std::shared_ptr<AudioClip> AudioClip::createFromFile(std::filesystem::path file)
         drflac_free(buffer.data, nullptr);
     }
     else
-        throw FOLK_RUNTIME_ERROR("Unsupported audio format: " 
+        throw Error("Unsupported audio format: "
                                  + ext.generic_string());
 
     return ptr;
@@ -101,7 +101,7 @@ AudioClip::AudioClip(const AudioBuffer& audio_buffer)
     else if (audio_buffer.channels == 2)
         format = AL_FORMAT_STEREO16;
     else
-        throw FOLK_RUNTIME_ERROR("Too many channels in audio clip");
+        throw Error("Too many channels in audio clip");
     
     buffer_mngr.copyData(format, audio_buffer.data, audio_buffer.size(), audio_buffer.sample_rate);
 }

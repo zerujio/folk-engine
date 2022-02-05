@@ -3,12 +3,8 @@
 namespace Folk
 {
 
-std::ostream& operator<<(std::ostream& os, const RuntimeError& err) {
-    os << err.file() << ":" 
-       << err.line() << " ( " 
-       << err.function() << " ) : "
-       << err.what();
-    
+std::ostream& operator<<(std::ostream& os, const Error& err) {
+    os << err.location() << " : " << err.what();
     return os;
 }
     

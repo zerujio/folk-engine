@@ -6,87 +6,220 @@
 #define SRC_UTILS__LIBRARY_CALL_HPP
 
 #include "folk/error.hpp"
+#include "folk/debug.hpp"
+#include "folk/utils/source_location.hpp"
+#include "folk/log.hpp"
 
 #include <type_traits>
+#include <functional>
+#include <optional>
 
 namespace Folk {
 
-/// Exception thrown when a library error occurs.
-struct CLibraryError : public RuntimeError {
-    using RuntimeError::RuntimeError;
+using std::experimental::source_location;
+
+struct LibraryError : public Error {
+    using Error::Error;
 };
 
 /**
- * @brief Wrapper for C library calls.
- * @tparam getError An error checking function. It should return an std::optional containing a descriptive message in
- * case of an error and be empty otherwise.
- * @tparam function A function to call.
- * @tparam Args Types of function parameters.
- * @param file name of source file.
- * @param line source line.
- * @param calling_function name of calling function.
- * @param args The arguments to pass to the function.
- * @return The result of `function_ptr(args...);`
+ * @brief Creates callables that invoke C library functions and perform error checking (if enabled).
+ * @tparam ErrorReturn Return type of the error checking function.
+ * @tparam ErrorArgs Arguments to forward to the error checking function.
+ *
+ * The signature for the error checking function is: std::optional<ErrorReturn> (*) (ErrorArgs...)
+ *
+ *
+ * The std::optional object should only contain an ErrorReturn object if an error occurred. The ErrorReturn type must
+ * be such that it is possible to initialize an std::logic_error instance with it (i.e. it is some sort of string).
  */
-template<auto getError, auto function, class... Args>
-auto libraryCall(const char* file, int line, const char* calling_function, Args&&... args)
-{
-    static_assert(std::is_invocable_v<decltype(function), Args...>, "Invalid argument types!");
+template<auto getError, class... ErrorArgs>
+class LibCall final {
+public:
 
-    if constexpr (std::is_void_v<decltype(function(args...))>) {
-        // void return type
-        getError();
-        function(args...);
-        auto error = getError();
-        if (error)
-            throw CLibraryError(*error, file, line, calling_function);
+    LibCall() = delete;
 
-    } else {
-        getError();
-        auto value = function(args...);
-        auto error = getError();
-        if (error)
-            throw CLibraryError(*error, file, line, calling_function);
-        return value;
+    template<class Return, class... Args>
+    using Function = Return (*) (Args...);
+
+    /**
+     * @brief Call a library function and, only on DEBUG builds, perform error checking.
+     * @tparam Return return type of the function.
+     * @tparam Args argument types of the function.
+     * @param function a function pointer.
+     * @param error_args arguments to pass to the error checking function.
+     * @return On DEBUG builds: a lambda that calls @p function and throws an exception if an error occurred. On
+     * RELEASE builds: @p function.
+     *
+     * The intended usage of this function is like so:
+     * ```
+     * LibCallDispatcher call {getError};
+     * // ...
+     * auto value = call(someFunction)(arg1, arg2, arg3);
+     * ```
+     *
+     * This is a "fast" call because error checking should effectively be optimized out on release builds.
+     */
+    template<class Return, class... Args>
+    static constexpr auto fast(Function<Return, Args...> function, ErrorArgs... error_args) noexcept {
+        if constexpr (c_debug_build) {
+            // DEBUG
+            // get location : true
+            // throwing     : true
+            return lambda<true, true>(function, error_args...);
+        } else {
+            // RELEASE
+            return function;
+        }
     }
-}
 
-/// C library call wrapper with an error checking function that takes a single argument.
-template<auto getError, class ErrorCheckArg, auto function, class... FunctionArgs>
-auto libraryCall(const char* file, int line, const char* calling_function, ErrorCheckArg&& error_arg, FunctionArgs&&... args)
-{
-    static_assert(std::is_invocable_v<decltype(function), FunctionArgs...>, "Invalid function argument types.");
-    static_assert(std::is_invocable_v<decltype(getError), ErrorCheckArg>, "Invalid error check function argument type.");
-
-    if constexpr (std::is_void_v<decltype(function(args...))>) {
-        // void return type
-        function(args...);
-        auto error = getError(error_arg);
-        if (error)
-            throw CLibraryError(*error, file, line, calling_function);
-    } else {
-        auto value = function(args...);
-        auto error = getError(error_arg);
-        if (error)
-            throw CLibraryError(*error, file, line, calling_function);
-        return value;
+    /**
+     * @brief Call a library function and, only on DEBUG builds, perform error checking.
+     * @tparam Return return type of the function.
+     * @tparam Args Argument types of the function.
+     * @param function The function to call.
+     * @param error_args Arguments to pass to the error checking function.
+     * @return On debug builds: a lambda that calls @p function and writes to the Log if an error occurred. On release
+     * builds: @p function.
+     *
+     * This is a "fast" call because error checking should effectively be optimized out on release builds.
+     */
+    template<class Return, class... Args>
+    static constexpr auto fastNoExcept(Function<Return, Args...> function, ErrorArgs... error_args) noexcept {
+        if constexpr (c_debug_build) {
+            // DEBUG
+            // get location : true
+            // throwing     : false
+            return lambda<true, false>(function, error_args...);
+        } else {
+            // RELEASE
+            return function;
+        }
     }
-}
 
-#if FOLK_DEBUG
+    /**
+     * @brief Call a library function and always perform error checking.
+     * @tparam Return return type of the function.
+     * @tparam Args argument types of the function.
+     * @param function the function to call.
+     * @param error_args arguments to pass to the error checking function.
+     * @return A lambda that calls @p function and throws an exception if an error occurred.
+     *
+     * This is a "slow" call because error checking is always performed, not only on debug builds.
+     */
+    template<class Return, class... Args>
+    static constexpr auto slow(Function<Return, Args...> function, ErrorArgs... error_args) noexcept {
+        if constexpr (c_debug_build) {
+            // DEBUG
+            // capture location : true
+            // throwing         : true
+            return lambda<true, true>(function, error_args...);
+        } else {
+            // RELEASE
+            // capture location : false
+            // throwing         : true
+            return lambda<false, true>(function, error_args...);
+        }
+    }
 
-#define FOLK_C_LIBRARY_CALL(errorCheck, function, ...)\
-libraryCall<errorCheck, function>(__FILE__, __LINE__, __PRETTY_FUNCTION__, ##__VA_ARGS__)
+    /**
+     * @brief Call a library function and always perform error checking.
+     * @tparam Return return type of the function.
+     * @tparam Args argument types of the function.
+     * @param function the function to call.
+     * @param error_args arguments to pass to the error checking function.
+     * @return A lambda that calls @p function and writes to the Log if an error occurred.
+     *
+     * This is a "slow" call because error checking is always performed, not only on debug builds.
+     */
+    template<class Return, class... Args>
+    static constexpr auto slowNoExcept(Function<Return, Args...> function, ErrorArgs... error_args) noexcept {
+        if constexpr (c_debug_build) {
+            // DEBUG
+            // capture location : true
+            // throwing         : false
+            return lambda<true, false>(function, error_args...);
+        } else {
+            // RELEASE
+            // capture location : false
+            // throwing         : false
+            return lambda<false, false>(function, error_args...);
+        }
+    }
 
-#define FOLK_C_LIBRARY_CALL_ERR_ARG(errorCheck, error_arg, function, ...)\
-libraryCall<errorCheck, function>(__FILE__, __LINE__, __PRETTY_FUNCTION__, err_arg, ##__VA_ARGS__)
+private:
+    template<bool Throwing>
+    static constexpr auto checkErrors(ErrorArgs... error_args) noexcept(!Throwing)
+    {
+        auto error = getError(error_args...);
+        if (error) {
+            if constexpr (Throwing)
+                throw LibraryError(*error);
+            else
+                Log::error() << *error << '\n';
+        }
+    }
 
-#else
+    template<bool Throwing>
+    static constexpr auto checkErrors(const source_location loc, ErrorArgs... error_args) noexcept(!Throwing)
+    {
+        auto error = getError(error_args...);
+        if (error) {
+            if constexpr (Throwing)
+                throw LibraryError(*error, loc);
+            else
+                Log::error() << loc << " : " << *error << '\n';
+        }
+    }
 
-#define FOLK_C_LIBRARY_CALL(errorCheck, function, ...) function(##__VA_ARGS__)
-#define FOLK_C_LIBRARY_CALL_ERR_ARG(errorCheck, error_arg, function, ...) function(##__VA_ARGS__)
+    template<bool Throwing, class Return, class... Args>
+    static constexpr auto callAndCheckErrors(ErrorArgs... error_args, Function<Return, Args...> function, Args... args)
+    noexcept(!Throwing)
+    {
+        if constexpr (std::is_void_v<Return>) {
+            function(args...);
+            checkErrors<Throwing>(error_args...);
+        } else {
+            auto value = function(args...);
+            checkErrors<Throwing>(error_args...);
+            return value;
+        }
+    }
 
-#endif // FOLK_DEBUG
+    template<bool Throwing, class Return, class... Args>
+    static constexpr auto callAndCheckErrors(const source_location loc, ErrorArgs... error_args,
+                                             Function<Return, Args...> function, Args... args)
+    noexcept(!Throwing)
+    {
+        if constexpr(std::is_void_v<Return>) {
+            function(args...);
+            checkErrors<Throwing>(loc, error_args...);
+        } else {
+            auto value = function(args...);
+            checkErrors<Throwing>(loc, error_args...);
+            return value;
+        }
+    }
+
+    template<bool CaptureLocation, bool Throwing, class Return, class... Args>
+    static constexpr auto lambda(Function<Return, Args...> function, ErrorArgs... error_args) noexcept {
+
+        if constexpr (CaptureLocation) {
+            return [function, error_args...] (Args... args, source_location loc = source_location::current())
+            noexcept (!Throwing) {
+                getError(error_args...); // clear error state;
+                return callAndCheckErrors<Throwing>(loc, error_args..., function, args...);
+            };
+
+        } else {
+            return [function, error_args...] (Args... args)
+            noexcept (!Throwing) {
+                getError(error_args...);
+                return callAndCheckErrors<Throwing>(error_args..., function, args...);
+            };
+        }
+    }
+};
 
 } // namespace Folk
 

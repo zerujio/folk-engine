@@ -23,7 +23,7 @@ try {
     Log::error() << e << "\n";
     onCritical();
 
-} catch (RuntimeError &e) {
+} catch (Error &e) {
     Log::error() << e << "\n";
 
 } catch (std::exception &e) {
