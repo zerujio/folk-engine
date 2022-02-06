@@ -38,7 +38,7 @@ public:
     }
 
 protected:
-    using call = LibCall;
+    using Call = LibCall;
 
     /// Retrieve a property using an glGet-style function.
     template<class T, auto Getter, class Enum>

@@ -52,19 +52,19 @@ void SourceHandle::setLooping(const bool value) const {
 }
 
 void SourceHandle::play() const {
-    call::fast(alSourcePlay)(id());
+    Call::fast(alSourcePlay)(id());
 }
 
 void SourceHandle::pause() const {
-    call::fast(alSourcePause)(id());
+    Call::fast(alSourcePause)(id());
 }
 
 void SourceHandle::stop() const {
-    call::fast(alSourcePause)(id());
+    Call::fast(alSourcePause)(id());
 }
 
 void SourceHandle::rewind() const {
-    call::fast(alSourcePause)(id());
+    Call::fast(alSourcePause)(id());
 }
 
 

@@ -19,13 +19,13 @@ namespace Folk {
 template<class HandleType, auto Gen, auto Del>
 class ObjectManager : public HandleType {
 
-    using call = typename HandleType::call;
+    using Call = typename HandleType::Call;
     using HandleType::id;
 
 public:
     /// Creates an OpenAL object.
     ObjectManager() {
-        call::slow(Gen)(1, &m_id());
+        Call::slow(Gen)(1, &m_id());
     }
 
     /// Deleted copy constructor.
@@ -50,7 +50,7 @@ public:
     /// Deletes the managed object.
     ~ObjectManager() {
         if (id() && static_cast<HandleType*>(this)->valid())
-            call::slowNoExcept(Del)(1, &m_id());
+            Call::slowNoExcept(Del)(1, &m_id());
     }
 
 private:

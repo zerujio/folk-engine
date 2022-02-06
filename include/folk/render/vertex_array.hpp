@@ -100,29 +100,48 @@ public:
     {
         m_vao.bind();
         m_buffer.bind(gl::BufferTarget::Array);
-        gl::call::slow(glBufferData)(GL_ARRAY_BUFFER, sizeof(Container::value_type) * data.size(), data.data(), GL_STATIC_DRAW);
+
+        writeBuffer(sizeof(Container::value_type) * data.size(), data.data());
 
         GLsizei stride {0};
         for (const VertexAttribute& att : attributes) {
             stride += att.rawSize();
         }
 
-        int i = 0;
-        GLsizei offset = 0;
+        int i {0};
+        GLsizei offset {0};
         for (const VertexAttribute& attrib : attributes) {
-            gl::call::slow(glVertexAttribPointer)(i, static_cast<GLint>(attrib.size), static_cast<GLenum>(attrib.type),
-                    attrib.norm, stride, reinterpret_cast<void*>(offset));
-            gl::call::fast(glEnableVertexAttribArray)(i);
-            ++i;
+            addVertexAttribute(i++, attrib, stride, offset);
             offset += attrib.rawSize();
         }
 
-        gl::call::fast(glBindVertexArray)(0);
+        gl::VertexArrayHandle::unbind();
     }
+
+    void bind() const;
+
+    static void unbind();
 
 private:
     gl::BufferManager m_buffer {};
     gl::VertexArrayManager m_vao {};
+
+    /**
+     * @brief Write vertex data to currently bound vertex array buffer.
+     * @param data An opaque pointer to data.
+     * @param size Size in bytes of the data.
+     */
+    static void writeBuffer(const void* data, GLsizei size) ;
+
+    /**
+     * @brief Add a vertex attribute to currently bound VAO.
+     * @param index index (location) of the attribute.
+     * @param attribute A vertex attribute specification.
+     * @param stride Separation between consecutive attributes (i.e. size of the whole vertex).
+     * @param offset Distance from the start of the buffer to the first instance of the attribute (or from the start of
+     * vertex to the attribute).
+     */
+    static void addVertexAttribute(int index, const VertexAttribute& attribute, GLsizei stride, GLsizei offset) ;
 };
 
 } // namespace Folk

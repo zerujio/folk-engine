@@ -7,7 +7,7 @@ GLboolean isBuffer(GLuint id) {
 }
 
 void BufferHandle::bind(BufferTarget target) const {
-    call::fast(glBindBuffer)(static_cast<GLenum>(target), id());
+    Call::fast(glBindBuffer)(static_cast<GLenum>(target), id());
 }
 
 void genBuffers(GLsizei n, GLuint *id_array) {

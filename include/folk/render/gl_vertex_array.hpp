@@ -15,8 +15,11 @@ GLboolean isVertexArray(GLuint id);
 class VertexArrayHandle : public BaseHandle<isVertexArray> {
 
 public:
+    /// bind this VAO
     void bind() const;
 
+    /// Unbind the currently bound VAO.
+    static void unbind();
 };
 
 void genVertexArrays(GLsizei n, GLuint* ids);

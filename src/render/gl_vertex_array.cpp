@@ -19,7 +19,11 @@ void gl::deleteVertexArrays(const GLsizei n, GLuint *ids) {
 }
 
 void gl::VertexArrayHandle::bind() const {
-    glBindVertexArray(id());
+    Call::fast(glBindVertexArray)(id());
 }
 
+void gl::VertexArrayHandle::unbind() {
+    Call::fast(glBindVertexArray)(0);
 }
+
+} // namespace Folk
