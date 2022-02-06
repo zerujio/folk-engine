@@ -5,12 +5,6 @@
 #ifndef INCLUDE_FOLK_RENDER__GL_CALL_HPP
 #define INCLUDE_FOLK_RENDER__GL_CALL_HPP
 
-#ifndef FOLK_DEBUG
-
-#define #define FOLK_GL_CALL(function, ...) function(##__VA_ARGS__)
-
-#else // FOLK_DEBUG
-
 #include "gl.hpp"
 #include "folk/utils/library_call.hpp"
 
@@ -34,7 +28,5 @@ using call = LibCall<GLError, getError>;
 void GLAPIENTRY debugMessageCallback(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar* message, const void* userParam);
 
 } // namespace Folk::gl
-
-#endif // FOLK_DEBUG
 
 #endif //INCLUDE_FOLK_RENDER__GL_CALL_HPP

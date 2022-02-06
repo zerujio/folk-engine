@@ -16,9 +16,9 @@ void WindowingSystem::initialize() {
     GLFW::call::slow(glfwWindowHint)(GLFW_CONTEXT_VERSION_MAJOR, FOLK_OPENGL_VERSION_MAJOR);
     GLFW::call::slow(glfwWindowHint)(GLFW_CONTEXT_VERSION_MINOR, FOLK_OPENGL_VERSION_MINOR);
     GLFW::call::slow(glfwWindowHint)(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-#ifdef FOLK_DEBUG
-    GLFW::call::slow(glfwWindowHint)(GLFW_OPENGL_DEBUG_CONTEXT, GLFW_TRUE);
-#endif
+    if constexpr (c_debug_build) {
+        GLFW::call::slow(glfwWindowHint)(GLFW_OPENGL_DEBUG_CONTEXT, GLFW_TRUE);
+    }
 }
 
 void WindowingSystem::terminate() {

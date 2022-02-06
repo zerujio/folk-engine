@@ -10,12 +10,10 @@
 namespace Folk {
 
 /**
- * @brief Base class for non owning handles to OpenGL style objects.
- * @tparam IdType The integer id type (e.g. GLuint).
- * @tparam EnumType The integer enum type (e.g. GLenum).
- * @tparam BoolType The boolean type (e.g. GLboolean).
- * @tparam isValid A validity checking function (e.g. glIsBuffer). Determines what type of object this handle refers to.
- * @tparam LibCall a class that will be used to call library functions.
+ * @brief Base class for non owning handles.
+ * @tparam LibCall The class that provides lambdas/function pointers for library calls.
+ * @tparam isValid A function that checks the validity of the handle, such as glIsBuffer().
+ * @tparam IdType The type for the handle, such as GLuint.
  */
 template<class LibCall, auto isValid, class IdType>
 class ObjectHandle {
@@ -24,6 +22,9 @@ class ObjectHandle {
     friend class ObjectManager;
 
 public:
+    using id_t = IdType;
+    using bool_t = decltype(isValid(0));
+
     /// Default constructor: id will default to zero, which may or may not be a valid id.
     ObjectHandle() : m_id(0) {}
 

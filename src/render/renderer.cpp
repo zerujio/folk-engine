@@ -82,14 +82,9 @@ void Renderer::setFrameBufferSize(Vec2i size) {
 }
 
 void Renderer::initialize() {
-#ifdef FOLK_DEBUG
-    glGetError();
-    glDebugMessageCallback(gl::debugMessageCallback, nullptr);
-    auto err = glGetError();
-    if (err) {
-        throw CriticalError("Renderer initialization failed!");
+    if constexpr(c_debug_build) {
+        glDebugMessageCallback(gl::debugMessageCallback, nullptr);
     }
-#endif
 }
 
 } // namespace folk

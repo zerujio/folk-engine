@@ -13,8 +13,8 @@ namespace Folk {
  * @brief Base class for OpenAL object managers.
  * A manager differs from
  * @tparam HandleType A handle type that inherits from ObjectHandle.
- * @tparam alGen The function to generate new objects of this type (e.g. alGenSources).
- * @tparam alDelete The function to delete objects (e.g. alDeleteSources).
+ * @tparam Gen The function to generate new objects of this type (e.g. alGenSources).
+ * @tparam Del The function to delete objects (e.g. alDeleteSources).
  */
 template<class HandleType, auto Gen, auto Del>
 class ObjectManager : public HandleType {
