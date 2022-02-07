@@ -10,6 +10,10 @@ void BufferHandle::bind(BufferTarget target) const {
     Call::fast(glBindBuffer)(static_cast<GLenum>(target), id());
 }
 
+void BufferHandle::unbind(BufferTarget target) {
+    Call::fast(glBindBuffer)(static_cast<GLenum>(target), 0);
+}
+
 void genBuffers(GLsizei n, GLuint *id_array) {
     glGenBuffers(n, id_array);
 }

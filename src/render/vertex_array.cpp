@@ -6,6 +6,10 @@
 
 namespace Folk {
 
+const std::array<VertexAttribute, 2> PositionColorVertex::vertex_attributes {
+        makeVertexAttribute<Vec3>(false, 0),
+        {VertexAttributeType::UByte, VertexAttributeSize::XYZW, true, offsetof(PositionColorVertex, color)}
+};
 
 void VertexArray::bind() const {
     m_vao.bind();
@@ -15,14 +19,15 @@ void VertexArray::unbind() {
     gl::VertexArrayHandle::unbind();
 }
 
-void VertexArray::writeBuffer(const void *data, GLsizei size) {
-    gl::call::slow(glBufferData)(GL_ARRAY_BUFFER, size, data, GL_STATIC_DRAW);
+void VertexArray::bufferData(const void *data, GLsizei size, gl::BufferHandle buffer, gl::BufferTarget target) {
+    buffer.bind(target);
+    gl::call::slow(glBufferData)(static_cast<GLenum>(target), size, data, GL_STATIC_DRAW);
 }
 
-void VertexArray::addVertexAttribute(int index, const VertexAttribute &attribute, GLsizei stride, GLsizei offset)
+void VertexArray::addVertexAttribute(int index, const VertexAttribute &attribute, GLsizei stride)
 {
     gl::call::fast(glVertexAttribPointer)(index, static_cast<GLint>(attribute.size), static_cast<GLenum>(attribute.type),
-                                          attribute.norm, stride, reinterpret_cast<void*>(offset));
+                                          attribute.normalize, stride, reinterpret_cast<void*>(attribute.offset));
     gl::call::fast(glEnableVertexAttribArray)(index);
 }
 

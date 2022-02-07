@@ -54,7 +54,7 @@ public:
     }
 
 private:
-    [[nodiscard]] constexpr ALuint& m_id() noexcept {
+    [[nodiscard]] constexpr auto& m_id() noexcept {
         return static_cast<HandleType*>(this)->m_id;
     }
 };

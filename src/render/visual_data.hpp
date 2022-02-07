@@ -8,7 +8,7 @@ namespace Folk
 
 struct VisualData final : public Visual {
     VisualData(std::shared_ptr<Mesh> mesh, std::shared_ptr<Material> material)
-        : Visual(mesh, material)
+        : Visual(std::move(mesh), std::move(material))
     {}
 };
 

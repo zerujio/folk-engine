@@ -2,25 +2,16 @@
 #define FOLK_RENDER__IMMEDIATE_GEOMETRY_HPP
 
 #include <vector>
-#include <cstdint>
 
 namespace Folk
 {
 
 /// \brief \~spanish Una estructura para especificar geometría. 
 /// \brief \~english A structure to specify geometry.
+template<class Vertex, class Index>
 struct ImmediateGeometry
 {
-    struct Vertex {
-        float x;
-        float y;
-        float z;
-        uint32_t abgr;
-    };
     using VertexArray = std::vector<Vertex>;
-    static_assert(sizeof(Vertex) == 16);
-
-    using Index = uint16_t;
     using IndexArray = std::vector<Index>;
 
     /// Vertices
@@ -44,11 +35,7 @@ struct ImmediateGeometry
      * \param v a vertex array.
      * \param i an index array.
     */
-    ImmediateGeometry(VertexArray && v, IndexArray && i) 
-        : vertices(v), indices(i) {}
-
-    /// Construye un cubo
-    static ImmediateGeometry createCube(const uint32_t color);
+    ImmediateGeometry(VertexArray && v, IndexArray && i) : vertices(v), indices(i) {}
 };
 
 } // namespace folk

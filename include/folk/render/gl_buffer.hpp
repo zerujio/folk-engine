@@ -34,6 +34,9 @@ class BufferHandle : public BaseHandle<isBuffer> {
 public:
     /// Bind to a buffer target. LibCall type: fast.
     void bind(BufferTarget) const;
+
+    /// Unbind a target's current buffer.
+    static void unbind(BufferTarget target);
 };
 
 void genBuffers(GLsizei n, GLuint* id_array);

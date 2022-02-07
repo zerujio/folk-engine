@@ -102,7 +102,7 @@ std::shared_ptr<Visual> getWhiteCubeVisual() {
     std::shared_ptr<Visual> visual_shared;
 
     if (visual_weak.expired()) {
-        auto mesh = Mesh::create(ImmediateGeometry::createCube(0xffffffff));
+        auto mesh = Mesh::createCube({0xff, 0xff, 0xff, 0xff});
         visual_shared = Visual::create(mesh);
         visual_weak = visual_shared;
     } else {
@@ -206,7 +206,7 @@ void Folk::sceneInit(Scene &scene) {
 
     // se crea el cubo naranja
     auto cube = createWhiteCube(scene.root());
-    auto visual = Visual::create(Mesh::create(ImmediateGeometry::createCube(0xff0088ff)));
+    auto visual = Visual::create(Mesh::createCube({0xff, 0x00, 0x88, 0xff}));
     cube.getComponent<VisualComponent>()->setVisual(visual);                    // se setea un Visual color naranja
     cube.getComponent<TransformComponent>()->scale({1.1f, 1.1f, 1.1f});         // se aumenta la escala un 10%
     // se añade el script de rotación

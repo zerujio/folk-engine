@@ -1,6 +1,8 @@
 #ifndef FOLK_RENDER__VISUAL_HPP
 #define FOLK_RENDER__VISUAL_HPP
 
+#include <utility>
+
 #include "folk/core/resource.hpp"
 #include "folk/render/material.hpp"
 #include "folk/render/mesh.hpp"
@@ -49,11 +51,9 @@ protected:
     std::shared_ptr<Mesh> mesh;
     std::shared_ptr<Material> material;
 
-    Visual(std::weak_ptr<Mesh> mesh_, std::weak_ptr<Material> material_)
-        :  mesh(mesh_), material(material_)
+    Visual(std::shared_ptr<Mesh> mesh_, std::shared_ptr<Material> material_)
+        :  mesh(std::move(mesh_)), material(std::move(material_))
     {}
-
-    ~Visual() {}
 };
 
 } // namespace folk

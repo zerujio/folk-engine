@@ -10,4 +10,6 @@ target_sources(folk_engine PRIVATE
         shader_loader.cpp
         camera_component.cpp
         gl_call.cpp
-        gl_buffer.cpp)
+        gl_buffer.cpp
+        gl_vertex_array.cpp
+        vertex_array.cpp)
