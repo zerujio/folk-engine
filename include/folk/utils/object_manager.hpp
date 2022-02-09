@@ -6,6 +6,7 @@
 #define INCLUDE_FOLK_UTILS__OBJECT_MANAGER_HPP
 
 #include "object_handle.hpp"
+#include <type_traits>
 
 namespace Folk {
 
@@ -13,19 +14,45 @@ namespace Folk {
  * @brief Base class for OpenAL object managers.
  * A manager differs from
  * @tparam HandleType A handle type that inherits from ObjectHandle.
- * @tparam Gen The function to generate new objects of this type (e.g. alGenSources).
- * @tparam Del The function to delete objects (e.g. alDeleteSources).
+ * @tparam Create The function to generate new objects of this type (e.g. alGenSources).
+ * @tparam Destroy The function to delete objects (e.g. alDeleteSources).
+ * @tparam Args Constructor arguments to forward to the Create() function.
  */
-template<class HandleType, auto Gen, auto Del>
+
+template<class HandleType, auto Create, auto Destroy, class... Args>
 class ObjectManager : public HandleType {
 
+    using CreateT = decltype(Create);
+    static constexpr bool glGenStyle { std::is_invocable_v<CreateT, int, id_t*, Args...> };
+    static constexpr bool glCreateStyle {
+        std::is_invocable_v<CreateT, Args...>&& std::is_same_v<id_t, std::invoke_result_t<CreateT, Args...>>
+    };
+    static constexpr bool unknownStyle { !glGenStyle && !glCreateStyle };
+
+protected:
+
     using Call = typename HandleType::Call;
+    using HandleType::valid;
     using HandleType::id;
+    using Id = typename HandleType::Id;
 
 public:
     /// Creates an OpenAL object.
-    ObjectManager() {
-        Call::slow(Gen)(1, &m_id());
+    explicit ObjectManager(Args... args) {
+
+        if constexpr(glGenStyle) {
+            // function has glGenBuffers style signature
+            Call::slow(Create)(1, &m_id(), args...);
+
+        } else if constexpr(glCreateStyle) {
+            // function has glCreateShader style signature
+            m_id() = Call::slow(Create)(args...);
+
+        } else {
+            static_assert(unknownStyle,
+                    "'Create' function signature does not match any known style;"
+                    " perhaps the argument types are incorrect?");
+        }
     }
 
     /// Deleted copy constructor.
@@ -49,11 +76,16 @@ public:
 
     /// Deletes the managed object.
     ~ObjectManager() {
-        if (id() && static_cast<HandleType*>(this)->valid())
-            Call::slowNoExcept(Del)(1, &m_id());
+        if (id() && valid()) {
+            if constexpr(glGenStyle)
+                Call::slowNoExcept(Destroy)(1, &m_id());
+            else if constexpr(glCreateStyle)
+                Call::slowNoExcept(Destroy)(id());
+        }
     }
 
 private:
+    // access id data member
     [[nodiscard]] constexpr auto& m_id() noexcept {
         return static_cast<HandleType*>(this)->m_id;
     }

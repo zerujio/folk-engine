@@ -35,6 +35,9 @@ private:
 
     static bool s_frame_buffer_size_changed;
     static Vec2i s_frame_buffer_size;
+
+    static void GLAPIENTRY debugMessageCallback(GLenum source, GLenum type, GLuint id, GLenum severity,
+                                                GLsizei length, const GLchar* message, const void* userParam);
 };
 
 } // namespace folk

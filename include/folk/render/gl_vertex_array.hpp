@@ -5,8 +5,7 @@
 #ifndef INCLUDE_FOLK_RENDER__GL_VERTEX_ARRAY_HPP
 #define INCLUDE_FOLK_RENDER__GL_VERTEX_ARRAY_HPP
 
-#include "gl_handle.hpp"
-#include "folk/utils/object_manager.hpp"
+#include "gl_object.hpp"
 
 namespace Folk::gl {
 
@@ -15,7 +14,7 @@ GLboolean isVertexArray(GLuint id);
 class VertexArrayHandle : public BaseHandle<isVertexArray> {
 
 public:
-    /// bind this VAO
+    /// use this VAO
     void bind() const;
 
     /// Unbind the currently bound VAO.

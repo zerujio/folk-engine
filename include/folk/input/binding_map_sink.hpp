@@ -10,7 +10,7 @@
 namespace Folk {
 
 /**
- * @brief A wrapper that maintains a pointer to a std::multimap to easily bind and unbind keys to values.
+ * @brief A wrapper that maintains a pointer to a std::multimap to easily use and unbind keys to values.
  * The underlying object will be
  * @tparam K key type.
  * @tparam T value type.

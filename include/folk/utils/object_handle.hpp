@@ -18,12 +18,11 @@ namespace Folk {
 template<class LibCall, auto isValid, class IdType>
 class ObjectHandle {
 
-    template<class H, auto G, auto D>
-    friend class ObjectManager;
+    template<class H, auto C, auto D, class... As> friend class ObjectManager;
 
 public:
-    using id_t = IdType;
-    using bool_t = decltype(isValid(0));
+    using Id = IdType;
+    using Bool = decltype(isValid(0));
 
     /// Default constructor: id will default to zero, which may or may not be a valid id.
     ObjectHandle() : m_id(0) {}
@@ -65,11 +64,11 @@ protected:
         LibCall::fast(SetterV)(m_id, property, &vector.x);
     }
 
+    constexpr ObjectHandle(IdType id) : m_id(id) {}
+
     constexpr auto id() const {
         return m_id;
     }
-
-    constexpr ObjectHandle(IdType id) : m_id(id) {}
 
 private:
     IdType m_id {0};

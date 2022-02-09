@@ -5,9 +5,7 @@
 #ifndef INCLUDE_FOLK_RENDER__GL_BUFFER_HPP
 #define INCLUDE_FOLK_RENDER__GL_BUFFER_HPP
 
-#include "gl.hpp"
-#include "gl_handle.hpp"
-#include "folk/utils/object_manager.hpp"
+#include "gl_object.hpp"
 
 namespace Folk::gl {
 
