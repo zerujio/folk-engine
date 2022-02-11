@@ -12,24 +12,25 @@ bool Log::s_wake_up_flag {false};
 Log::Buffer* Log::s_out_buf_ptr {nullptr};
 Log::Buffer* Log::s_err_buf_ptr {nullptr};
 
-ScopedInitializer<Log>::ScopedInitializer() {
-    Log::initialize(out_buf, err_buf);
+ScopedInitializer<Log>::ScopedInitializer(LogLevel level) {
+    Log::initialize(level, out_buf, err_buf);
 }
 
 ScopedInitializer<Log>::~ScopedInitializer() noexcept {
     Log::terminate();
 }
 
-void ScopedInitializer<Log>::wakeUp() {
+void ScopedInitializer<Log>::wakeUp() const {
     if (Log::s_wake_up_flag)
         Log::s_condition.notify_all();
 }
 
-void Log::initialize(Log::Buffer &out_buf, Log::Buffer &err_buf) {
+void Log::initialize(LogLevel level, Log::Buffer &out_buf, Log::Buffer &err_buf) {
     if (s_out_buf_ptr || s_err_buf_ptr)
         throw CriticalError("Log initialized twice");
 
     std::scoped_lock lk {s_mutex};
+    s_level = level;
     s_out_buf_ptr = &out_buf;
     s_err_buf_ptr = &err_buf;
     s_thread = std::thread(Log::main);

@@ -6,11 +6,6 @@
 
 namespace Folk {
 
-const std::array<VertexAttribute, 2> PositionColorVertex::vertex_attributes {
-        makeVertexAttribute<Vec3>(false, 0),
-        {VertexAttributeType::UByte, VertexAttributeSize::XYZW, true, offsetof(PositionColorVertex, color)}
-};
-
 void VertexArray::bind() const {
     m_vao.bind();
 }
@@ -24,11 +19,16 @@ void VertexArray::bufferData(const void *data, GLsizei size, gl::BufferHandle bu
     gl::call::slow(glBufferData)(static_cast<GLenum>(target), size, data, GL_STATIC_DRAW);
 }
 
-void VertexArray::addVertexAttribute(int index, const VertexAttribute &attribute, GLsizei stride)
+void VertexArray::addVertexAttribute(const VertexAttribute &attribute, GLsizei stride, GLuint offset)
 {
-    gl::call::fast(glVertexAttribPointer)(index, static_cast<GLint>(attribute.size), static_cast<GLenum>(attribute.type),
-                                          attribute.normalize, stride, reinterpret_cast<void*>(attribute.offset));
-    gl::call::fast(glEnableVertexAttribArray)(index);
+    gl::call::fast(glVertexAttribPointer)(
+            attribute.location,
+            static_cast<GLint>(attribute.count),
+            static_cast<GLenum>(attribute.type.gl_enum),
+            attribute.normalize,
+            stride,
+            reinterpret_cast<void*>(offset));
+    gl::call::fast(glEnableVertexAttribArray)(attribute.location);
 }
 
 } // namespace Folk

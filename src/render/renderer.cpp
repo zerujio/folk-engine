@@ -16,9 +16,11 @@ Vec2i Renderer::s_frame_buffer_size {};
 void Renderer::drawFrame(SceneManager &scene, std::chrono::duration<double> delta)
 {
     if (s_frame_buffer_size_changed) {
-        glViewport(0, 0, s_frame_buffer_size.x, s_frame_buffer_size.y);
+        gl::call::fast(glViewport)(0, 0, s_frame_buffer_size.x, s_frame_buffer_size.y);
         s_frame_buffer_size_changed = false;
     }
+
+    glClear(GL_COLOR_BUFFER_BIT);
 
     auto aspect_ratio = static_cast<float>(s_frame_buffer_size.x) / static_cast<float>(s_frame_buffer_size.y);
 
@@ -42,20 +44,21 @@ void Renderer::drawFrame(SceneManager &scene, std::chrono::duration<double> delt
     reg_view.each(
             [] (const auto entity, SceneGraphNode& transform, const VisualComponent& visual)
             {
-                // setViewTransform(view_mtx, proj_mtx);
-
                 auto mesh = visual.visual->getMesh();
-                // setVertexBuffer( mesh->vertex_buffer );
-                // setIndexBuffer( mesh->index_buffer );
+                auto material = visual.visual->getMaterial();
 
-                // setTransform( transform.transformMatrix() );
+                material->getShader()->m_shader_program.bind();
+                mesh->m_vertex_array.bind();
 
-                // setProgram(visual.visual->getMaterial()->getShader()->handle):
-                // draw();
+                gl::call::fast(glDrawElements)(
+                        static_cast<GLenum>(mesh->getDrawMode()),
+                        mesh->m_vertex_array.m_index_count,
+                        static_cast<GLenum>(mesh->m_vertex_array.m_index_type),
+                        nullptr);
+
+                VertexArray::unbind();
             }
     );
-
-    glClear(GL_COLOR_BUFFER_BIT);
 
     // end frame (swap buffers?)
     s_handle.swapBuffers();
@@ -80,7 +83,9 @@ void Renderer::setFrameBufferSize(Vec2i size) {
     s_frame_buffer_size = size;
 }
 
-void Renderer::initialize() {
+void Renderer::initialize(RenderContextHandle handle) {
+    setContext(handle);
+
     if constexpr(c_debug_build) {
         glDebugMessageCallback(debugMessageCallback, nullptr);
     }

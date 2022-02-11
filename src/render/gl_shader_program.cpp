@@ -8,6 +8,13 @@ GLboolean _isProgram(GLuint id) {
 
 void ShaderProgramHandle::link() const {
     Call::fast(glLinkProgram)(id());
+    GLint success;
+    Call::fast(glGetProgramiv)(id(), GL_LINK_STATUS, &success);
+    if (!success) {
+        std::array<char, 1024> buf {};
+        Call::fast(glGetProgramInfoLog)(id(), buf.size(), nullptr, buf.data());
+        Log::error() << "[GL ERROR] Shader linking failed: " << buf.data() << "\n";
+    }
 }
 
 void ShaderProgramHandle::attach(ShaderHandle shader) const {
@@ -18,8 +25,12 @@ void ShaderProgramHandle::detach(ShaderHandle shader) const {
     Call::fast(glDetachShader)(id(), shader.id());
 }
 
-void ShaderProgramHandle::use() const {
+void ShaderProgramHandle::bind() const {
     Call::fast(glUseProgram)(id());
+}
+
+void ShaderProgramHandle::unbind() {
+    Call::fast(glUseProgram)(0u);
 }
 
 GLuint _createProgram() {

@@ -17,16 +17,13 @@ struct Renderer final {
     Renderer() = delete;
 
     /// OpenGL setup
-    static void initialize();
+    static void initialize(RenderContextHandle handle);
 
     /// Draw a frame.
     static void drawFrame(SceneManager &scene, std::chrono::duration<double> delta);
 
     /// Draw the performance monitor.
     static void drawPerfMon(const PerformanceMonitor&, DeltaClock::milliseconds_double) noexcept;
-
-    /// Set the rendering context to perform rendering operations on.
-    static void setContext(RenderContextHandle);
 
     static void setFrameBufferSize(Vec2i size);
 
@@ -35,6 +32,8 @@ private:
 
     static bool s_frame_buffer_size_changed;
     static Vec2i s_frame_buffer_size;
+
+    static void setContext(RenderContextHandle);
 
     static void GLAPIENTRY debugMessageCallback(GLenum source, GLenum type, GLuint id, GLenum severity,
                                                 GLsizei length, const GLchar* message, const void* userParam);

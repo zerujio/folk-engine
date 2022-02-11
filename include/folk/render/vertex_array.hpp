@@ -46,18 +46,21 @@ public:
     {
         m_vao.bind();
 
-        bufferData(vertex_data.data(), sizeof(typename VertexContainer::value_type) * vertex_data.size(),
-                   m_vertex_buffer, gl::BufferTarget::Array);
+        bufferData(vertex_data.data(),
+                   sizeof(typename VertexContainer::value_type) * vertex_data.size(),
+                   m_vertex_buffer,
+                   gl::BufferTarget::Array);
 
-        bufferData(index_data.data(), sizeof(typename IndexContainer::value_type) * index_data.size(),
-                   m_index_buffer, gl::BufferTarget::ElementArray);
+        bufferData(index_data.data(),
+                   sizeof(typename IndexContainer::value_type) * index_data.size(),
+                   m_index_buffer,
+                   gl::BufferTarget::ElementArray);
 
         const auto stride {sizeof(typename VertexContainer::value_type)};
         const auto& attributes = VertexContainer::value_type::vertex_attributes;
 
-        int i {0};
-        for (const VertexAttribute& attrib : attributes) {
-            addVertexAttribute(i++, attrib, stride);
+        for (const VertexAttribSpec& attrib : attributes) {
+            addVertexAttribute(attrib.attribute, stride, attrib.offset);
         }
 
         gl::VertexArrayHandle::unbind();
@@ -82,7 +85,7 @@ private:
     static void bufferData(const void* data, GLsizei size, gl::BufferHandle buffer, gl::BufferTarget target);
 
     // Add a vertex attribute to currently bound VAO.
-    static void addVertexAttribute(int index, const VertexAttribute& attribute, GLsizei stride);
+    static void addVertexAttribute(const VertexAttribute& attribute, GLsizei stride, GLuint offset);
 };
 
 } // namespace Folk

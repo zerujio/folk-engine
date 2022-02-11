@@ -16,8 +16,8 @@ enum class IndexType : GLenum {
 };
 
 template<class T> constexpr IndexType getIndexTypeOf() {
-    constexpr bool is_short = std::is_same_v<T, GLuint>;
-    constexpr bool is_int = std::is_same_v<T, GLushort>;
+    constexpr bool is_short = std::is_same_v<T, GLushort>;
+    constexpr bool is_int = std::is_same_v<T, GLuint>;
 
     static_assert( is_short || is_int, "Index type must be GLuint or GLushort" );
 

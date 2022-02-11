@@ -32,7 +32,7 @@ public:
     /**
      * \see ImmediateGeometry
      */
-    template<class Vertex = PositionColorVertex, class Index = GLushort>
+    template<class Vertex = PositionNormalVertex, class Index = GLushort>
     static std::shared_ptr<Mesh> create(ImmediateGeometry<Vertex, Index> const& geometry,
                                         DrawMode mode = DrawMode::Triangles)
     {
@@ -40,7 +40,7 @@ public:
     }
 
     /// Create a cube.
-    static std::shared_ptr<Mesh> createCube(Color color);
+    static std::shared_ptr<Mesh> createCube();
 
     [[nodiscard]] DrawMode getDrawMode() const;
 

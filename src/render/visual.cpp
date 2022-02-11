@@ -11,7 +11,7 @@ namespace Folk
 {
 
 std::shared_ptr<Visual> Visual::create() {
-    return create(Mesh::createCube({0xff, 0xff, 0xff, 0xff}), Material::create());
+    return create(Mesh::createCube(), Material::create());
 }
 
 std::shared_ptr<Visual> Visual::create(std::shared_ptr<Mesh> mesh_) {
@@ -19,7 +19,7 @@ std::shared_ptr<Visual> Visual::create(std::shared_ptr<Mesh> mesh_) {
 }
 
 std::shared_ptr<Visual> Visual::create(std::shared_ptr<Material> material_) {
-    return create(Mesh::createCube({0xff, 0xff, 0xff, 0xff}), std::move(material_));
+    return create(Mesh::createCube(), std::move(material_));
 }
 
 std::shared_ptr<Visual> Visual::create(std::shared_ptr<Mesh> mesh_,

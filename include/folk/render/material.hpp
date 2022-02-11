@@ -1,6 +1,8 @@
 #ifndef FOLK_RENDER__MATERIAL_HPP
 #define FOLK_RENDER__MATERIAL_HPP
 
+#include <utility>
+
 #include "folk/core/resource.hpp"
 #include "folk/render/shader.hpp"
 
@@ -44,7 +46,7 @@ public:
     */
     std::shared_ptr<Shader> getShader();
 
-    Material(std::shared_ptr<Shader> shader_) : shader(shader_) {}
+    explicit Material(std::shared_ptr<Shader> shader_) : shader(std::move(shader_)) {}
 
 private:
     std::shared_ptr<Shader> shader;

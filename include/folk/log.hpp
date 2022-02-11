@@ -75,7 +75,7 @@ namespace Folk
             std::mutex mutex {};
         };
 
-        static void initialize(Log::Buffer& out_buf, Log::Buffer& err_buf);
+        static void initialize(LogLevel level, Log::Buffer& out_buf, Log::Buffer& err_buf);
         static void terminate() noexcept;
 
         static void main();
@@ -94,13 +94,13 @@ namespace Folk
     template<>
     struct ScopedInitializer<Log> {
 
-        ScopedInitializer();
+        ScopedInitializer(LogLevel level);
         ~ScopedInitializer() noexcept;
 
         ScopedInitializer(const ScopedInitializer&) = delete;
         ScopedInitializer& operator=(const ScopedInitializer&) = delete;
 
-        void wakeUp();
+        void wakeUp() const;
 
     private:
         Log::Buffer out_buf {};

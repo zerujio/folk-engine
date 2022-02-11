@@ -15,7 +15,7 @@ TEST_CASE("ExceptionHandler")
 {
     using namespace Folk;
 
-    ScopedInitializer<Log> log_init {};
+    ScopedInitializer<Log> log_init{LogLevel::Trace};
     ExceptionHandler handler {};
 
     SECTION("throwException") {

@@ -4,6 +4,13 @@ namespace Folk::gl {
 
 void ShaderHandle::compile() const {
     Call::slow(glCompileShader)(id());
+    GLint success;
+    Call::fast(glGetShaderiv)(id(), GL_COMPILE_STATUS, &success);
+    if (!success) {
+        std::array<char, 1024> buf {};
+        Call::fast(glGetShaderInfoLog)(id(), buf.size(), nullptr, buf.data());
+        Log::error() << "[GL ERROR] Shader compilation failed: " << buf.data() << "\n";
+    }
 }
 
 void ShaderHandle::setSource(const char *source_string) const {

@@ -9,10 +9,10 @@ R"glsl(
 
 #version 330 core
 
-layout (location = 0) in vec3 aPos;
+layout (location = 0) in vec3 a_position;
 
 void main() {
-    gl_Position = vec4(aPos.x, aPos.y, aPos.z, 1.0);
+    gl_Position = vec4(a_position, 1.0);
 }
 
 )glsl"
@@ -24,7 +24,11 @@ R"glsl(
 
 #version 330 core
 
-void main() {}
+out vec4 frag_color;
+
+void main() {
+    frag_color = vec4(1.0f, 1.0f, 1.0f, 1.0f);
+}
 
 )glsl"
 };

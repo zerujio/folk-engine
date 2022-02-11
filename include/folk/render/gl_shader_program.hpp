@@ -20,7 +20,10 @@ public:
     void detach(ShaderHandle shader) const;
 
     /// Make this shader program current.
-    void use() const;
+    void bind() const;
+
+    /// Unbind the currently bound shader program.
+    static void unbind();
 };
 
 GLuint _createProgram();

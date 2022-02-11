@@ -15,21 +15,21 @@ void Mesh::setDrawMode(DrawMode draw_mode) {
     m_draw_mode = draw_mode;
 }
 
-std::shared_ptr<Mesh> Mesh::createCube(const Color color) {
+std::shared_ptr<Mesh> Mesh::createCube() {
 
-    std::array<PositionColorVertex, 8> vertices {
-            PositionColorVertex
-            { {-1.0f,  1.0f,  1.0f}, color },
-            { { 1.0f,  1.0f,  1.0f}, color },
-            { {-1.0f, -1.0f,  1.0f}, color },
-            { { 1.0f, -1.0f,  1.0f}, color },
-            { {-1.0f,  1.0f, -1.0f}, color },
-            { { 1.0f,  1.0f, -1.0f}, color },
-            { {-1.0f, -1.0f, -1.0f}, color },
-            { { 1.0f, -1.0f, -1.0f}, color }
+    std::array<PositionVertex, 8> vertices {
+            PositionVertex
+            {-1.0f,  1.0f,  1.0f},
+            { 1.0f,  1.0f,  1.0f},
+            {-1.0f, -1.0f,  1.0f},
+            { 1.0f, -1.0f,  1.0f},
+            {-1.0f,  1.0f, -1.0f},
+            { 1.0f,  1.0f, -1.0f},
+            {-1.0f, -1.0f, -1.0f},
+            { 1.0f, -1.0f, -1.0f}
     };
 
-    std::array<GLuint, 36> indices {
+    std::array<GLushort, 36> indices {
         0, 1, 2,
         1, 3, 2,
         4, 6, 5,

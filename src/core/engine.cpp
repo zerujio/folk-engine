@@ -48,7 +48,7 @@ void Engine::main(LogLevel level) {
     ExceptionHandler exception_handler {ExceptionHandler::CallbackArg<Game::exit>};
 
     // initialize log thread
-    ScopedInitializer<Log> log_initializer{};
+    ScopedInitializer<Log> log_initializer{level};
 
     // create main window
     ScopedInitializer<Folk::WindowingSystem> window_init {};
@@ -64,7 +64,7 @@ void Engine::main(LogLevel level) {
     AudioManager audio_manager {exception_handler};
 
     // Renderer
-    Renderer::setContext(game_window);
+    Renderer::initialize(game_window);
 
     // Scene manager
     SceneManager scene_manager{};

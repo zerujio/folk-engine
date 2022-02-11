@@ -1,28 +1,40 @@
-//
-// Created by sergio on 06-02-22.
-//
-
 #ifndef INCLUDE_FOLK_RENDER__VERTEX_TYPES_HPP
 #define INCLUDE_FOLK_RENDER__VERTEX_TYPES_HPP
 
+#include "vertex_attribute.hpp"
+#include <array>
+
 namespace Folk {
 
+struct VertexAttribSpec final {
+    VertexAttribute attribute;
+    GLuint offset;
+};
+
 struct PositionVertex final {
+
+    constexpr PositionVertex(float x, float y, float z) : position(x, y, z) {}
+
     Vec3 position {};
 
-    static constexpr std::array<VertexAttribute, 1> vertex_attributes {
-            makeVertexAttribute<Vec3>(false, 0)
+    static constexpr std::array<VertexAttribSpec, 1> vertex_attributes {
+        VertexAttribute::fromVectorType<Vec3>(false, VertexAttribute::Location::Position), 0
     };
 };
 
-using Color = glm::u8vec4;
-struct PositionColorVertex final {
+struct PositionNormalVertex final {
     Vec3 position {};
-    Color color {};
+    Vec3 normal {};
 
-    static const std::array<VertexAttribute, 2> vertex_attributes;
-    // vertex_attributes[0] = {VertexAttributeType::Float, VertexAttributeSize::XYZ, false, 0};
-    // vertex_attributes[1] = {VertexAttributeType::UByte, VertexAttributeSize::XYZW, true, offsetof(PositionColorVertex, color)}:
+    static const std::array<VertexAttribSpec, 2> vertex_attributes;
+};
+
+struct PositionNormalTexCoordVertex final {
+    Vec3 position {};
+    Vec3 normal {};
+    Vec2 uv {};
+
+    static const std::array<VertexAttribSpec, 3> vertex_attributes;
 };
 
 } // namespace Folk

@@ -27,17 +27,19 @@ class ObjectManager : public HandleType {
     static constexpr bool glCreateStyle {
         std::is_invocable_v<CreateT, Args...>&& std::is_same_v<id_t, std::invoke_result_t<CreateT, Args...>>
     };
-    static constexpr bool unknownStyle { !glGenStyle && !glCreateStyle };
+    static constexpr bool knownStyle { glGenStyle || glCreateStyle };
 
 protected:
 
     using Call = typename HandleType::Call;
-    using HandleType::valid;
     using HandleType::id;
     using Id = typename HandleType::Id;
 
 public:
-    /// Creates an OpenAL object.
+
+    using HandleType::valid;
+
+    /// Creates an object.
     explicit ObjectManager(Args... args) {
 
         if constexpr(glGenStyle) {
@@ -49,8 +51,8 @@ public:
             m_id() = Call::slow(Create)(args...);
 
         } else {
-            static_assert(unknownStyle,
-                    "'Create' function signature does not match any known style;"
+            static_assert(knownStyle,
+                    "'Create' function signature does not match any known style (glGenX or glCreateX);"
                     " perhaps the argument types are incorrect?");
         }
     }

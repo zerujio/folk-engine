@@ -102,7 +102,7 @@ std::shared_ptr<Visual> getWhiteCubeVisual() {
     std::shared_ptr<Visual> visual_shared;
 
     if (visual_weak.expired()) {
-        auto mesh = Mesh::createCube({0xff, 0xff, 0xff, 0xff});
+        auto mesh = Mesh::createCube();
         visual_shared = Visual::create(mesh);
         visual_weak = visual_shared;
     } else {
@@ -193,7 +193,7 @@ struct TargetScript final : public Folk::Script {
 };
 
 void Folk::sceneInit(Scene &scene) {
-    Log::warning() << "Esta demo utiliza los archivos 'click.wav' y 'ding.wav'! (Están disponibles en la carpeta examples/assets)\n";
+    Log::message() << "Esta demo utiliza los archivos 'click.wav' y 'ding.wav'! (Están disponibles en la carpeta examples/assets)\n";
 
     // se configura la cámara con una vista top-down.
     auto camera = scene.root().createChild("Camera");
@@ -206,7 +206,7 @@ void Folk::sceneInit(Scene &scene) {
 
     // se crea el cubo naranja
     auto cube = createWhiteCube(scene.root());
-    auto visual = Visual::create(Mesh::createCube({0xff, 0x00, 0x88, 0xff}));
+    auto visual = Visual::create(Mesh::createCube());
     cube.getComponent<VisualComponent>()->setVisual(visual);                    // se setea un Visual color naranja
     cube.getComponent<TransformComponent>()->scale({1.1f, 1.1f, 1.1f});         // se aumenta la escala un 10%
     // se añade el script de rotación
