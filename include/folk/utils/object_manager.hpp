@@ -22,38 +22,23 @@ namespace Folk {
 template<class HandleType, auto Create, auto Destroy, class... Args>
 class ObjectManager : public HandleType {
 
-    using CreateT = decltype(Create);
-    static constexpr bool glGenStyle { std::is_invocable_v<CreateT, int, id_t*, Args...> };
-    static constexpr bool glCreateStyle {
-        std::is_invocable_v<CreateT, Args...>&& std::is_same_v<id_t, std::invoke_result_t<CreateT, Args...>>
-    };
-    static constexpr bool knownStyle { glGenStyle || glCreateStyle };
-
-protected:
-
     using Call = typename HandleType::Call;
     using HandleType::id;
     using Id = typename HandleType::Id;
 
 public:
-
     using HandleType::valid;
 
     /// Creates an object.
     explicit ObjectManager(Args... args) {
 
-        if constexpr(glGenStyle) {
-            // function has glGenBuffers style signature
-            Call::slow(Create)(1, &m_id(), args...);
-
-        } else if constexpr(glCreateStyle) {
+        if constexpr(std::is_invocable_v<decltype(Create), Args...>) {
             // function has glCreateShader style signature
             m_id() = Call::slow(Create)(args...);
 
         } else {
-            static_assert(knownStyle,
-                    "'Create' function signature does not match any known style (glGenX or glCreateX);"
-                    " perhaps the argument types are incorrect?");
+            // function has glGenBuffers style signature
+            Call::slow(Create)(1, &m_id(), args...);
         }
     }
 
@@ -79,10 +64,10 @@ public:
     /// Deletes the managed object.
     ~ObjectManager() {
         if (id() && valid()) {
-            if constexpr(glGenStyle)
-                Call::slowNoExcept(Destroy)(1, &m_id());
-            else if constexpr(glCreateStyle)
+            if constexpr(std::is_invocable_v<decltype(Destroy), Id>)
                 Call::slowNoExcept(Destroy)(id());
+            else
+                Call::slowNoExcept(Destroy)(1, &m_id());
         }
     }
 

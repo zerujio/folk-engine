@@ -4,6 +4,11 @@
 #include "folk/core/resource.hpp"
 #include "gl_shader.hpp"
 #include "gl_shader_program.hpp"
+#include "vertex_attribute.hpp"
+
+#include <array>
+#include <vector>
+#include <tuple>
 
 namespace Folk
 {
@@ -54,6 +59,31 @@ public:
      * \param fragment Archivo que contiene el fragment shader.
     */
     static Ref createFromFiles(const char* vertex, const char* fragment);
+
+    /**
+     * @brief The vertex attribute index that will be assigned by default to the given attribute names.
+     *
+     * Vertex shader variables defined with a name present in this list will be assigned the corresponding index.
+     * Note that certain variable names are aliases for the same vertex attribute (like @p a_position and @p a_Position).
+     * When writing custom shaders, care should be taken not to define two variables with names mapped to the same index.
+     *
+     * Note that indices set using the `layout(location = index)` syntax take precedence over those specified here or in
+     * @p user_attribute_indices.
+     */
+    static constexpr std::array builtin_attribute_indices {
+        std::pair("a_position", DefaultAttribIndex::Position),
+        std::pair("a_Position", DefaultAttribIndex::Position),
+        std::pair("a_normal", DefaultAttribIndex::Normal),
+        std::pair("a_Normal", DefaultAttribIndex::Normal),
+        std::pair("a_tex_coord", DefaultAttribIndex::TexCoord),
+        std::pair("a_texCoord", DefaultAttribIndex::TexCoord),
+        std::pair("a_TexCoord", DefaultAttribIndex::TexCoord),
+        std::pair("a_color", DefaultAttribIndex::Color),
+        std::pair("a_Color", DefaultAttribIndex::Color)
+    };
+
+    /// Same as @p builtin_attribute_indices , but specified by the user.
+    static std::vector<std::pair<const char*, GLuint>> user_attribute_indices;
 
 private:
     void compileShadersAndLinkProgram(const char *vert, const char *frag) const;

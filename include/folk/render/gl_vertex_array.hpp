@@ -11,7 +11,7 @@ namespace Folk::gl {
 
 GLboolean isVertexArray(GLuint id);
 
-class VertexArrayHandle : public BaseHandle<isVertexArray> {
+class VertexArray : public BaseHandle<isVertexArray> {
 
 public:
     /// use this VAO
@@ -24,7 +24,7 @@ public:
 void genVertexArrays(GLsizei n, GLuint* ids);
 void deleteVertexArrays(GLsizei n, GLuint* ids);
 
-using VertexArrayManager = ObjectManager<VertexArrayHandle, genVertexArrays, deleteVertexArrays>;
+using VertexArrayManager = ObjectManager<VertexArray, genVertexArrays, deleteVertexArrays>;
 
 }
 

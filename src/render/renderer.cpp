@@ -51,12 +51,10 @@ void Renderer::drawFrame(SceneManager &scene, std::chrono::duration<double> delt
                 mesh->m_vertex_array.bind();
 
                 gl::call::fast(glDrawElements)(
-                        static_cast<GLenum>(mesh->getDrawMode()),
-                        mesh->m_vertex_array.m_index_count,
-                        static_cast<GLenum>(mesh->m_vertex_array.m_index_type),
+                        GL_TRIANGLES,
+                        mesh->m_index_count,
+                        static_cast<GLenum>(mesh->m_index_type),
                         nullptr);
-
-                VertexArray::unbind();
             }
     );
 
@@ -67,7 +65,7 @@ void Renderer::drawFrame(SceneManager &scene, std::chrono::duration<double> delt
 void Renderer::drawPerfMon(const PerformanceMonitor& perf_monitor,
                            DeltaClock::milliseconds_double delta) noexcept
 {
-    // draw perfomance monitor
+    // draw performance monitor
 }
 
 void Renderer::setContext(RenderContextHandle handle) {

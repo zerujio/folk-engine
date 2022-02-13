@@ -6,7 +6,7 @@ GLboolean _isProgram(GLuint id) {
     return glIsProgram(id);
 }
 
-void ShaderProgramHandle::link() const {
+void ShaderProgram::link() const {
     Call::fast(glLinkProgram)(id());
     GLint success;
     Call::fast(glGetProgramiv)(id(), GL_LINK_STATUS, &success);
@@ -17,20 +17,24 @@ void ShaderProgramHandle::link() const {
     }
 }
 
-void ShaderProgramHandle::attach(ShaderHandle shader) const {
+void ShaderProgram::attach(ShaderHandle shader) const {
     Call::fast(glAttachShader)(id(), shader.id());
 }
 
-void ShaderProgramHandle::detach(ShaderHandle shader) const {
+void ShaderProgram::detach(ShaderHandle shader) const {
     Call::fast(glDetachShader)(id(), shader.id());
 }
 
-void ShaderProgramHandle::bind() const {
+void ShaderProgram::bind() const {
     Call::fast(glUseProgram)(id());
 }
 
-void ShaderProgramHandle::unbind() {
+void ShaderProgram::unbind() {
     Call::fast(glUseProgram)(0u);
+}
+
+void ShaderProgram::bindAttribLocation(GLuint index, const char* name) const {
+    Call::fast(glBindAttribLocation)(id(), index, name);
 }
 
 GLuint _createProgram() {

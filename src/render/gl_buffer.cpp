@@ -6,12 +6,16 @@ GLboolean isBuffer(GLuint id) {
     return glIsBuffer(id);
 }
 
-void BufferHandle::bind(BufferTarget target) const {
+void Buffer::bind(BufferTarget target) const {
     Call::fast(glBindBuffer)(static_cast<GLenum>(target), id());
 }
 
-void BufferHandle::unbind(BufferTarget target) {
+void Buffer::unbind(BufferTarget target) {
     Call::fast(glBindBuffer)(static_cast<GLenum>(target), 0);
+}
+
+void Buffer::data(BufferTarget target, GLsizei size, const void *data, BufferUsage usage) {
+    Call::slow(glBufferData)(static_cast<GLenum>(target), size, data, static_cast<GLenum>(usage));
 }
 
 void genBuffers(GLsizei n, GLuint *id_array) {

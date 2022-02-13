@@ -27,7 +27,19 @@ enum class BufferTarget : GLenum {
     Uniform = GL_UNIFORM_BUFFER
 };
 
-class BufferHandle : public BaseHandle<isBuffer> {
+enum class BufferUsage : GLenum {
+    StaticDraw = GL_STATIC_DRAW,
+    StaticRead = GL_STATIC_READ,
+    StaticCopy = GL_STATIC_COPY,
+    DynamicDraw = GL_DYNAMIC_DRAW,
+    DynamicRead = GL_DYNAMIC_READ,
+    DynamicCopy = GL_DYNAMIC_COPY,
+    StreamDraw = GL_STREAM_DRAW,
+    StreamRead = GL_STREAM_READ,
+    StreamCopy = GL_STREAM_COPY
+};
+
+class Buffer : public BaseHandle<isBuffer> {
 
 public:
     /// Bind to a buffer target. LibCall type: fast.
@@ -35,12 +47,15 @@ public:
 
     /// Unbind a target's current buffer.
     static void unbind(BufferTarget target);
+
+    /// Copy data to buffer.
+    static void data(BufferTarget target, GLsizei size, const void *data, BufferUsage usage);
 };
 
 void genBuffers(GLsizei n, GLuint* id_array);
 void deleteBuffers(GLsizei n, GLuint* id_array);
 
-using BufferManager = ObjectManager<BufferHandle, genBuffers, deleteBuffers>;
+using BufferManager = ObjectManager<Buffer, genBuffers, deleteBuffers>;
 
 } // namespace Folk::gl
 

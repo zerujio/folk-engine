@@ -6,11 +6,6 @@
 
 namespace Folk {
 
-struct VertexAttribSpec final {
-    VertexAttribute attribute;
-    GLuint offset;
-};
-
 struct PositionVertex final {
 
     constexpr PositionVertex(float x, float y, float z) : position(x, y, z) {}
@@ -18,7 +13,7 @@ struct PositionVertex final {
     Vec3 position {};
 
     static constexpr std::array<VertexAttribSpec, 1> vertex_attributes {
-        VertexAttribute::fromVectorType<Vec3>(false, VertexAttribute::Location::Position), 0
+            VertexAttribSpec(DefaultAttribIndex::Position, VertexAttribute::fromVectorType<Vec3>(false), /* offset */ 0)
     };
 };
 
@@ -32,7 +27,7 @@ struct PositionNormalVertex final {
 struct PositionNormalTexCoordVertex final {
     Vec3 position {};
     Vec3 normal {};
-    Vec2 uv {};
+    Vec2 tex_coord {};
 
     static const std::array<VertexAttribSpec, 3> vertex_attributes;
 };

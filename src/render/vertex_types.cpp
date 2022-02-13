@@ -8,21 +8,18 @@ namespace Folk {
 
 const std::array<VertexAttribSpec, 2> PositionNormalVertex::vertex_attributes {
     // position
-    VertexAttribSpec{ VertexAttribute::fromVectorType<Vec3>(false, VertexAttribute::Location::Position), 0 },
+    VertexAttribSpec{DefaultAttribIndex::Position, VertexAttribute::fromVectorType<Vec3>(false), 0 },
     // normal
-    {VertexAttribute::fromVectorType<Vec3>(false, VertexAttribute::Location::Normal),
-            offsetof(PositionNormalVertex, normal)}
+    {DefaultAttribIndex::Normal, VertexAttribute::fromVectorType<Vec3>(false), offsetof(PositionNormalVertex, normal)}
 };
 
 const std::array<VertexAttribSpec, 3> PositionNormalTexCoordVertex::vertex_attributes {
     // position
-    VertexAttribSpec{ VertexAttribute::fromVectorType<Vec3>(false, VertexAttribute::Location::Position), 0 },
+    VertexAttribSpec{DefaultAttribIndex::Position, VertexAttribute::fromVectorType<Vec3>(false), 0 },
     // normal
-    {VertexAttribute::fromVectorType<Vec3>(false, VertexAttribute::Location::Normal),
-            offsetof(PositionNormalTexCoordVertex, normal)},
+    {DefaultAttribIndex::Normal, VertexAttribute::fromVectorType<Vec3>(false), offsetof(PositionNormalTexCoordVertex, normal)},
     // texture coordinates
-    {VertexAttribute::fromVectorType<Vec2>(false, VertexAttribute::Location::TexCoord),
-            offsetof(PositionNormalTexCoordVertex, uv)}
+    {DefaultAttribIndex::TexCoord, VertexAttribute::fromVectorType<Vec2>(false), offsetof(PositionNormalTexCoordVertex, tex_coord)}
 };
 
 } // namespace Folk

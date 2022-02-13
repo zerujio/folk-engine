@@ -23,7 +23,7 @@ GLboolean _isShader(GLuint id);
 
 class ShaderHandle : public BaseHandle<_isShader>{
 
-    friend class ShaderProgramHandle;
+    friend class ShaderProgram;
 
 public:
     /**

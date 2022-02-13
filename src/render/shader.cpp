@@ -8,6 +8,8 @@
 namespace Folk
 {
 
+std::vector<std::pair<const char*, GLuint>> user_attribute_indices {};
+
 Shader::Ref Shader::createDefault() {
     return std::make_shared<Shader>(default_vert_source_code, default_frag_source_code);
 }
@@ -24,6 +26,15 @@ Shader::Ref Shader::createFromFiles(const char* vert, const char* frag) {
 }
 
 void Shader::linkProgram(const gl::ShaderHandle vert, const gl::ShaderHandle frag) const {
+
+    for (const auto& p : builtin_attribute_indices) {
+        m_shader_program.bindAttribLocation(static_cast<GLuint>(p.second), p.first);
+    }
+
+    for (const auto& p : Folk::user_attribute_indices) {
+        m_shader_program.bindAttribLocation(p.second, p.first);
+    }
+
     m_shader_program.attach(vert);
     m_shader_program.attach(frag);
 

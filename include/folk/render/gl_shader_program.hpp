@@ -8,7 +8,7 @@ namespace Folk::gl {
 
 GLboolean _isProgram(GLuint id);
 
-class ShaderProgramHandle : public BaseHandle<_isProgram> {
+class ShaderProgram : public BaseHandle<_isProgram> {
 public:
     /// Link the GLSL program shaders. A shader must have been attached previously.
     void link() const;
@@ -24,12 +24,15 @@ public:
 
     /// Unbind the currently bound shader program.
     static void unbind();
+
+    /// Bind a variable name to a vertex attribute index. Must be called before linking for it to take effect.
+    void bindAttribLocation(GLuint index, const char* name) const;
 };
 
 GLuint _createProgram();
 void _deleteProgram(GLuint id);
 
-using ShaderProgramManager = ObjectManager<ShaderProgramHandle, _createProgram, _deleteProgram>;
+using ShaderProgramManager = ObjectManager<ShaderProgram, _createProgram, _deleteProgram>;
 
 } // namespace Folk
 

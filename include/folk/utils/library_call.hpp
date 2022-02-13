@@ -209,11 +209,9 @@ private:
         if constexpr(std::is_void_v<Return>) {
             function(args...);
             checkErrors<Throwing>(loc, error_args...);
-            Log::trace() << loc << "\n";
         } else {
             auto value = function(args...);
             checkErrors<Throwing>(loc, error_args...);
-            Log::trace() << loc << "\n";
             return value;
         }
     }

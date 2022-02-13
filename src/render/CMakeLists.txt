@@ -12,5 +12,4 @@ target_sources(folk_engine PRIVATE
         render_context.cpp
         renderer.cpp
         shader.cpp
-        vertex_array.cpp
         visual.cpp)

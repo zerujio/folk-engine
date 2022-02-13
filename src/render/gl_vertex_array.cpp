@@ -18,11 +18,11 @@ void gl::deleteVertexArrays(const GLsizei n, GLuint *ids) {
     glDeleteVertexArrays(n, ids);
 }
 
-void gl::VertexArrayHandle::bind() const {
+void gl::VertexArray::bind() const {
     Call::fast(glBindVertexArray)(id());
 }
 
-void gl::VertexArrayHandle::unbind() {
+void gl::VertexArray::unbind() {
     Call::fast(glBindVertexArray)(0);
 }
 

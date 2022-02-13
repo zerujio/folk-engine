@@ -7,14 +7,6 @@
 namespace Folk
 {
 
-DrawMode Mesh::getDrawMode() const {
-    return m_draw_mode;
-}
-
-void Mesh::setDrawMode(DrawMode draw_mode) {
-    m_draw_mode = draw_mode;
-}
-
 std::shared_ptr<Mesh> Mesh::createCube() {
 
     std::array<PositionVertex, 8> vertices {
@@ -44,7 +36,18 @@ std::shared_ptr<Mesh> Mesh::createCube() {
         6, 3, 7,
     };
 
-    return std::make_shared<Mesh>( vertices, indices, DrawMode::Triangles );
+    return std::make_shared<Mesh>( vertices, indices );
+}
+
+void Mesh::configureVertexAttribute(GLuint index, const VertexAttribute &attribute, GLsizei stride, GLuint offset) {
+    gl::call::fast(glVertexAttribPointer)(
+            index,
+            static_cast<GLint>(attribute.count),
+            static_cast<GLenum>(attribute.type.gl_enum),
+            attribute.normalize,
+            stride,
+            reinterpret_cast<void*>(offset));
+    gl::call::fast(glEnableVertexAttribArray)(index);
 }
 
 } // namespace folk
