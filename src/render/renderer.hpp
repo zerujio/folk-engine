@@ -9,6 +9,8 @@
 #include "../utils/performance_monitor.hpp"
 #include "../utils/scoped_initializer.hpp"
 #include "../scene/scene_manager.hpp"
+#include "folk/render/shader.hpp"
+
 
 namespace Folk {
 

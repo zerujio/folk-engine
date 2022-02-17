@@ -86,7 +86,7 @@ make <target>
 ```
 Las targets son:
 - `folk_engine`: librería estática.
-- `folk_docs`: documentación en html. Abrir con un navegador web, ej. `firefox build/html/index.html`.
+- `folk_docs`: documentación en html. Abrir con un navegador web, ej. `firefox build/html/m_location.html`.
 - `basic_setup`: programa de ejemplo (`examples/basic_setup`).
 
 #### Shaders

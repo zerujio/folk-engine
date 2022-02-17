@@ -27,7 +27,7 @@ bool PerformanceMonitor::getVisibility() const noexcept {
 
 const PerformanceMonitor::Item& PerformanceMonitor::getItem(int k) const {
     if (k >= items.size())
-        throw Error("Item index out of range");
+        throw Error("Item location out of range");
     
     return items[k].item;
 }

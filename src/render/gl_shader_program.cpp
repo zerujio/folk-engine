@@ -37,6 +37,48 @@ void ShaderProgram::bindAttribLocation(GLuint index, const char* name) const {
     Call::fast(glBindAttribLocation)(id(), index, name);
 }
 
+GLint ShaderProgram::getInterface(Interface interface, InterfaceParam param) const {
+    GLint value;
+    Call::fast(glGetProgramInterfaceiv)(id(), static_cast<GLenum>(interface), static_cast<GLenum>(param), &value);
+    return value;
+}
+
+void ShaderProgram::getResource(ShaderProgram::Interface interface, GLuint resource_index, GLsizei property_count,
+                                const ShaderProgram::ResourceProp *properties, GLsizei value_buffer_size,
+                                GLsizei *value_lengths, GLint *value_buffer) const
+{
+    Call::slow(glGetProgramResourceiv)(id(), static_cast<GLenum>(interface), resource_index,
+            property_count, reinterpret_cast<const GLenum*>(properties),
+            value_buffer_size, value_lengths, value_buffer);
+}
+
+void ShaderProgram::getResource(ShaderProgram::Interface interface, GLuint resource_index,
+                                const std::vector<ResourceProp> &properties, std::vector<GLsizei> &value_lengths,
+                                std::vector<GLint> &values) const
+{
+    if (value_lengths.size() != properties.size())
+        value_lengths.resize(properties.size());
+
+    getResource(interface, resource_index,
+                properties.size(), properties.data(),
+                values.size(), value_lengths.data(), values.data());
+}
+
+void ShaderProgram::getResource(ShaderProgram::Interface interface, GLuint resource_index,
+                                const std::vector<ResourceProp> &properties, std::vector<GLint> &values) const {
+    getResource(interface, resource_index, properties.size(), properties.data(), values.size(), nullptr, values.data());
+}
+
+std::string ShaderProgram::getResourceName(ShaderProgram::Interface interface, GLuint resource_index) const {
+    GLint char_array_length;
+    const auto name_property = ResourceProp::NameLength;
+    getResource(interface, resource_index, 1, &name_property, 1, nullptr, &char_array_length);
+    std::string string (char_array_length, char());
+    Call::fast(glGetProgramResourceName)(id(), static_cast<GLenum>(interface), resource_index, char_array_length,
+                                         nullptr, string.data());
+}
+
+
 GLuint _createProgram() {
     return glCreateProgram();
 }

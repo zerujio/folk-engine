@@ -23,7 +23,7 @@ public:
     /**
      * \param text Text description of the item. String must remain valid for the
      *             lifetime of the item.
-     * \return the index needed to call \ref start() and \ref stop() on this item
+     * \return the location needed to call \ref start() and \ref stop() on this item
      */
     int addItem(const char* label);
 

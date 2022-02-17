@@ -5,6 +5,7 @@
 #include "gl_shader.hpp"
 #include "gl_shader_program.hpp"
 #include "vertex_attribute.hpp"
+#include "uniform_type.hpp"
 
 #include <array>
 #include <vector>
@@ -22,26 +23,17 @@ public:
     using Ref = std::shared_ptr<Shader>;
 
     /**
-     * @brief Create a shader from glsl source code
-     * @tparam StringContainerV A string container type (e.g. std::vector<std::string>, std::array<const char*>, etc.)
-     * @tparam StringContainerF A string container type
-     * @param vertex_source Source code for the vertex shader.
-     * @param fragment_source Source code for the fragment shader.
+     * @brief Compile and link a shader program.
+     * @param vert Source code for the vertex shader.
+     * @param frag Source code for the fragment shader.
      */
-    template<class StringContainerV, class StringContainerF>
-    Shader(const StringContainerV& vertex_source, const StringContainerF& fragment_source) {
-        gl::ShaderManager vert {gl::ShaderType::Vertex};
-        vert.setSource(vertex_source);
-        vert.compile();
-
-        gl::ShaderManager frag {gl::ShaderType::Fragment};
-        frag.setSource(fragment_source);
-        frag.compile();
-
-        linkProgram(vert, frag);
-    }
-
     Shader(const std::string& vert, const std::string& frag);
+
+    /**
+     * @brief Compile and link a shader program from (null terminated) C strings.
+     * @param vert Source code for the vertex shader.
+     * @param frag Source code for the fragment shader.
+     */
     Shader(const char* vert, const char* frag);
 
     /// Crea una instancia del shader predeterminado.
@@ -50,24 +42,66 @@ public:
     /// Crea un programa a partir de archivos.
     /**
      * Ejemplo:
-     * 
+     *
      * ```cpp
      * Shader::Ref shader = Shader::createFromFiles("shader.vert", "shader.frag");
      * ```
-     * 
+     *
      * \param vertex Archivo que contiene el vertex shader.
      * \param fragment Archivo que contiene el fragment shader.
     */
     static Ref createFromFiles(const char* vertex, const char* fragment);
 
+    class Uniform final {
+
+        friend class Renderer;
+        friend class Material;
+
+    public:
+        /// Name of the uniform variable.
+        std::string name;
+
+        /// Data type of the uniform variable.
+        UniformType type;
+
+        /// Size of the variable. Its >1 for arrays.
+        unsigned int count;
+
+        /**
+         * @brief Construct a new uniform specification.
+         * @param name_ Name of the variable.
+         * @param type_ Type of the uniform.
+         * @param count_ Number of elements (>1 if its an array)
+         * @param location_ (Internal usage) Uniform location.
+         * @param type_info_ (Internal usage).
+         * @param data_ptr (Internal usage) Opaque pointer to memory in which to store the current value of the uniform.
+         */
+        Uniform(std::string name_, UniformType type_, unsigned int count_, unsigned int location_);
+
+    private:
+        // Additional type information for internal usage.
+        const UniformTypeInfo& type_info;
+
+        // (Internal usage) Uniform location.
+        unsigned int location;
+    };
+
     /**
-     * @brief The vertex attribute index that will be assigned by default to the given attribute names.
+     * @brief Retrieve the list of user defined uniforms.
+     * @return A vector containing uniform descriptors that can be used to modify the values of the uniforms.
      *
-     * Vertex shader variables defined with a name present in this list will be assigned the corresponding index.
+     * Note that "built-in" uniforms, such as u_ModelMatrix and u_ViewMatrix, will not show up in this list.
+     */
+    [[nodiscard]] const std::vector<Uniform>& uniforms() const { return m_uniforms; }
+
+    /**
+     * @brief The vertex attribute location that will be assigned by default to the given attribute names.
+     *
+     * Vertex shader variables defined with a name present in this list will be assigned the corresponding location.
      * Note that certain variable names are aliases for the same vertex attribute (like @p a_position and @p a_Position).
-     * When writing custom shaders, care should be taken not to define two variables with names mapped to the same index.
+     * When writing custom shaders, care should be taken not to define two variables with names mapped to the same location.
      *
-     * Note that indices set using the `layout(location = index)` syntax take precedence over those specified here or in
+     * Note that indices set using the `layout(location = location)` syntax take precedence over those specified here or in
      * @p user_attribute_indices.
      */
     static constexpr std::array builtin_attribute_indices {
@@ -85,14 +119,55 @@ public:
     /// Same as @p builtin_attribute_indices , but specified by the user.
     static std::vector<std::pair<const char*, GLuint>> user_attribute_indices;
 
-private:
-    void compileShadersAndLinkProgram(const char *vert, const char *frag) const;
-    void linkProgram(gl::ShaderHandle vert, gl::ShaderHandle frag) const;
+    /// Identifies built in uniforms
+    enum class BuiltInUniform : unsigned int {
+        Model = 0,
+        View,
+        Projection,
+        Color
+    };
 
+    /// Lists the possible names for built-in uniforms
+    static constexpr std::array builtin_uniform_names {
+        std::pair("u_model", BuiltInUniform::Model),
+        std::pair("u_Model", BuiltInUniform::Model),
+        std::pair("u_view", BuiltInUniform::View),
+        std::pair("u_View", BuiltInUniform::View),
+        std::pair("u_proj", BuiltInUniform::Projection),
+        std::pair("u_Proj", BuiltInUniform::Projection),
+        std::pair("u_projection", BuiltInUniform::Projection),
+        std::pair("u_Projection", BuiltInUniform::Projection),
+        std::pair("u_color", BuiltInUniform::Color),
+        std::pair("u_Color", BuiltInUniform::Color),
+        std::pair("u_tint", BuiltInUniform::Color),
+        std::pair("u_Tint", BuiltInUniform::Color)
+    };
+
+    /// Lists the type for each uniform.
+    static constexpr std::array builtin_uniform_types {
+        UniformType::FloatMat4, // Model
+        UniformType::FloatMat4, // View
+        UniformType::FloatMat4, // Projection
+        UniformType::FloatVec4  // Color
+    };
+
+    static constexpr UniformType getBuiltInUniformType(BuiltInUniform u) {
+        return builtin_uniform_types[static_cast<unsigned int>(u)];
+    }
+
+private:
     gl::ShaderProgramManager m_shader_program {};
+    std::vector<Uniform> m_uniforms {};     // uniform specification
+    std::array<int, builtin_uniform_types.size()> m_builtin_uniform_locations {-1, -1, -1, -1};
+
+    void compileAndLink(const char* vert_src, const char* frag_src);
+    void parseUniforms();
+    void parseBuiltInUniform(const char* name, BuiltInUniform u_id, UniformType type, GLuint count, GLuint location);
+
+    [[nodiscard]] int& builtInUniformLoc(BuiltInUniform u);
+    [[nodiscard]] const int& builtInUniformLoc(BuiltInUniform u) const;
 };
 
 } // namespace Folk
-
 
 #endif // FOLK_RENDER__SHADER_HPP

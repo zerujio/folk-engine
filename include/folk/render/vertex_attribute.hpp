@@ -94,9 +94,9 @@ struct VertexAttribSpec final {
     {}
 
     /**
-     * @brief The attribute index used to match vertex data with shader variables.
+     * @brief The attribute location used to match vertex data with shader variables.
      *
-     * All active (not unused) GLSL variables will be assigned an index when program linking happens. Variables declared
+     * All active (not unused) GLSL variables will be assigned an location when program linking happens. Variables declared
      * `in type variable_name` take their values from vertex attributes. That is, if the vertex shader declares the
      * following variable:
      *
@@ -109,18 +109,18 @@ struct VertexAttribSpec final {
      *          Vec3 normal;
      *      };
      *
-     * then the attribute specification for @p position should have its @p index set to @ a_position 's index. The
+     * then the attribute specification for @p position should have its @p location set to @ a_position 's location. The
      * result will be that when a Mesh whose vertex data has type @p V is drawn, within the vertex shader the variable
      * @p a_position will take the value of the field @p position of the corresponding vertex.
      *
      *  ---
      *
-     * The index of a variable is determined in two ways:
+     * The location of a variable is determined in two ways:
      *
      * - In the static member variables Shader::attribute_indices and Shader::builtin_attribute_indices. These are lists
      * of variable names and the indices to be assigned to each one.
      * - By explicitly specifying it in the vertex shader through the `layout(location = i) in type variable_name`
-     * syntax, where @p i is a positive integer literal that will determine the index of the variable in the linked
+     * syntax, where @p i is a positive integer literal that will determine the location of the variable in the linked
      * program.
      *
      * Note that the second method always takes precedence.

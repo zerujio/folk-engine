@@ -33,7 +33,7 @@ struct ImmediateGeometry
      * 
      * \~english
      * \param v a vertex array.
-     * \param i an index array.
+     * \param i an location array.
     */
     ImmediateGeometry(VertexArray && v, IndexArray && i) : vertices(v), indices(i) {}
 };

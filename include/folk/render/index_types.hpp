@@ -9,7 +9,7 @@
 
 namespace Folk {
 
-/// Valid index types.
+/// Valid location types.
 enum class IndexType : GLenum {
     UInt16 = GL_UNSIGNED_SHORT,
     UInt32 = GL_UNSIGNED_INT
