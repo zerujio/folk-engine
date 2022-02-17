@@ -14,11 +14,17 @@ using Vec4 = glm::vec4;
 /// 4 element integer vector
 using Vec4i = glm::ivec4;
 
+/// 4 element unsigned integer vector
+using Vec4u = glm::uvec4;
+
 /// 3 element floating point vector.
 using Vec3 = glm::vec3;
 
 /// 3 element integer vector.
 using Vec3i = glm::ivec3;
+
+/// 3 element unsigned integer vector.
+using Vec3u = glm::uvec3;
 
 /// 2 element floating point vector.
 using Vec2 = glm::vec2;
@@ -28,6 +34,9 @@ using Vec2d = glm::dvec2;
 
 /// 2 element integer vector.
 using Vec2i = glm::ivec2;
+
+/// 2 element unsigned int vector.
+using Vec2u = glm::uvec2;
 
 } // namespace Folk
 

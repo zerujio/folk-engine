@@ -4,7 +4,7 @@ target_compile_features(folk_engine PUBLIC cxx_std_17)
 
 target_include_directories(folk_engine PUBLIC ../include)
 target_link_libraries(folk_engine PUBLIC entt OpenAL glm glad glfw)
-target_link_libraries(folk_engine PRIVATE cxxopts dr_libs)
+target_link_libraries(folk_engine PRIVATE cxxopts dr_libs stb_image)
 
 add_subdirectory(audio)
 add_subdirectory(core)

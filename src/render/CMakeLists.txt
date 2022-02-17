@@ -6,6 +6,7 @@ target_sources(folk_engine PRIVATE
         gl_shader.cpp
         gl_shader_program.cpp
         gl_vertex_array.cpp
+        image.cpp
         immediate_geometry.cpp
         material.cpp
         mesh.cpp
@@ -13,4 +14,5 @@ target_sources(folk_engine PRIVATE
         renderer.cpp
         shader.cpp
         uniform_type_info.cpp
+        vertex_types.cpp
         visual.cpp)

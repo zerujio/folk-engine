@@ -25,7 +25,10 @@ struct VisualComponent final {
     VisualComponent() = default;
 
     /// Construye un nuevo componente que utiliza el Visual referenciado.
-    VisualComponent(std::shared_ptr<Visual> visual_) : visual(visual_) {}
+    VisualComponent(std::shared_ptr<Visual> visual_) : visual(std::move(visual_)) {}
+
+    template<class... Args>
+    VisualComponent(Args&&... args) : visual( Visual::create(std::forward<Args>(args)...) ) {}
 };
 
 class VisualPtr final : public ComponentPtr<VisualComponent> {

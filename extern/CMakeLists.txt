@@ -36,3 +36,7 @@ target_include_directories(dr_libs INTERFACE dr_libs)
 
 # glm
 add_subdirectory(glm)
+
+#stb_image
+add_library(stb_image STATIC stb/stb_image.c)
+target_include_directories(stb_image INTERFACE stb)

@@ -8,7 +8,7 @@ namespace Folk
 
 /// \brief \~spanish Una estructura para especificar geometría. 
 /// \brief \~english A structure to specify geometry.
-template<class Vertex, class Index>
+template<class Vertex, class Index = unsigned int>
 struct ImmediateGeometry
 {
     using VertexArray = std::vector<Vertex>;
