@@ -5,6 +5,8 @@
 #include "folk/log.hpp"
 #include "folk/render/gl.hpp"
 
+#include "uniform_type_info.hpp"
+
 #include <glm/gtc/matrix_transform.hpp>
 
 namespace Folk {
@@ -47,8 +49,10 @@ void Renderer::drawFrame(SceneManager &scene, std::chrono::duration<double> delt
                 auto mesh = visual.visual->getMesh();
                 auto material = visual.visual->getMaterial();
 
-                material->getShader()->m_shader_program.bind();
                 mesh->m_vertex_array.bind();
+                material->getShader()->m_shader_program.bind();
+
+                setUserUniforms(*material);
 
                 gl::call::fast(glDrawElements)(
                         GL_TRIANGLES,
@@ -60,6 +64,20 @@ void Renderer::drawFrame(SceneManager &scene, std::chrono::duration<double> delt
 
     // end frame (swap buffers?)
     s_handle.swapBuffers();
+}
+
+void Renderer::setUserUniforms(const Material &material) {
+
+    const auto& uniform_list = material.getShader()->uniforms();
+
+    for (int i = 0; i < uniform_list.size(); ++i) {
+        const auto& info = uniform_list[i];
+        const bool transposed = material.m_uniform_info[i].transposed;
+        const void* data_ptr = &material.m_uniform_data[material.m_uniform_info[i].data_index];
+        const auto& glUniform = material.getShader()->uniforms()[i].type_info.glUniform();
+        glUniform(info.location, info.count, data_ptr, transposed);
+    }
+
 }
 
 void Renderer::drawPerfMon(const PerformanceMonitor& perf_monitor,

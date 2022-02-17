@@ -93,6 +93,7 @@ void Shader::parseUniforms() {
         while (name_iter != builtin_uniform_names.end()) {
             if (name_iter->first == name)
                 break;
+            ++name_iter;
         }
 
         // if builtin...
@@ -136,8 +137,13 @@ int &Shader::builtInUniformLoc(Shader::BuiltInUniform u) {
 const int &Shader::builtInUniformLoc(Shader::BuiltInUniform u) const {
     return m_builtin_uniform_locations[static_cast<unsigned int>(u)];
 }
+
 Shader::Uniform::Uniform(std::string name_, UniformType type_, unsigned int count_, unsigned int location_)
-: name(std::move(name_)), type(type_), count(count_), location(location_), type_info(UniformTypeInfo::get(type))
+: name(std::move(name_)),
+    type(type_),
+    count(count_),
+    location(location_),
+    type_info(UniformTypeInfo::get(type))
 {}
 
 } // namespace Folk

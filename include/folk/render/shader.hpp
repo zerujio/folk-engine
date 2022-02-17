@@ -7,6 +7,7 @@
 #include "vertex_attribute.hpp"
 #include "uniform_type.hpp"
 
+
 #include <array>
 #include <vector>
 #include <tuple>
@@ -123,8 +124,7 @@ public:
     enum class BuiltInUniform : unsigned int {
         Model = 0,
         View,
-        Projection,
-        Color
+        Projection
     };
 
     /// Lists the possible names for built-in uniforms
@@ -137,18 +137,13 @@ public:
         std::pair("u_Proj", BuiltInUniform::Projection),
         std::pair("u_projection", BuiltInUniform::Projection),
         std::pair("u_Projection", BuiltInUniform::Projection),
-        std::pair("u_color", BuiltInUniform::Color),
-        std::pair("u_Color", BuiltInUniform::Color),
-        std::pair("u_tint", BuiltInUniform::Color),
-        std::pair("u_Tint", BuiltInUniform::Color)
     };
 
     /// Lists the type for each uniform.
     static constexpr std::array builtin_uniform_types {
-        UniformType::FloatMat4, // Model
-        UniformType::FloatMat4, // View
-        UniformType::FloatMat4, // Projection
-        UniformType::FloatVec4  // Color
+        UniformType::fMat4, // Model
+        UniformType::fMat4, // View
+        UniformType::fMat4, // Projection
     };
 
     static constexpr UniformType getBuiltInUniformType(BuiltInUniform u) {
@@ -158,7 +153,7 @@ public:
 private:
     gl::ShaderProgramManager m_shader_program {};
     std::vector<Uniform> m_uniforms {};     // uniform specification
-    std::array<int, builtin_uniform_types.size()> m_builtin_uniform_locations {-1, -1, -1, -1};
+    std::array<int, builtin_uniform_types.size()> m_builtin_uniform_locations {-1, -1, -1};
 
     void compileAndLink(const char* vert_src, const char* frag_src);
     void parseUniforms();

@@ -73,9 +73,10 @@ std::string ShaderProgram::getResourceName(ShaderProgram::Interface interface, G
     GLint char_array_length;
     const auto name_property = ResourceProp::NameLength;
     getResource(interface, resource_index, 1, &name_property, 1, nullptr, &char_array_length);
-    std::string string (char_array_length, char());
+    std::string string (char_array_length - 1, char());
     Call::fast(glGetProgramResourceName)(id(), static_cast<GLenum>(interface), resource_index, char_array_length,
                                          nullptr, string.data());
+    return string;
 }
 
 

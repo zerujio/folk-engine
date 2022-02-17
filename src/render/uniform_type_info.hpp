@@ -12,76 +12,45 @@
 
 namespace Folk {
 
-// This is necessary to set the uniform without knowing its type
+/// A surrogate for a glUniform function. Necessary to modify uniforms without knowing their types statically.
 struct glUniformFunctor {
-    virtual ~glUniformFunctor() = 0;
-    virtual void operator() (unsigned int location, unsigned int count, const void* value) const = 0;
+
+    virtual ~glUniformFunctor() = default;
+
+    /**
+     * @brief Call the appropriate glUniform function
+     * @param location uniform location
+     * @param count >1 if array
+     * @param value An opaque pointer to the value to set.
+     * @param transposed Whether to transpose uniforms or not. Ignored by non matrix types.
+     */
+    virtual void operator() (unsigned int location, unsigned int count, const void* value, bool transposed) const = 0;
 };
 
-struct UniformTypeInfo final {
+/// Information about uniform types.
+class UniformTypeInfo final {
 
-    std::unique_ptr<glUniformFunctor> p_glUniform;
-    unsigned int size;  // size in bytes of the type
+    static const std::map<UniformType, UniformTypeInfo> s_info_map;
 
+    std::shared_ptr<const glUniformFunctor> p_glUniform;
+    std::size_t m_size;
+
+public:
+    UniformTypeInfo(std::size_t size, std::shared_ptr<glUniformFunctor> ptr) : m_size(size), p_glUniform(std::move(ptr)) {}
+
+    /// Size in bytes of the type.
+    [[nodiscard]] std::size_t size() const { return m_size; }
+
+    /// The glUniform* function needed to modify uniform of this type.
+    [[nodiscard]] const auto& glUniform() const { return *p_glUniform; }
+
+    /// Get type info from enum value.
     static const UniformTypeInfo& get(UniformType type);
 
-private:
-    static const std::map<UniformType, UniformTypeInfo> s_info_map;
-};
-
-template<class ValueType>
-class glUniformFunctorImpl final : public glUniformFunctor {
-
-    void (**glUniform) (GLint, GLsizei, const ValueType*);
-
-public:
-    glUniformFunctorImpl(decltype(glUniform) function) : glUniform(function) {}
-
-    ~glUniformFunctorImpl() override = default;
-
-    void operator() (unsigned int location, unsigned int count, const void* value) const override {
-        (*glUniform)(static_cast<GLint>(location), static_cast<GLsizei>(count),
-                reinterpret_cast<const ValueType*>(value));
-    }
-};
-
-// same for matrix uniform types
-
-struct glUniformMatrixFunctor {
-    virtual ~glUniformMatrixFunctor() = 0;
-    virtual void operator() (unsigned int loc, unsigned int count, bool transpose, const void* value) const = 0;
-};
-
-struct UniformMatrixTypeInfo final {
-
-    std::unique_ptr<glUniformMatrixFunctor> glUniformMatrix;
-    unsigned int size;
-
-    static const UniformMatrixTypeInfo& get(UniformType type);
-
-    static constexpr bool is(UniformType type) {
+    static constexpr bool isMatrix(UniformType type) {
         return (type >= UniformType::fMat2 && type <= UniformType::fMat4x3)
-               || (type >= UniformType::dMat2 && type <= UniformType::dMat4x3);
+        || (type >= UniformType::dMat2 && type <= UniformType::dMat4x3);
     }
-
-private:
-    static const std::map<UniformType, UniformMatrixTypeInfo> s_info_map;
-};
-
-template<class ValueType>
-class glUniformMatrixFunctorImpl final : public glUniformMatrixFunctor {
-
-    void (**glUniform) (GLint, GLsizei, GLboolean, const ValueType*);
-
-public:
-    glUniformMatrixFunctorImpl(decltype(glUniform) u) : glUniform(u) {}
-    ~glUniformMatrixFunctorImpl() override = default;
-
-    void operator() (unsigned int loc, unsigned int count, bool transpose, const void* value) const override {
-        (*glUniform)(static_cast<GLint>(loc), static_cast<GLsizei>(count),
-                transpose, reinterpret_cast<const ValueType*>(value));
-    }
-
 };
 
 } // namespace Folk

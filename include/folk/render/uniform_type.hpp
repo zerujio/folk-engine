@@ -138,6 +138,8 @@ namespace impl {
 /// Base type of the representation (e.g. float for glm::vec3).
 template<UniformType T> using UniformTypeBaseRep = typename impl::BaseType_struct<UniformTypeRep<T>>::type;
 
+struct UniformTypeInfo;
+
 }
 
 #endif //INCLUDE_FOLK_RENDER__UNIFORM_TYPE_HPP

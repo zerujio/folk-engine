@@ -10,6 +10,7 @@
 #include "../utils/scoped_initializer.hpp"
 #include "../scene/scene_manager.hpp"
 #include "folk/render/shader.hpp"
+#include "folk/render/material.hpp"
 
 
 namespace Folk {
@@ -36,6 +37,8 @@ private:
     static Vec2i s_frame_buffer_size;
 
     static void setContext(RenderContextHandle);
+
+    static void setUserUniforms(const Material& material);
 
     static void GLAPIENTRY debugMessageCallback(GLenum source, GLenum type, GLuint id, GLenum severity,
                                                 GLsizei length, const GLchar* message, const void* userParam);

@@ -12,4 +12,5 @@ target_sources(folk_engine PRIVATE
         render_context.cpp
         renderer.cpp
         shader.cpp
+        uniform_type_info.cpp
         visual.cpp)

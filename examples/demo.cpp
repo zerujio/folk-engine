@@ -207,6 +207,7 @@ void Folk::sceneInit(Scene &scene) {
     // se crea el cubo naranja
     auto cube = createWhiteCube(scene.root());
     auto visual = Visual::create(Mesh::createCube());
+    visual->getMaterial()->uniform("u_color").value<UniformType::fVec4>() = {1.0f, .25f, .25f, 1.0f};
     cube.getComponent<VisualComponent>()->setVisual(visual);                    // se setea un Visual color naranja
     cube.getComponent<TransformComponent>()->scale({1.1f, 1.1f, 1.1f});         // se aumenta la escala un 10%
     // se añade el script de rotación
