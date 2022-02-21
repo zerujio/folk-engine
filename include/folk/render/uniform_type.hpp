@@ -12,64 +12,69 @@ namespace Folk {
 
 enum class UniformType : GLenum {
 
-    // 0x1404
-    Int = GL_INT,
-    UInt = GL_UNSIGNED_INT,
+    // float
     Float = GL_FLOAT,
 
-    // 0x140A
-    Double = GL_DOUBLE,
-
-    // 0x8B50
     fVec2 = GL_FLOAT_VEC2,
     fVec3 = GL_FLOAT_VEC3,
     fVec4 = GL_FLOAT_VEC4,
 
-    // 0x8B53
-    iVec2 = GL_INT_VEC2,
-    iVec3 = GL_INT_VEC3,
-    iVec4 = GL_INT_VEC4,
-
-    // 0x8B56
-    Bool = GL_BOOL,
-    bVec2 = GL_BOOL_VEC2,
-    bVec3 = GL_BOOL_VEC3,
-    bVec4 = GL_BOOL_VEC4,
-
-    // 0x8B5A
     fMat2 = GL_FLOAT_MAT2,
     fMat3 = GL_FLOAT_MAT3,
     fMat4 = GL_FLOAT_MAT4,
 
-    // 0x8B65
     fMat2x3 = GL_FLOAT_MAT2x3,
     fMat2x4 = GL_FLOAT_MAT2x4,
+
     fMat3x2 = GL_FLOAT_MAT3x2,
     fMat3x4 = GL_FLOAT_MAT3x4,
+
     fMat4x2 = GL_FLOAT_MAT4x2,
     fMat4x3 = GL_FLOAT_MAT4x3,
 
-    // 0x8DC6
+    // int
+    Int = GL_INT,
+
+    iVec2 = GL_INT_VEC2,
+    iVec3 = GL_INT_VEC3,
+    iVec4 = GL_INT_VEC4,
+
+    // uint
+    UInt = GL_UNSIGNED_INT,
     uVec2 = GL_UNSIGNED_INT_VEC2,
     uVec3 = GL_UNSIGNED_INT_VEC3,
     uVec4 = GL_UNSIGNED_INT_VEC4,
 
-    // 0x8F46
-    dMat2 = GL_DOUBLE_MAT2,
-    dMat3 = GL_DOUBLE_MAT3,
-    dMat4 = GL_DOUBLE_MAT4,
-    dMat2x3 = GL_DOUBLE_MAT2x3, //0x8F49
-    dMat2x4 = GL_DOUBLE_MAT2x4,
-    dMat3x2 = GL_DOUBLE_MAT3x2,
-    dMat3x4 = GL_DOUBLE_MAT3x4,
-    dMat4x2 = GL_DOUBLE_MAT4x2,
-    dMat4x3 = GL_DOUBLE_MAT4x3,
+    // double
+    Double = GL_DOUBLE,
 
-    // 0x8FFC
     dVec2 = GL_DOUBLE_VEC2,
     dVec3 = GL_DOUBLE_VEC3,
     dVec4 = GL_DOUBLE_VEC4,
 
+    dMat2 = GL_DOUBLE_MAT2,
+    dMat3 = GL_DOUBLE_MAT3,
+    dMat4 = GL_DOUBLE_MAT4,
+
+    dMat2x3 = GL_DOUBLE_MAT2x3,
+    dMat2x4 = GL_DOUBLE_MAT2x4,
+
+    dMat3x2 = GL_DOUBLE_MAT3x2,
+    dMat3x4 = GL_DOUBLE_MAT3x4,
+
+    dMat4x2 = GL_DOUBLE_MAT4x2,
+    dMat4x3 = GL_DOUBLE_MAT4x3,
+
+    // bool
+    Bool = GL_BOOL,
+
+    bVec2 = GL_BOOL_VEC2,
+    bVec3 = GL_BOOL_VEC3,
+    bVec4 = GL_BOOL_VEC4,
+
+    // texture samplers
+    sampler1D = GL_SAMPLER_1D,
+    sampler2D = GL_SAMPLER_2D,
 };
 
 namespace impl {

@@ -2,7 +2,7 @@
 // Created by sergio on 17-02-22.
 //
 
-#include "image.hpp"
+#include "folk/render/image.hpp"
 
 #include <stb_image.h>
 

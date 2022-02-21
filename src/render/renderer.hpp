@@ -11,6 +11,7 @@
 #include "../scene/scene_manager.hpp"
 #include "folk/render/shader.hpp"
 #include "folk/render/material.hpp"
+#include "folk/render/texture.hpp"
 
 
 namespace Folk {
