@@ -2,7 +2,8 @@
 #define FOLK_RENDER__MATERIAL_HPP
 
 #include "folk/core/resource.hpp"
-#include "folk/render/shader.hpp"
+#include "shader.hpp"
+#include "uniform.hpp"
 
 #include <vector>
 #include <memory>
@@ -51,102 +52,92 @@ public:
     */
     [[nodiscard]] std::shared_ptr<Shader> getShader() const;
 
-    /// Access the value of a uniform.
-    class ConstUniform final {
+    /**
+     * @brief Access a uniform by index.
+     * @tparam uType The expected type of the uniform. Must correspond to the one declared in the GLSL shader.
+     * @param index The index of the uniform in the Shader's uniform list.
+     * @return A reference to the uniform at @p index.
+     */
+    template<UniformType uType>
+    [[nodiscard]] const Uniform<UTypeRep<uType>>& uniform(unsigned int index) const {
+        if (index >= m_uniforms.size())
+            throw Error("Uniform list access out of range");
 
-        const Material& m_material;
-        unsigned int m_uniform_index;
+        auto* derived_ptr = dynamic_cast<const Uniform<UTypeRep<uType>>*>(m_uniforms[index].get());
 
-    public:
-
-        ConstUniform(const Material& mat_, unsigned int index_)
-        : m_material(mat_), m_uniform_index(index_)
-        {
-            if (m_uniform_index >= m_material.m_uniform_info.size())
-                throw Error("Uniform index out of range");
+        if (!derived_ptr) {
+            // dynamic cast failed because the uniform is not of the requested type.
+            const auto &info {m_shader->uniforms()[index]};
+            std::stringstream msg {"Uniform "};
+            msg << info.name << " of type " << info.type << " accessed as " << uType << ".";
+            throw Error(msg.str());
         }
 
-        /// Access the value of the uniform.
-        template<UniformType T>
-        [[nodiscard]] const UniformTypeRep<T>& value() const {
-            if (T != m_material.m_shader->uniforms()[m_uniform_index].type)
-                throw Error("Attempt to access uniform with incorrect type.");
+        return *derived_ptr;
+    }
 
-            const auto data_index = m_material.m_uniform_info[m_uniform_index].data_index;
-            return reinterpret_cast<const UniformTypeRep<T>&>(m_material.m_uniform_data[data_index]);
+    template<UniformType utype>
+    [[nodiscard]] auto& uniform(unsigned int index) {
+        const auto const_this = this;
+        return const_cast<Uniform<UTypeRep<utype>>&>(const_this->uniform<utype>(index));
+    }
+
+    /**
+     * @brief Access uniform by name.
+     * @tparam uType The type of the uniform declared in the GLSL shader.
+     * @param name The name of the variable in the GLSL shader.
+     * @return A reference to the corresponding Uniform object.
+     */
+    template<UniformType uType>
+    [[nodiscard]] const auto& uniform(const char* name) const {
+        int index = uniformIndex(name);
+
+        if (index < 0) {
+            std::string msg {"No uniform named "};
+            msg += name;
+            throw Error(msg);
         }
 
-        /// Access the Nth element of an array uniform.
-        template<UniformType T>
-        [[nodiscard]] const UniformTypeRep<T>& array(unsigned int n) const {
-            if (n >= m_material.m_shader->uniforms()[m_uniform_index].count)
-                throw Error("Uniform array index out of range.");
+        return uniform<uType>(index);
+    }
 
-            auto ptr = &value<T>();
+    template<UniformType uType>
+    [[nodiscard]] const auto& uniform(const std::string& name) const {
+        return uniform<uType>(name.c_str());
+    }
 
-            return ptr[n];
-        }
+    template<UniformType uType>
+    [[nodiscard]] auto& uniform(const char* name) {
+        const Material* const_this = this;
+        return const_cast<Uniform<UTypeRep<uType>>&>(const_this->uniform<uType>(name));
+    }
 
-        /// Access the @p transposed property. This value is ignored for non matrix uniforms.
-        [[nodiscard]] const bool& transposed() const {
-            return m_material.m_uniform_info[m_uniform_index].transposed;
-        }
-    };
+    template<UniformType uType>
+    [[nodiscard]] auto& uniform(const std::string& name) {
+        return uniform<uType>(name.c_str());
+    }
 
-    /// Access the value of an uniform.
-    class Uniform final {
-
-        ConstUniform uniform;
-
-    public:
-
-        Uniform(Material& m, unsigned int i) : uniform(m, i) {}
-
-        template<UniformType T>
-        [[nodiscard]] UniformTypeRep<T>& value() const {
-            return const_cast<UniformTypeRep<T>&>(uniform.template value<T>());
-        }
-
-        template<UniformType T>
-        [[nodiscard]] UniformTypeRep<T>& array(unsigned int n) const {
-            return const_cast<UniformTypeRep<T>&>(uniform.template array<T>(n));
-        }
-
-        [[nodiscard]] bool& transposed() const {
-            return const_cast<bool&>(uniform.transposed());
-        }
-    };
-
-    /// const access to the uniform at @p index
-    [[nodiscard]] ConstUniform uniform(unsigned int index) const;
-
-    /// Access to the uniform at @p index
-    [[nodiscard]] Uniform uniform(unsigned int index);
-
-    /// Find uniform by name
-    [[nodiscard]] ConstUniform uniform(const std::string& name) const;
-    [[nodiscard]] ConstUniform uniform(const char* name) const;
-    [[nodiscard]] Uniform uniform(const std::string& name);
-    [[nodiscard]] Uniform uniform(const char* name);
-
-    /// find uniform index by name (-1 if not found).
+    /**
+     * @brief Search for the index of the uniform with a given name.
+     * @param name The name of the uniform variable (in the GLSL shader).
+     * @return The index of the uniform named @p name, or -1 if no such uniform exists.
+     */
     [[nodiscard]] int uniformIndex(const std::string& name) const;
     [[nodiscard]] int uniformIndex(const char *name) const;
 
+    /// The amount of uniforms in this Material.
+    [[nodiscard]] unsigned int uniformCount() const;
+
 private:
 
-    using StorageUnit = GLuint;
-
-    struct UniformInfo final {
-        unsigned int data_index;    // index in the data buffer
-        bool transposed;            // only for matrix types
-    };
-
     std::shared_ptr<Shader> m_shader {};
-    std::vector<UniformInfo> m_uniform_info {};
-    std::vector<StorageUnit> m_uniform_data {};
+    std::vector<std::unique_ptr<IUniform>> m_uniforms {};
 
+    // Add the uniforms listed in m_shader.uniforms() to m_uniforms.
     void addUniforms();
+
+    // create a Uniform object based on a uniform declaration
+    static std::unique_ptr<IUniform> parseUniform(const Shader::UniformInfo& uniform_decl);
 };
 
 } // namespace folk

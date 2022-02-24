@@ -17,8 +17,14 @@ void Folk::sceneInit(Scene &scene) {
     };
 
     auto visual_c = scene.root().addComponent<VisualComponent>(Mesh::create(mesh));
+    auto mat = visual_c.visual()->getMaterial();
 
-    visual_c.visual()->getMaterial()->uniform("u_color").value<UniformType::fVec4>() = {.75f, .5f, .25f, 1.0f};
+    mat->uniform<UniformType::fVec4>("u_color").value = {.75f, .5f, .25f, 1.0f};
+
+    Image img {"paper.jpg"};
+    auto tex = std::make_shared<Texture<TextureType::Tex2D>>(img);
+
+    mat->uniform<UniformType::sampler2D>("u_texture").p_texture = tex;
 }
 
 void Folk::engineInit() {

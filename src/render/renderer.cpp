@@ -5,8 +5,6 @@
 #include "folk/log.hpp"
 #include "folk/render/gl.hpp"
 
-#include "uniform_type_info.hpp"
-
 #include <glm/gtc/matrix_transform.hpp>
 
 namespace Folk {
@@ -62,22 +60,13 @@ void Renderer::drawFrame(SceneManager &scene, std::chrono::duration<double> delt
             }
     );
 
-    // end frame (swap buffers?)
+    // finish frame
     s_handle.swapBuffers();
 }
 
 void Renderer::setUserUniforms(const Material &material) {
-
-    const auto& uniform_list = material.getShader()->uniforms();
-
-    for (int i = 0; i < uniform_list.size(); ++i) {
-        const auto& info = uniform_list[i];
-        const bool transposed = material.m_uniform_info[i].transposed;
-        const void* data_ptr = &material.m_uniform_data[material.m_uniform_info[i].data_index];
-        const auto& glUniform = material.getShader()->uniforms()[i].type_info.glUniform();
-        glUniform(info.location, info.count, data_ptr, transposed);
-    }
-
+    for (const auto& u : material.m_uniforms)
+        u->bind();
 }
 
 void Renderer::drawPerfMon(const PerformanceMonitor& perf_monitor,

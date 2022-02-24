@@ -53,7 +53,8 @@ public:
     */
     static Ref createFromFiles(const char* vertex, const char* fragment);
 
-    class Uniform final {
+    /// Type information for this shader program's uniforms.
+    class UniformInfo final {
 
         friend class Renderer;
         friend class Material;
@@ -65,7 +66,7 @@ public:
         /// Data type of the uniform variable.
         UniformType type;
 
-        /// Size of the variable. Its >1 for arrays.
+        /// Size of the variable. >1 for arrays.
         unsigned int count;
 
         /**
@@ -73,18 +74,12 @@ public:
          * @param name_ Name of the variable.
          * @param type_ Type of the uniform.
          * @param count_ Number of elements (>1 if its an array)
-         * @param location_ (Internal usage) Uniform location.
-         * @param type_info_ (Internal usage).
-         * @param data_ptr (Internal usage) Opaque pointer to memory in which to store the current value of the uniform.
+         * @param location_ (Internal usage) Uniform location or sampler texture unit.
          */
-        Uniform(std::string name_, UniformType type_, unsigned int count_, unsigned int location_);
+        UniformInfo(std::string name_, UniformType type_, unsigned int count_, unsigned int location_or_tex_unit_);
 
     private:
-        // Additional type information for internal usage.
-        const UniformTypeInfo& type_info;
-
-        // (Internal usage) Uniform location.
-        unsigned int location;
+        unsigned int location_or_tex_unit;
     };
 
     /**
@@ -93,7 +88,7 @@ public:
      *
      * Note that "built-in" uniforms, such as u_ModelMatrix and u_ViewMatrix, will not show up in this list.
      */
-    [[nodiscard]] const std::vector<Uniform>& uniforms() const { return m_uniforms; }
+    [[nodiscard]] const std::vector<UniformInfo>& uniforms() const { return m_uniforms; }
 
     /**
      * @brief The vertex attribute location that will be assigned by default to the given attribute names.
@@ -141,7 +136,7 @@ public:
 
     /// Lists the type for each uniform.
     static constexpr std::array builtin_uniform_types {
-        UniformType::fMat4, // Model
+            UniformType::fMat4, // Model
         UniformType::fMat4, // View
         UniformType::fMat4, // Projection
     };
@@ -152,12 +147,14 @@ public:
 
 private:
     gl::ShaderProgramManager m_shader_program {};
-    std::vector<Uniform> m_uniforms {};     // uniform specification
+    std::vector<UniformInfo> m_uniforms {};     // uniform specification
     std::array<int, builtin_uniform_types.size()> m_builtin_uniform_locations {-1, -1, -1};
+    GLuint m_texture_units {0}; // number of used texture units
 
     void compileAndLink(const char* vert_src, const char* frag_src);
     void parseUniforms();
-    void parseBuiltInUniform(const char* name, BuiltInUniform u_id, UniformType type, GLuint count, GLuint location);
+    void addBuiltInUniform(const char* name, BuiltInUniform u_id, UniformType type, GLuint count, GLuint location);
+    void addUserDefinedUniform(std::string name, UniformType type, GLuint count, GLuint location);
 
     [[nodiscard]] int& builtInUniformLoc(BuiltInUniform u);
     [[nodiscard]] const int& builtInUniformLoc(BuiltInUniform u) const;

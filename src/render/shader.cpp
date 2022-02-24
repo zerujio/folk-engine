@@ -1,7 +1,6 @@
 #include "folk/render/shader.hpp"
 #include "renderer.hpp"
 #include "default_shader.hpp"
-#include "uniform_type_info.hpp"
 
 #include <fstream>
 #include <sstream>
@@ -98,15 +97,15 @@ void Shader::parseUniforms() {
 
         // if builtin...
         if (name_iter != builtin_uniform_names.end()) {
-            parseBuiltInUniform(name_iter->first, name_iter->second, type, count, location);
+            addBuiltInUniform(name_iter->first, name_iter->second, type, count, location);
         } else {
             // add to user defined uniforms
-            m_uniforms.emplace_back(name, type, count, location);
+            addUserDefinedUniform(std::move(name), type, count, location);
         }
     }
 }
 
-void Shader::parseBuiltInUniform(const char* name, Shader::BuiltInUniform u_id, UniformType type, GLuint count, GLuint location) {
+void Shader::addBuiltInUniform(const char* name, Shader::BuiltInUniform u_id, UniformType type, GLuint count, GLuint location) {
     // check type
     auto builtin_type = getBuiltInUniformType(u_id);
     if (type != builtin_type) {
@@ -127,6 +126,16 @@ void Shader::parseBuiltInUniform(const char* name, Shader::BuiltInUniform u_id, 
     builtInUniformLoc(u_id) = location;
 }
 
+void Shader::addUserDefinedUniform(std::string name, UniformType type, GLuint count, GLuint location) {
+    if (isSampler(type)) {
+        m_shader_program.bind();
+        gl::call::fast(glUniform1i)(location, m_texture_units);
+        m_uniforms.emplace_back(std::move(name), type, count, m_texture_units++);
+    } else {
+        m_uniforms.emplace_back(std::move(name), type, count, location);
+    }
+}
+
 
 // Uniform
 
@@ -138,12 +147,11 @@ const int &Shader::builtInUniformLoc(Shader::BuiltInUniform u) const {
     return m_builtin_uniform_locations[static_cast<unsigned int>(u)];
 }
 
-Shader::Uniform::Uniform(std::string name_, UniformType type_, unsigned int count_, unsigned int location_)
+Shader::UniformInfo::UniformInfo(std::string name_, UniformType type_, unsigned int count_, unsigned int loc_or_tex_)
 : name(std::move(name_)),
-    type(type_),
-    count(count_),
-    location(location_),
-    type_info(UniformTypeInfo::get(type))
+  type(type_),
+  count(count_),
+  location_or_tex_unit(loc_or_tex_)
 {}
 
 } // namespace Folk

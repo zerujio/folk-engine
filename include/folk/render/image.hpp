@@ -38,9 +38,9 @@ private:
 
     static void freeData(byte* data);
 
-    std::unique_ptr<unsigned char, Deleter<freeData>> p_data;
     Vec2i m_dims {};
     int m_channels {};
+    std::unique_ptr<unsigned char, Deleter<freeData>> p_data;
 };
 
 } // namespace Folk

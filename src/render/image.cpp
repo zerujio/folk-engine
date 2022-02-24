@@ -1,8 +1,5 @@
-//
-// Created by sergio on 17-02-22.
-//
-
 #include "folk/render/image.hpp"
+#include "folk/error.hpp"
 
 #include <stb_image.h>
 
@@ -11,7 +8,10 @@ namespace Folk {
 
 Image::Image(const char *file_name)
 : p_data(stbi_load(file_name, &m_dims.x, &m_dims.y, &m_channels, 0))
-{}
+{
+    if (!p_data)
+        throw Error(std::string("Image load failed: ") + stbi_failure_reason());
+}
 
 Image::Image(const std::string &file_name) : Image(file_name.c_str()) {}
 

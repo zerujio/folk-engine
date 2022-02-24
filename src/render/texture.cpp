@@ -11,7 +11,7 @@ namespace Folk {
 Folk::BaseTexture::BaseTexture(gl::Texture::Target type)
 : m_target(type)
 {
-    m_texture.bind(type);
+    m_texture.bind(m_target);
 }
 
 gl::Texture::Target BaseTexture::target() const {
@@ -24,7 +24,7 @@ void BaseTexture::bind() const {
 
 // Texture2D
 
-Texture2D::Texture2D(const Image &image_2d)
+Texture2D::Texture(const Image &image_2d)
 : BaseTexture(gl::Texture::Target::Tex2D)
 {
     if (image_2d.dimensions().x != image_2d.dimensions().y)
