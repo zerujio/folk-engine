@@ -1,7 +1,3 @@
-//
-// Created by sergio on 17-02-22.
-//
-
 #include "folk/render/texture.hpp"
 
 #include <array>
@@ -48,6 +44,26 @@ Texture2D::Texture(const Image &image_2d)
                             format.first, image_2d.dimensions().x, image_2d.dimensions().y,
                             format.second, Type::UByte, image_2d.data());
     gl::Texture::generateMipmap(target());
+}
+
+
+/// Set the wrap mode of the texture (for both axis).
+void Texture2D::setWrapMode(WrapMode mode) const {
+    bind();
+    gl::Texture::setWrapMode(gl::Texture::Target::Tex2D, gl::Texture::WrapAxis::S, mode);
+    gl::Texture::setWrapMode(gl::Texture::Target::Tex2D, gl::Texture::WrapAxis::T, mode);
+}
+
+/// Set the texture wrap mode on the X axis.
+void Texture2D::setWrapModeX(WrapMode mode) const {
+    bind();
+    gl::Texture::setWrapMode(gl::Texture::Target::Tex2D, gl::Texture::WrapAxis::S, mode);
+}
+
+/// Set the texture wrap mode on the Y axis.
+void Texture2D::setWrapModeY(WrapMode mode) const {
+    bind();
+    gl::Texture::setWrapMode(gl::Texture::Target::Tex2D, gl::Texture::WrapAxis::T, mode);
 }
 
 } // namespace Folk

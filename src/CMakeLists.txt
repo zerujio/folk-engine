@@ -1,11 +1,3 @@
-add_library(folk_engine STATIC)
-set_property(TARGET folk_engine PROPERTY FOLDER lib)
-target_compile_features(folk_engine PUBLIC cxx_std_17)
-
-target_include_directories(folk_engine PUBLIC ../include)
-target_link_libraries(folk_engine PUBLIC entt OpenAL glm glad glfw)
-target_link_libraries(folk_engine PRIVATE cxxopts dr_libs stb_image)
-
 add_subdirectory(audio)
 add_subdirectory(core)
 add_subdirectory(render)

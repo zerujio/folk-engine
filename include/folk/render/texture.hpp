@@ -63,6 +63,17 @@ public:
      */
     explicit Texture(const Image& image_2d);
 
+    using WrapMode = gl::Texture::WrapMode;
+
+    /// Set the wrap mode of the texture (for both axis).
+    void setWrapMode(WrapMode mode) const;
+
+    /// Set the texture wrap mode on the X axis.
+    void setWrapModeX(WrapMode mode) const;
+
+    /// Set the texture wrap mode on the Y axis.
+    void setWrapModeY(WrapMode mode) const;
+
 };
 using Texture2D = Texture<TextureType::Tex2D>;
 

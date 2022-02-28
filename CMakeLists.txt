@@ -12,10 +12,15 @@ add_compile_definitions(
 
 find_package(Doxygen)
 
+# engine library
+add_library(folk_engine STATIC)
+target_compile_features(folk_engine PUBLIC cxx_std_17)
+target_include_directories(folk_engine PUBLIC include)
+
 # external dependencies
 add_subdirectory(extern)
 
-# configure engine library
+# sources
 add_subdirectory(src)
 
 # examples
