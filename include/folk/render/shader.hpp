@@ -6,7 +6,7 @@
 #include "gl_shader_program.hpp"
 #include "vertex_attribute.hpp"
 #include "uniform_type.hpp"
-
+#include "vertex_types.hpp"
 
 #include <array>
 #include <vector>
@@ -37,8 +37,9 @@ public:
      */
     Shader(const char* vert, const char* frag);
 
-    /// Crea una instancia del shader predeterminado.
-    static Ref createDefault();
+    /// Create a default shader for a built-in vertex type.
+    template<class> static Ref createDefault();
+    
 
     /// Crea un programa a partir de archivos.
     /**
@@ -159,6 +160,11 @@ private:
     [[nodiscard]] int& builtInUniformLoc(BuiltInUniform u);
     [[nodiscard]] const int& builtInUniformLoc(BuiltInUniform u) const;
 };
+
+
+template<> Shader::Ref Shader::createDefault<PositionVertex>();
+template<> Shader::Ref Shader::createDefault<PositionNormalVertex>();
+template<> Shader::Ref Shader::createDefault<PositionNormalTexCoordVertex>();
 
 } // namespace Folk
 

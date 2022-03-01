@@ -1,7 +1,3 @@
-//
-// Created by sergio on 21-12-21.
-//
-
 #include "folk/folk.hpp"
 #include "folk/render.hpp"
 #include "folk/input.hpp"

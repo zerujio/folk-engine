@@ -1,6 +1,5 @@
 target_sources(folk_engine PRIVATE
         camera_component.cpp
-        default_shader.cpp
         gl.cpp
         gl_buffer.cpp
         gl_shader.cpp

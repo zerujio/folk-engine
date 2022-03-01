@@ -10,8 +10,85 @@ namespace Folk
 
 std::vector<std::pair<const char*, GLuint>> user_attribute_indices {};
 
-Shader::Ref Shader::createDefault() {
-    return std::make_shared<Shader>(default_vert_source_code, default_frag_source_code);
+template<> Shader::Ref Shader::createDefault<PositionNormalTexCoordVertex>() {
+
+    constexpr const char vert[] {
+        R"glsl(
+
+            #version 330 core
+
+            in vec3 a_position;
+            in vec3 a_normal;
+            in vec2 a_texCoord;
+
+            out vec2 texCoord;
+            out vec3 normal;
+
+            void main() {
+                gl_Position = vec4(a_position, 1.0);
+                texCoord = a_texCoord;
+                normal = a_normal;
+            }
+
+        )glsl"
+    };
+
+
+    constexpr const char frag[] {
+        R"glsl(
+
+            #version 330 core
+
+            in vec2 texCoord;
+
+            out vec4 frag_color;
+            uniform vec4 u_color = {1.0f, 1.0f, 1.0f, 1.0f};
+            uniform sampler2D u_texture;
+
+            void main() {
+                frag_color = texture(u_texture, texCoord) * u_color;
+            }
+
+        )glsl"
+    };
+
+    return std::make_shared<Shader>(vert, frag);
+}
+
+template<> Shader::Ref Shader::createDefault<PositionNormalVertex>() {
+    constexpr const char vert[] {
+        R"glsl(
+            #version 330 core
+
+            in vec3 a_position;
+            in vec2 a_normal;
+
+            out vec3 normal;
+            
+            void main() {
+                gl_Position = vec4(a_position, 1.0f);
+                normal = a_normal;
+            }
+        )glsl"
+    };
+
+    constexpr const char frag[] {
+        R"glsl(
+            #version 330 core
+
+            in vec3 normal;
+
+            out vec4 frag_color;
+
+            uniform vec4 u_color = {1.0f, 1.0f, 1.0f, 1.0f};
+
+            void main() {
+                frag_color = u_color;
+            }
+        )glsl"
+    }
+
+    return std::make_shared<Shader>(vert, frag);
 }
 
 std::string readShaderSource(const char* filename) {

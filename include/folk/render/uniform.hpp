@@ -193,6 +193,11 @@ public:
 protected:
 
     void bind() const override {
+        if (!p_texture) {
+            Log::warning() << "Using uninitialized sampler uniform!\n";
+            return;
+        }
+
         gl::Texture::setActive(m_texture_unit);
         p_texture->bind();
     }
