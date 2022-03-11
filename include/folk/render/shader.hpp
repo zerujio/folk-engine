@@ -38,7 +38,7 @@ public:
     Shader(const char* vert, const char* frag);
 
     /// Create a default shader for a built-in vertex type.
-    template<class> static Ref createDefault();
+    template<class VertexType> static Ref createDefault();
     
 
     /// Crea un programa a partir de archivos.
@@ -95,10 +95,10 @@ public:
      * @brief The vertex attribute location that will be assigned by default to the given attribute names.
      *
      * Vertex shader variables defined with a name present in this list will be assigned the corresponding location.
-     * Note that certain variable names are aliases for the same vertex attribute (like @p a_position and @p a_Position).
+     * Note that certain variable names are aliases for the same vertex attribute (like @p a_position and @p a_Position ).
      * When writing custom shaders, care should be taken not to define two variables with names mapped to the same location.
      *
-     * Note that indices set using the `layout(location = location)` syntax take precedence over those specified here or in
+     * Note that indices set using the `layout(location = i)` syntax take precedence over those specified here or in
      * @p user_attribute_indices.
      */
     static constexpr std::array builtin_attribute_indices {
@@ -137,7 +137,7 @@ public:
 
     /// Lists the type for each uniform.
     static constexpr std::array builtin_uniform_types {
-            UniformType::fMat4, // Model
+        UniformType::fMat4, // Model
         UniformType::fMat4, // View
         UniformType::fMat4, // Projection
     };

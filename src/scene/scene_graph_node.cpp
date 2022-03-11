@@ -50,23 +50,23 @@ void SceneGraphNode::invalidateMtxCache() {
 }
 
 void SceneGraphNode::updateTransformMatrix() {
-    // identity matrix
     Mat4 transform {1.0f};
-    
-    // scale
-    glm::scale(transform, m_transform.scale);
-    
-    // rotation
-    glm::rotate(transform, m_transform.rotation.y, {.0f, 1.0f, .0f});
-    glm::rotate(transform, m_transform.rotation.z, {.0f, .0f, 1.0f});
-    glm::rotate(transform, m_transform.rotation.x, {1.0f, .0f, .0f});
 
     // position
-    glm::translate(transform, m_transform.position);
+    transform = glm::translate(transform, m_transform.position);
+    
+    // rotation
+    transform = glm::rotate(transform, glm::radians(m_transform.rotation.x), {1.0f, .0f, .0f});
+    transform = glm::rotate(transform, glm::radians(m_transform.rotation.z), {.0f, .0f, 1.0f});
+    transform = glm::rotate(transform, glm::radians(m_transform.rotation.y), {.0f, 1.0f, .0f});
+
+    // scale
+    transform = glm::scale(transform, m_transform.scale);
     
     if (m_parent_ptr)
-        transform *= m_parent_ptr->transformMatrix();
+        transform = m_parent_ptr->transformMatrix() * transform;
 
+    m_transform.matrix = transform;
     m_transform.is_mtx_valid = true;
 }
 

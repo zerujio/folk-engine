@@ -137,13 +137,14 @@ void Folk::sceneInit(Folk::Scene &scene) {
 
     // cargamos un shader
     //auto shader = Shader::createFromFiles("vs_basic.bin", "fs_basic.bin");
-    auto shader = Shader::createDefault();
+    auto shader = Shader::createDefault<PositionVertex>();
 
     // Crear una Visual...
     auto visual = Visual::create(
-        Mesh::create(ImmediateGeometry::createCube(0xffffffff)), // con un cuadrado como mesh
+        Mesh::createCube(),         // con un cubo como mesh
         Material::create(shader)    // y el shader que leímos desde el archivo
     );
+    visual->getMaterial()->uniform<UniformType::fVec4>("u_color").value = {1.0f, 1.0f, 1.0f, 1.0f};
 
     // Añadir al nodo una componente con la Visual anterior
     cube.addComponent<VisualComponent>(visual);
@@ -156,9 +157,10 @@ void Folk::sceneInit(Folk::Scene &scene) {
     small_cube_tr.position({1.0f, 1.0f, 1.0f});
 
     auto small_visual = Visual::create(
-        Mesh::create(ImmediateGeometry::createCube(0xff0000ff)),
-        visual->getMaterial()
+        visual->getMesh(),
+        Material::create(shader)
     );
+    small_visual->getMaterial()->uniform<UniformType::fVec4>("u_color").value = {1.0f, .0f, .0f, 1.0f};
     small_cube.addComponent<VisualComponent>(small_visual);
 
     // Añadir una cámara

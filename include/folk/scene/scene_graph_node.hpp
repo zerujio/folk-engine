@@ -56,7 +56,7 @@ private:
         Vec3 rotation {0, 0, 0};
         Vec3 scale    {1, 1, 1};
         
-        Mat4 matrix {};
+        Mat4 matrix {1.0f};
 
         // is transform matrix valid (up to date)?
         bool is_mtx_valid {false};

@@ -11,9 +11,8 @@ Material::Material(std::shared_ptr<Shader> shader_) : m_shader(std::move(shader_
     addUniforms();
 }
 
-
 std::shared_ptr<Material> Material::create() {
-    return create(Shader::createDefault());
+    return std::make_shared<Material>(std::move(Shader::createDefault<PositionVertex>()));
 }
 
 std::shared_ptr<Material> Material::create(std::shared_ptr<Shader> shader_) {

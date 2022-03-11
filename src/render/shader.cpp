@@ -1,6 +1,5 @@
 #include "folk/render/shader.hpp"
 #include "renderer.hpp"
-#include "default_shader.hpp"
 
 #include <fstream>
 #include <sstream>
@@ -61,7 +60,7 @@ template<> Shader::Ref Shader::createDefault<PositionNormalVertex>() {
             #version 330 core
 
             in vec3 a_position;
-            in vec2 a_normal;
+            in vec3 a_normal;
 
             out vec3 normal;
             
@@ -80,13 +79,48 @@ template<> Shader::Ref Shader::createDefault<PositionNormalVertex>() {
 
             out vec4 frag_color;
 
-            uniform vec4 u_color = {1.0f, 1.0f, 1.0f, 1.0f};
+            uniform vec4 u_color = vec4(1.0f, 1.0f, 1.0f, 1.0f);
 
             void main() {
                 frag_color = u_color;
             }
         )glsl"
-    }
+    };
+
+    return std::make_shared<Shader>(vert, frag);
+}
+
+template<> Shader::Ref Shader::createDefault<PositionVertex>() {
+    constexpr const char vert[] {
+        R"glsl(
+            #version 330 core
+
+            in vec3 a_position;
+            
+            uniform mat4 u_model;
+            uniform mat4 u_view;
+            uniform mat4 u_proj;
+
+            void main() {
+                gl_Position = u_proj * u_view * u_model * vec4(a_position, 1.0f);
+            }
+
+        )glsl"
+    };
+
+    constexpr const char frag[] {
+        R"glsl(
+            #version 330 core
+
+            out vec4 frag_color;
+
+            uniform vec4 u_color = vec4(1.0f, 1.0f, 1.0f, 1.0f);
+
+            void main() {
+                frag_color = u_color;
+            }
+        )glsl"
+    };
 
     return std::make_shared<Shader>(vert, frag);
 }

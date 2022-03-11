@@ -6,6 +6,7 @@
 #include "folk/render/gl.hpp"
 
 #include <glm/gtc/matrix_transform.hpp>
+#include "glm/gtc/type_ptr.hpp"
 
 namespace Folk {
 
@@ -33,16 +34,24 @@ void Renderer::drawFrame(SceneManager &scene, std::chrono::duration<double> delt
     if (cam_entity == entt::null) {
         // at_vector = {0, 0, 0};
         // eye_vector = {0, 0, 0};
-        proj_mtx = glm::perspective(60.0f, aspect_ratio, 0.1f, 100.0f);
+        proj_mtx = glm::perspective(glm::radians(60.0f), aspect_ratio, 0.1f, 100.0f);
     } else {
-        view_mtx = glm::inverse(scene.registry().get<TransformComponent>(cam_entity).transformMatrix());
+
+        const auto& cam_transform = scene.registry().get<TransformComponent>(cam_entity).transformMatrix();
+
+        Vec3 pos = cam_transform * Vec4(0, 0, 0, 1.0f);
+        Vec3 at = cam_transform * Vec4(0, -1.0f, 0, 1.0f);
+        Vec3 up = glm::normalize(cam_transform * Vec4(0, 0, 1.0f, 1.0f));
+
+        view_mtx = glm::lookAt(pos, at, up);
+
         const auto& cam_data = scene.registry().get<CameraComponent>(cam_entity);
-        proj_mtx = glm::perspective(cam_data.fovy, aspect_ratio, cam_data.near, cam_data.far);
+        proj_mtx = glm::perspective(glm::radians(cam_data.fovy), aspect_ratio, cam_data.near, cam_data.far);
     }
 
     auto reg_view = scene.registry().view<SceneGraphNode, const VisualComponent>();
     reg_view.each(
-            [] (const auto entity, SceneGraphNode& transform, const VisualComponent& visual)
+            [&view_mtx, &proj_mtx] (const auto entity, SceneGraphNode& transform, const VisualComponent& visual)
             {
                 auto mesh = visual.visual->getMesh();
                 auto material = visual.visual->getMaterial();
@@ -51,6 +60,7 @@ void Renderer::drawFrame(SceneManager &scene, std::chrono::duration<double> delt
                 material->getShader()->m_shader_program.bind();
 
                 setUserUniforms(*material);
+                setTransformUniforms(transform.transformMatrix(), view_mtx, proj_mtx, *material);
 
                 gl::call::fast(glDrawElements)(
                         GL_TRIANGLES,
@@ -67,6 +77,17 @@ void Renderer::drawFrame(SceneManager &scene, std::chrono::duration<double> delt
 void Renderer::setUserUniforms(const Material &material) {
     for (const auto& u : material.m_uniforms)
         u->bind();
+}
+
+void Renderer::setTransformUniforms(const Mat4& model, const Mat4& view, const Mat4& projection, const Material& material) {
+    auto shader = material.getShader();
+    auto model_loc = shader->builtInUniformLoc(Shader::BuiltInUniform::Model);
+    auto view_loc = shader->builtInUniformLoc(Shader::BuiltInUniform::View);
+    auto proj_loc = shader->builtInUniformLoc(Shader::BuiltInUniform::Projection);
+
+    gl::call::fast(glUniformMatrix4fv)(model_loc, 1, false, glm::value_ptr(model));
+    gl::call::fast(glUniformMatrix4fv)(view_loc, 1, false, glm::value_ptr(view));
+    gl::call::fast(glUniformMatrix4fv)(proj_loc, 1, false, glm::value_ptr(projection));
 }
 
 void Renderer::drawPerfMon(const PerformanceMonitor& perf_monitor,

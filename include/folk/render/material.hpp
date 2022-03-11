@@ -24,7 +24,7 @@ class Material : public Resource {
     friend class Renderer;
 
 public: 
-    /// Crea un material con el shader predeterminado.
+    /// Create a material using the default untextured shader (withe vertex type PositionVertex).
     static std::shared_ptr<Material> create();
 
     /// Crea un material con el shader provisto.
