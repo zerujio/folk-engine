@@ -20,12 +20,12 @@ class SimpleScript : public Script {
         
         Vec3 direction {};
 
-        direction.y += Input::get(Key::W) == InputState::Press;
-        direction.y -= Input::get(Key::S) == InputState::Press;
+        direction.z += Input::get(Key::W) == InputState::Press;
+        direction.z -= Input::get(Key::S) == InputState::Press;
         direction.x += Input::get(Key::D) == InputState::Press;
         direction.x -= Input::get(Key::A) == InputState::Press;
-        direction.z += Input::get(Key::R) == InputState::Press;
-        direction.z -= Input::get(Key::F) == InputState::Press;
+        direction.y += Input::get(Key::R) == InputState::Press;
+        direction.y -= Input::get(Key::F) == InputState::Press;
 
         if ( direction.x || direction.y || direction .z ) {
             direction = glm::normalize(direction);
@@ -56,7 +56,9 @@ void Folk::sceneInit(Scene &scene) {
           2, 3, 0 }
     };
 
-    auto visual_c = scene.root().addComponent<VisualComponent>(Mesh::create(mesh));
+    auto cube = scene.root().createChild("Cube");
+
+    auto visual_c = cube.addComponent<VisualComponent>(Mesh::create(mesh));
     auto mat = visual_c.visual()->getMaterial();
     mat->setShader(Shader::createDefault<PositionNormalTexCoordVertex>());
     mat->uniform<UniformType::fVec4>("u_color").value = {1.0f, 1.0f, 1.0f, 1.0f};
@@ -66,7 +68,15 @@ void Folk::sceneInit(Scene &scene) {
 
     mat->uniform<UniformType::sampler2D>("u_texture").p_texture = tex;
 
-    scene.root().addComponent<ScriptComponent>().addScript<SimpleScript>();
+    cube.addComponent<ScriptComponent>().addScript<SimpleScript>();
+    cube.getComponent<TransformComponent>()->position({0.0f, 0.0f, -2.5f});
+
+    /*
+    auto camera = scene.root().createChild("Camera");
+
+    camera.getComponent<TransformComponent>()->position({0.0f, 0.0f, -5.0f});
+    scene.setCamera(camera.addComponent<CameraComponent>());
+    */
 }
 
 void Folk::engineInit() {
