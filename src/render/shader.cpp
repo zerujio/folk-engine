@@ -23,8 +23,12 @@ template<> Shader::Ref Shader::createDefault<PositionNormalTexCoordVertex>() {
             out vec2 texCoord;
             out vec3 normal;
 
+            uniform mat4 u_model;
+            uniform mat4 u_view;
+            uniform mat4 u_proj;
+
             void main() {
-                gl_Position = vec4(a_position, 1.0);
+                gl_Position = u_model * vec4(a_position, 1.0);
                 texCoord = a_texCoord;
                 normal = a_normal;
             }
@@ -41,7 +45,7 @@ template<> Shader::Ref Shader::createDefault<PositionNormalTexCoordVertex>() {
             in vec2 texCoord;
 
             out vec4 frag_color;
-            uniform vec4 u_color = {1.0f, 1.0f, 1.0f, 1.0f};
+            uniform vec4 u_color = vec4(1.0f, 1.0f, 1.0f, 1.0f);
             uniform sampler2D u_texture;
 
             void main() {

@@ -5,10 +5,11 @@ namespace Folk
 {
 
 std::ostream& operator<<(std::ostream& os, const Error& err) {
-    if constexpr(c_debug_build)
-        os << err.location() << " : " << err.what();
-    else
-        os << err.what();
+#ifdef FOLK_DEBUG
+    os << err.location() << " : " << err.what();
+#else   
+    os << err.what();
+#endif
     return os;
 }
     

@@ -1,9 +1,3 @@
-//
-// Created by sergio on 02-02-22.
-//
-
-#ifdef FOLK_DEBUG
-
 #include "folk/render/gl.hpp"
 
 namespace Folk {
@@ -37,5 +31,3 @@ GLenum gl::getError() noexcept {
 }
 
 } // namespace Folk::gl
-
-#endif // GL_DEBUG
