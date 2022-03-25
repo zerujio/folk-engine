@@ -32,16 +32,16 @@ void Renderer::drawFrame(SceneManager &scene, std::chrono::duration<double> delt
 
     // calculate view and projection matrix
     if (cam_entity == entt::null) {
-        // at_vector = {0, 0, 0};
-        // eye_vector = {0, 0, 0};
+        view_mtx = glm::lookAt(Vec3(0.0f, 0.0f, 1.0f), {0.0f, 0.0f, 0.0f}, {0.0f, 1.0f, 0.0f});
         proj_mtx = glm::perspective(glm::radians(60.0f), aspect_ratio, 0.1f, 100.0f);
-    } else {
 
+
+    } else {
         const auto& cam_transform = scene.registry().get<TransformComponent>(cam_entity).transformMatrix();
 
         Vec3 pos = cam_transform * Vec4(0, 0, 0, 1.0f);
-        Vec3 at = cam_transform * Vec4(0, -1.0f, 0, 1.0f);
-        Vec3 up = glm::normalize(cam_transform * Vec4(0, 0, 1.0f, 1.0f));
+        Vec3 at = cam_transform * Vec4(0, 0, -1.0f, 1.0f);
+        Vec3 up = glm::normalize(cam_transform * Vec4(0, 1.0f, 0, 1.0f));
 
         view_mtx = glm::lookAt(pos, at, up);
 

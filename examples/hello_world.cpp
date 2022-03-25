@@ -69,14 +69,11 @@ void Folk::sceneInit(Scene &scene) {
     mat->uniform<UniformType::sampler2D>("u_texture").p_texture = tex;
 
     cube.addComponent<ScriptComponent>().addScript<SimpleScript>();
-    cube.getComponent<TransformComponent>()->position({0.0f, 0.0f, -2.5f});
 
-    /*
     auto camera = scene.root().createChild("Camera");
 
-    camera.getComponent<TransformComponent>()->position({0.0f, 0.0f, -5.0f});
+    camera.getComponent<TransformComponent>()->position({0.0f, 0.0f, 2.5f});
     scene.setCamera(camera.addComponent<CameraComponent>());
-    */
 }
 
 void Folk::engineInit() {
