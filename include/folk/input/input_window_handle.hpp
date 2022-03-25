@@ -6,7 +6,7 @@
 #define SRC_INPUT__INPUT_HANDLER_HPP
 
 #include "folk/input/input_code.hpp"
-#include "folk/window/window_manager.hpp"
+#include "folk/window/window_handle.hpp"
 #include "folk/window/glfw_call.hpp"
 #include "cast.hpp"
 
@@ -17,7 +17,7 @@ namespace Folk {
 /**
  * @brief A lightweight object that wraps the windowing system's input polling functions for a window.
  */
-class InputManager final {
+class InputWindowHandle final {
 public:
     /**
      * @brief Create an input manager for a window.
@@ -25,13 +25,13 @@ public:
      * window manager from which the object was created can be safely moved from.
      * @param manager A window manager.
      */
-    explicit InputManager(const WindowManager& manager);
+    explicit InputWindowHandle(const WindowHandle& window);
 
     /**
      * @brief Create an input manager not bound to a window.
      * Operations other than assignment on a default-initialized input handler will result in an exception.
      */
-    InputManager() = default;
+    InputWindowHandle() = default;
 
     /// Poll the state of a key.
     [[nodiscard]] InputState getKey(Key key) const;

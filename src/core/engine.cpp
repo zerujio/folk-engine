@@ -58,7 +58,7 @@ void Engine::main(LogLevel level) {
 
     // Input handling
     InputEventQueue input_queue{};
-    ScopedInitializer<Input> input_initializer{InputManager(game_window), input_queue};
+    ScopedInitializer<Input> input_initializer{InputWindowHandle(game_window), input_queue};
 
     // Audio
     AudioManager audio_manager {exception_handler};

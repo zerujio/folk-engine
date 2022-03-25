@@ -10,7 +10,7 @@
 
 namespace Folk {
 
-RenderContextHandle Renderer::s_handle {};
+RenderingWindowHandle Renderer::s_handle {};
 bool Renderer::s_frame_buffer_size_changed {false};
 Vec2i Renderer::s_frame_buffer_size {};
 
@@ -96,7 +96,7 @@ void Renderer::drawPerfMon(const PerformanceMonitor& perf_monitor,
     // draw performance monitor
 }
 
-void Renderer::setContext(RenderContextHandle handle) {
+void Renderer::setContext(RenderingWindowHandle handle) {
     s_handle = handle;
     s_handle.makeContextCurrent();
     s_handle.setFrameBufferSizeCallback<setFrameBufferSize>();
@@ -109,7 +109,7 @@ void Renderer::setFrameBufferSize(Vec2i size) {
     s_frame_buffer_size = size;
 }
 
-void Renderer::initialize(RenderContextHandle handle) {
+void Renderer::initialize(RenderingWindowHandle handle) {
     setContext(handle);
 
     if constexpr(c_debug_build) {

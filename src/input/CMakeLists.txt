@@ -5,5 +5,5 @@
         input_action_manager.cpp
         input_registry.cpp
         input_event_queue.cpp
-        input_manager.cpp
+        input_window_handle.cpp
         input.cpp)

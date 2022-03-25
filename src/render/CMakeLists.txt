@@ -11,7 +11,7 @@ target_sources(folk_engine PRIVATE
         immediate_geometry.cpp
         material.cpp
         mesh.cpp
-        render_context.cpp
+        rendering_window_handle.cpp
         renderer.cpp
         shader.cpp
         texture.cpp

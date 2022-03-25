@@ -1,6 +1,6 @@
 #include "performance_monitor.hpp"
 
-#include "folk/window/window_manager.hpp"
+#include "folk/window/window_handle.hpp"
 
 #include "../core/engine.hpp"
 

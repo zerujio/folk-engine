@@ -6,7 +6,7 @@
 #include "folk/input/key.hpp"
 #include "folk/input/mouse_button.hpp"
 #include "folk/input/input_action.hpp"
-#include "folk/input/input_manager.hpp"
+#include "folk/input/input_window_handle.hpp"
 #include "folk/input/input_event_queue.hpp"
 
 #include "folk/math/vector.hpp"
@@ -68,10 +68,10 @@ struct Input final {
 private:
     friend class ScopedInitializer<Input>;
 
-    static void initialize(InputManager manager, InputEventQueue& queue);
+    static void initialize(InputWindowHandle manager, InputEventQueue& queue);
     static void terminate();
 
-    static InputManager s_input_manager;
+    static InputWindowHandle s_input_manager;
     static InputEventQueue* s_input_queue_ptr;
 
     template<class T>

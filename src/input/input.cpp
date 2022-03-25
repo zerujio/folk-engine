@@ -1,13 +1,13 @@
 #include "folk/input.hpp"
 
-#include "folk/input/input_manager.hpp"
+#include "folk/input/input_window_handle.hpp"
 #include "folk/input/input_event_queue.hpp"
 
 #include "GLFW/glfw3.h"
 
 namespace Folk {
 
-InputManager Input::s_input_manager {};
+InputWindowHandle Input::s_input_manager {};
 InputEventQueue* Input::s_input_queue_ptr {nullptr};
 
 template<class InputType>
@@ -15,7 +15,7 @@ void Input::inputCallback(InputType code, InputState state) {
     s_input_queue_ptr->enqueue(code, state);
 }
 
-void Input::initialize(const InputManager manager, InputEventQueue &queue)
+void Input::initialize(const InputWindowHandle manager, InputEventQueue &queue)
 {
     s_input_manager = manager;
     s_input_queue_ptr = &queue;

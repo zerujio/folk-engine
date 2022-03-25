@@ -3,7 +3,7 @@
 
 #include "folk/math/vector.hpp"
 
-#include "render_context.hpp"
+#include "rendering_window_handle.hpp"
 
 #include "../utils/delta_clock.hpp"
 #include "../utils/performance_monitor.hpp"
@@ -21,7 +21,7 @@ struct Renderer final {
     Renderer() = delete;
 
     /// OpenGL setup
-    static void initialize(RenderContextHandle handle);
+    static void initialize(RenderingWindowHandle handle);
 
     /// Draw a frame.
     static void drawFrame(SceneManager &scene, std::chrono::duration<double> delta);
@@ -32,12 +32,12 @@ struct Renderer final {
     static void setFrameBufferSize(Vec2i size);
 
 private:
-    static RenderContextHandle s_handle;
+    static RenderingWindowHandle s_handle;
 
     static bool s_frame_buffer_size_changed;
     static Vec2i s_frame_buffer_size;
 
-    static void setContext(RenderContextHandle);
+    static void setContext(RenderingWindowHandle);
 
     static void setUserUniforms(const Material& material);
 
