@@ -3,41 +3,74 @@
 
 #include "folk/math/vector.hpp"
 
-#include "rendering_window_handle.hpp"
-
 #include "../utils/delta_clock.hpp"
 #include "../utils/performance_monitor.hpp"
 #include "../utils/scoped_initializer.hpp"
+
 #include "../scene/scene_manager.hpp"
+
 #include "folk/render/shader.hpp"
 #include "folk/render/material.hpp"
 #include "folk/render/texture.hpp"
+#include "folk/render/visual.hpp"
+#include "folk/render/visual_component.hpp"
+
+#include "rendering_window_handle.hpp"
+
+#include <vector>
 
 
 namespace Folk {
 
-/// Manages rendering operations. Should only be called from the main thread
+/**
+ * @brief Handles rendering operations.
+ */
 struct Renderer final {
-    Renderer() = delete;
+    
+    /**
+     * @brief Construct a new Renderer object.
+     * 
+     * @param handle A handle to the window to render to.
+     */
+    Renderer(RenderingWindowHandle handle);
 
-    /// OpenGL setup
-    static void initialize(RenderingWindowHandle handle);
+    /**
+     * @brief Enqueue a draw call.
+     * 
+     * @param transform_matrix A transformation matrix for the object (the 'u_model' shader uniform).
+     * @param visual A Visual object.
+     */
+    void draw(const Mat4& transform_matrix, const VisualComponent& visual);
 
-    /// Draw a frame.
-    static void drawFrame(SceneManager &scene, std::chrono::duration<double> delta);
+    /**
+     * @brief Process queued draw calls.
+     * 
+     * @param camera_transform Transform matrix that determines the position and orientation of the camera.
+     * @param camera Camera component.
+     */
+    void finishFrame(const Mat4& camera_transform, const CameraComponent& camera);
 
     /// Draw the performance monitor.
-    static void drawPerfMon(const PerformanceMonitor&, DeltaClock::milliseconds_double) noexcept;
+    void drawPerfMon(const PerformanceMonitor&, DeltaClock::milliseconds_double) noexcept;
 
-    static void setFrameBufferSize(Vec2i size);
+    /// Set the clear screen color.
+    void setClearColor(Vec4 color) const;
 
 private:
-    static RenderingWindowHandle s_handle;
+    
+    RenderingWindowHandle m_window_handle;
 
-    static bool s_frame_buffer_size_changed;
-    static Vec2i s_frame_buffer_size;
+    bool m_frame_buffer_size_changed {true};
+    Vec2i m_frame_buffer_size {};
 
-    static void setContext(RenderingWindowHandle);
+    struct DrawCall {
+        Mat4 transform;
+        std::shared_ptr<Visual> visual;
+    };
+
+    std::vector<DrawCall> draw_call_queue {};
+
+    void setFrameBufferSize(Vec2i size);
 
     static void setUserUniforms(const Material& material);
 

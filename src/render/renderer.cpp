@@ -10,9 +10,44 @@
 
 namespace Folk {
 
-RenderingWindowHandle Renderer::s_handle {};
-bool Renderer::s_frame_buffer_size_changed {false};
-Vec2i Renderer::s_frame_buffer_size {};
+Renderer::Renderer(RenderingWindowHandle window) : 
+m_window_handle(window),
+m_frame_buffer_size(window.getFrameBufferSize())
+{
+    window.makeContextCurrent();
+    window.setFrameBufferSizeCallback<setFrameBufferSize>(this);
+}
+
+void Renderer::setClearColor(Vec4 color) const {
+    glClearColor(color.r, color.g, color.b, color.a);
+}
+
+void Renderer::draw(const Mat4& transform, const VisualComponent& component) {
+    draw_call_queue.emplace_back(transform, component.visual);
+}
+
+void Renderer::finishFrame(const Mat4 &camera_transform, const VisualComponent& visual) 
+{
+    if (m_frame_buffer_size_changed) {
+        gl::call::fast(glViewport)(0, 0, m_frame_buffer_size.x, m_frame_buffer_size.y);
+        m_frame_buffer_size_changed = false;
+    }
+
+    glClear(GL_COLOR_BUFFER_BIT);
+
+    auto aspect_ratio = static_cast<float>(m_frame_buffer_size.x) / static_cast<float>(m_frame_buffer_size.y);
+
+    Mat4 view_transform {1.0f};
+    Mat4 proj_transform {1.0f};
+
+    {
+        Vec3 pos = camera_transform * Vec4(0, 0, 0, 1.0f);
+        Vec3 at = camera_transform * Vec4(0, 0, -1.0f, 1.0f);
+        Vec3 up = glm::normalize(camera_transform * Vec4(0, 1.0f, 0, 1.0f));
+
+        // view_transform
+    }
+}
 
 void Renderer::drawFrame(SceneManager &scene, std::chrono::duration<double> delta)
 {
@@ -81,6 +116,7 @@ void Renderer::setUserUniforms(const Material &material) {
 
 void Renderer::setTransformUniforms(const Mat4& model, const Mat4& view, const Mat4& projection, const Material& material) {
     auto shader = material.getShader();
+
     auto model_loc = shader->builtInUniformLoc(Shader::BuiltInUniform::Model);
     auto view_loc = shader->builtInUniformLoc(Shader::BuiltInUniform::View);
     auto proj_loc = shader->builtInUniformLoc(Shader::BuiltInUniform::Projection);
@@ -96,17 +132,9 @@ void Renderer::drawPerfMon(const PerformanceMonitor& perf_monitor,
     // draw performance monitor
 }
 
-void Renderer::setContext(RenderingWindowHandle handle) {
-    s_handle = handle;
-    s_handle.makeContextCurrent();
-    s_handle.setFrameBufferSizeCallback<setFrameBufferSize>();
-    setFrameBufferSize(s_handle.getFrameBufferSize());
-    glClearColor(.1f, .1f, .1f, 1.0f);
-}
-
 void Renderer::setFrameBufferSize(Vec2i size) {
-    s_frame_buffer_size_changed = true;
-    s_frame_buffer_size = size;
+    m_frame_buffer_size = size;
+    m_frame_buffer_size_changed = true;
 }
 
 void Renderer::initialize(RenderingWindowHandle handle) {

@@ -64,7 +64,7 @@ void Engine::main(LogLevel level) {
     AudioManager audio_manager {exception_handler};
 
     // Renderer
-    Renderer::initialize(game_window);
+    Renderer renderer {game_window};
 
     // Scene manager
     SceneManager scene_manager{};
@@ -112,7 +112,8 @@ void Engine::main(LogLevel level) {
         // frame end
         perf_monitor.stop(frame_time_id);
 
-        Renderer::drawPerfMon(perf_monitor, delta);
+        renderer.drawPerfMon(perf_monitor, delta);
+
         perf_monitor.clear();
         log_initializer.wakeUp(); // print log buffer to console
     }
@@ -146,12 +147,29 @@ void Engine::updateAudio(PerformanceMonitor &perf_monitor, const ExceptionHandle
     perf_monitor.stop(id);
 }
 
-void Engine::drawFrame(PerformanceMonitor &perf_monitor, const ExceptionHandler &exception_handler,
+void Engine::drawFrame(PerformanceMonitor &perf_monitor, Renderer &renderer, const ExceptionHandler &exception_handler,
                        SceneManager &scene_manager, DeltaClock::seconds_double delta) noexcept
 try
 {
     auto id = perf_monitor.addItem("Renderer");
-    Renderer::drawFrame(scene_manager, delta);
+
+    auto view = scene_manager.registry().view<SceneGraphNode, const VisualComponent>();
+    view.each([&renderer](SceneGraphNode& graph_node, const VisualComponent& visual_comp){
+        renderer.draw(graph_node.transformMatrix(), visual_comp);
+    });
+
+    auto camera_id = scene_manager.camera();
+
+    if (camera_id != entt::null) {
+        auto &camera_transform = scene_manager.registry().get<TransformComponent>(camera_id).transformMatrix();
+        auto &camera_component = scene_manager.registry().get<CameraComponent>(camera_id);
+        renderer.finishFrame(camera_transform, camera_component);
+    } else {
+        Mat4 identity {1.0f};
+        CameraComponent default_init_component {};
+        renderer.finishFrame(identity, default_init_component);
+    }
+
     perf_monitor.stop(id);
 }
 catch (...)

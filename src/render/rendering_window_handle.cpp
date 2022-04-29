@@ -1,7 +1,3 @@
-//
-// Created by sergio on 30-01-22.
-//
-
 #include "rendering_window_handle.hpp"
 
 namespace Folk {
